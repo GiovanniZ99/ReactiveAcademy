@@ -10,6 +10,5 @@ public class Esercizio1_2 {
            saldoBancario += saldoBancario * (percentuale / 100);
             System.out.println(saldoBancario);
         }
-
     }
 }
