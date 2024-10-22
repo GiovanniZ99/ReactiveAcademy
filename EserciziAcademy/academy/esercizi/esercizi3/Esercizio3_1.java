@@ -16,28 +16,20 @@ public class Esercizio3_1 {
                 matriceTombola[i][j] = numero++;
             }
         }
+
         for (int[] ints : matriceTombola) {
             for (int anInt : ints) {
                 System.out.print(anInt + "\t");
             }
             System.out.println();
         }
+        System.out.println(Arrays.toString(trovaNumAdiacentiPerNumero(matriceTombola, 1)));
         System.out.println(Arrays.toString(trovaNumAdiacenti(matriceTombola, 4, 5)));
     }
 
     private static int[] trovaNumAdiacenti(int[][] matrice, int x, int y) {
 
         int[] results = new int[4];
-        if (x > 0) {
-            results[0] = matrice[x - 1][y];
-        } else {
-            System.out.println("Hai preso il muro superiore");
-        }
-        if (x < matrice.length - 1) {
-            results[1] = matrice[x + 1][y];
-        } else {
-            System.out.println("hai preso il muro in basso");
-        }
         if (y > 0) {
             results[2] = matrice[x][y - 1];
         } else {
@@ -47,6 +39,16 @@ public class Esercizio3_1 {
             results[3] = matrice[x][y + 1];
         } else {
             System.out.println("Hai preso il muro destro");
+        }
+        if (x > 0) {
+            results[0] = matrice[x - 1][y];
+        } else {
+            System.out.println("Hai preso il muro superiore");
+        }
+        if (x < matrice.length - 1) {
+            results[1] = matrice[x + 1][y];
+        } else {
+            System.out.println("hai preso il muro in basso");
         }
         return results;
     }

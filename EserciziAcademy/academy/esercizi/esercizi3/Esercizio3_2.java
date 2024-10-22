@@ -12,7 +12,6 @@ inferiore destra?
 public class Esercizio3_2 {
     public static void main(String[] args) {
         stampaMatrice(creaMatriceTris());
-
     }
 
     public static String[][] creaMatriceTris() {
@@ -20,17 +19,18 @@ public class Esercizio3_2 {
 
         for (int i = 0; i < tris.length; i++) {
             for (int j = 0; j < tris[i].length; j++) {
-           tris[i][j] = generaOpzioni(1)[0];
+           tris[i][j] = String.valueOf(generaOpzioni(1)[0]);
             }
         }
         tris[0][2] = "x";
+        System.out.println("Gli elementi sono: " + tris[0][0] + tris[1][1] + tris[2][3]);
         return tris;
     }
 
-    public static String[] generaOpzioni(int lunghezza) {
-        String[] opzioni = new String[lunghezza];
+    public static char[] generaOpzioni(int lunghezza) {
+        char[] opzioni = new char[lunghezza];
         java.util.Random random = new java.util.Random();
-        String[] valoriPossibili = {"x", "o", " "};
+        char[] valoriPossibili = {'x', 'o', ' '};
 
         for (int i = 0; i < lunghezza; i++) {
             int indiceOpzioni = random.nextInt(valoriPossibili.length);
