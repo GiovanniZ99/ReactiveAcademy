@@ -30,23 +30,36 @@ public class Esercizio3_1 {
         int[] results = new int[4];
         if (x > 0) {
             results[0] = matrice[x - 1][y];
-        }  else {
-                System.out.println("Hai preso il muro superiore");
-            }
-            if (x < matrice.length - 1) {
-                results[1] = matrice[x + 1][y];}else{
-                System.out.println("hai preso il muro in basso");
-            }
-                if (y > 0) {
-                    results[2] = matrice[x][y - 1];}else{
-                    System.out.println("Hai preso il muro sinistro");
-                }
-                    if (y < matrice[x].length - 1) {
-                        results[3] = matrice[x][y + 1];
-                    }else{
-                        System.out.println("Hai preso il muro destro");
-                    }
+        } else {
+            System.out.println("Hai preso il muro superiore");
+        }
+        if (x < matrice.length - 1) {
+            results[1] = matrice[x + 1][y];
+        } else {
+            System.out.println("hai preso il muro in basso");
+        }
+        if (y > 0) {
+            results[2] = matrice[x][y - 1];
+        } else {
+            System.out.println("Hai preso il muro sinistro");
+        }
+        if (y < matrice[x].length - 1) {
+            results[3] = matrice[x][y + 1];
+        } else {
+            System.out.println("Hai preso il muro destro");
+        }
         return results;
+    }
+
+    private static int[] trovaNumAdiacentiPerNumero(int[][] matrice, int numero) {
+        for (int i = 0; i < matrice.length; i++) {
+            for (int j = 0; j < matrice[i].length; j++) {
+                if (matrice[i][j] == numero) {
+                    return trovaNumAdiacenti(matrice, i, j);
+                }
+            }
+        }
+        return null;
     }
 }
 
