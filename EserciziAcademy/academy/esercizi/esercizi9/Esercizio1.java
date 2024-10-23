@@ -10,33 +10,73 @@ deve essere progressivo, come esplicato nel sistema americano e con una RAL di 3
 risultare un netto di 22.600. */
 public class Esercizio1 {
     public static void main(String[] args) {
-        int[] array = calcolaTasseItaliane(60000);
-        System.out.println(Arrays.toString(array));
-        int sum= 0;
-        for (int j : array) {
+        int ralDaInserire = prendiRal();
+        stampaCalcoloTasseItaliane(calcolaTasseItaliane(ralDaInserire));
+        System.out.println(calcolaTasseAmericane(ralDaInserire, coniugato()));
+
+    }
+
+    private static int prendiRal() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Inserisci la RAL per calcolare le tasse italiane e americane");
+
+        return scanner.nextInt();
+    }
+    private static boolean coniugato(){
+        System.out.print("Sei coniugato? (true/false): ");
+        Scanner scanner = new Scanner(System.in);
+       return scanner.nextBoolean();
+    }
+
+    public static float[] calcolaTasseItaliane(int ral){
+        float[] tasse = new float[4];
+        float primoScaglione = 15000;
+        float secondoScaglione = 28000;
+        float terzoScaglione = 50000;
+        // devi sottrarre il ral iniziale e tassare quello che ti viene
+        if(ral<primoScaglione){
+            tasse[0] = (float) ral * 23/1000;
+        }else if(ral >primoScaglione && ral < secondoScaglione){
+            tasse[0] = primoScaglione * 23/100;
+            tasse[1] = (ral - primoScaglione) * 25/100;
+        }else if(ral > secondoScaglione && ral < terzoScaglione){
+            tasse[0] = primoScaglione * 23/100;
+            tasse[1] =  (secondoScaglione - primoScaglione) * 25/100;
+            tasse[2] =  (ral - terzoScaglione) * 35/100;
+        }else if(ral > terzoScaglione){
+            tasse[0] = primoScaglione * 23/100;
+            tasse[1] = (secondoScaglione - primoScaglione) * 25/100;
+            tasse[2] = (terzoScaglione - secondoScaglione) * 35/100;
+            tasse[3] = (ral - terzoScaglione) * 43/100;
+        }
+        return tasse;
+    }
+    public static void stampaCalcoloTasseItaliane(float[] arrayTasse){
+        System.out.println(Arrays.toString(arrayTasse));
+        float sum= 0;
+        for (float j : arrayTasse) {
             sum += j;
         }
         System.out.println(sum);
-
     }
-    public static int [] calcolaTasseItaliane(int reddito){
-        int[] tasse = new int[4];
-
-        // devi sottrarre il reddito iniziale e tassare quello che ti viene
-        if(reddito<15000){
-            tasse[0] = 15000 * 23/1000;
-        }else if(reddito >15001 && reddito < 28000){
-            tasse[0] = 15000 * 23/100;
-            tasse[1] = (reddito - 15000) * 25/100;
-        }else if(reddito > 28001 && reddito < 50000){
-            tasse[0] = 15000 * 23/100;
-            tasse[1] =  (28000 - 15000) * 25/100;
-            tasse[2] =  (reddito - 28000) * 35/100;
-        }else if(reddito > 50000){
-            tasse[0] = 15000 * 23/100;
-            tasse[1] = (28000 - 15000) * 25/100;
-            tasse[2] = (50000 - 28000) * 35/100;
-            tasse[3] = (reddito - 50000) * 43/100;
+    public static float calcolaTasseAmericane(int ral, boolean coniugato){
+        float tasse = 0;
+        if(coniugato){
+            if(ral > 0 && ral < 8000){
+                 tasse = 800 * 0.10f;
+            }else if(ral>6000 && ral < 32000){
+                tasse = 24000 * 0.15f;
+            }else if(ral > 32000){
+                tasse = (ral - 32000) * 0.25f + 4400;
+            }
+        }else{
+            if(ral > 0 && ral < 16000){
+                tasse = 16000 * 0.10f;
+            }else if(ral >16000 && ral < 64000){
+                tasse = 48000 * 0.15f + 1600;
+            }else if(ral > 64000){
+                tasse = (ral - 64000) * 0.25f + 8800;
+            }
         }
         return tasse;
     }
