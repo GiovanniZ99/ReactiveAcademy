@@ -2,7 +2,7 @@ package academy.esercizi.esercizi6;
 
 import java.util.Arrays;
 
-/*Scrivere dei programmi per visualizzare le seguenti tabelle con l’uso del print*/
+/*Scrivere dei programmi per visualizzare le seguenti tabelle con l’uso del printf*/
 public class Esercizio1 {
     public static void main(String[] args) {
        creaTbella();
