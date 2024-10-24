@@ -11,13 +11,13 @@ public class Esercizio7 {
     }
 
     public static String rimuoviSpazi(String creditCardNumber) {
-        String result = "";
+        String numeroSenzaSpaziOTrattini = "";
         for (int i = 0; i < creditCardNumber.length() - 1; i++) {
             if (creditCardNumber.charAt(i) != ' ' && creditCardNumber.charAt(i)!= '-') {
-                result += creditCardNumber.charAt(i);
+                numeroSenzaSpaziOTrattini += creditCardNumber.charAt(i);
             }
         }
 
-        return result;
+        return numeroSenzaSpaziOTrattini;
     }
 }
