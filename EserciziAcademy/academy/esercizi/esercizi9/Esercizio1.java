@@ -35,19 +35,19 @@ public class Esercizio1 {
         float terzoScaglione = 50000;
         // devi sottrarre il ral iniziale e tassare quello che ti viene
         if(ral<primoScaglione){
-            tasse[0] = (float) ral * 23/1000;
-        }else if(ral >primoScaglione && ral < secondoScaglione){
-            tasse[0] = primoScaglione * 23/100;
-            tasse[1] = (ral - primoScaglione) * 25/100;
-        }else if(ral > secondoScaglione && ral < terzoScaglione){
-            tasse[0] = primoScaglione * 23/100;
-            tasse[1] =  (secondoScaglione - primoScaglione) * 25/100;
-            tasse[2] =  (ral - terzoScaglione) * 35/100;
+            tasse[0] = (float) ral * 0.23f;
+        }else if(ral < secondoScaglione){
+            tasse[0] = primoScaglione * 0.23f;
+            tasse[1] = (ral - primoScaglione) * 0.25f;
+        }else if(ral < terzoScaglione){
+            tasse[0] = primoScaglione * 0.23f;
+            tasse[1] =  (secondoScaglione - primoScaglione) * 0.25f;
+            tasse[2] =  (ral - secondoScaglione) * 0.35f;
         }else if(ral > terzoScaglione){
-            tasse[0] = primoScaglione * 23/100;
-            tasse[1] = (secondoScaglione - primoScaglione) * 25/100;
-            tasse[2] = (terzoScaglione - secondoScaglione) * 35/100;
-            tasse[3] = (ral - terzoScaglione) * 43/100;
+            tasse[0] = primoScaglione * 0.23f;
+            tasse[1] = (secondoScaglione - primoScaglione) * 0.25f;
+            tasse[2] = (terzoScaglione - secondoScaglione) * 0.35f;
+            tasse[3] = (ral - terzoScaglione) * 0.43f;
         }
         return tasse;
     }
