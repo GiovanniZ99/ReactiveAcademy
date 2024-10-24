@@ -1,5 +1,6 @@
 package academy.esercizi.esercizi2;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /* Dovete decidere se un dado è ecquo, contando la frequenza con cui,
@@ -11,36 +12,43 @@ dado doop aver eseguito il lancio 1000 volte.
 public class Esercizio2_8 {
     public static void main(String[] args) {
         Random r = new Random();
-        int lancioDado = r.nextInt(6) + 1;
-        byte uno = 0;
-        byte due = 0;
-        byte tre = 0;
-        byte quattro = 0;
-        byte cinque = 0;
-        byte sei = 0;
-        for (int i = 0; i <= 1000; i++) {
-            if (lancioDado == 1) {
+
+        int[] numeriUsciti = new int[1000];
+        for (int i = 0; i < 1000; i++) {
+            int lancioDado = r.nextInt(6) + 1;
+            numeriUsciti[i] = lancioDado;
+        }
+        int uno = 0;
+        int due = 0;
+        int tre = 0;
+        int quattro = 0;
+        int cinque = 0;
+        int sei = 0;
+        for (int i = 0; i < numeriUsciti.length - 1; i++) {
+            if (numeriUsciti[i] == 1) {
                 uno++;
-            } else if (lancioDado == 2) {
+            }
+            if (numeriUsciti[i] == 2) {
                 due++;
-            } else if (lancioDado == 3) {
+            }
+            if (numeriUsciti[i]==3){
                 tre++;
-            } else if (lancioDado == 4) {
+            }
+            if (numeriUsciti[i]==4){
                 quattro++;
-            } else if (lancioDado == 5) {
+            }
+            if (numeriUsciti[i]==5){
                 cinque++;
-            } else if (lancioDado == 6) {
+            }
+            if(numeriUsciti[i] == 6){
                 sei++;
             }
-
-            System.out.println("Frequenza dei lanci del dado:");
-            System.out.println("Faccia\tFrequenza");
-            System.out.println("1\t" + uno);
-            System.out.println("2\t" + due);
-            System.out.println("3\t" + tre);
-            System.out.println("4\t" + quattro);
-            System.out.println("5\t" + cinque);
-            System.out.println("6\t" + sei);
         }
+        int[] frequenzaNumeri = {uno, due, tre, quattro, cinque, sei};
+
+        System.out.println(Arrays.toString(frequenzaNumeri));
+
+        System.out.println(Arrays.toString(numeriUsciti));
     }
 }
+
