@@ -17,6 +17,7 @@ public class Esercizio4 {
         double saldoCheck = scanner.nextDouble();
         System.out.println("Inserisci il saldo del conto di risparmio");
         double saldoSav = scanner.nextDouble();
+        Cliente cliente = new Cliente(saldoCheck, saldoSav);
         if (saldoCheck < 0 || saldoSav < 0) {
             System.out.println("Importi non validi");
         }
@@ -30,54 +31,27 @@ public class Esercizio4 {
         double cifra = scanner.nextDouble();
         switch (scelta) {
             case 1:
-                withdrawal(saldoCheck, cifra);
+                cliente.withdrawal(saldoCheck, cifra);
                 break;
             case 2:
-                withdrawal(saldoSav, cifra);
+                cliente.withdrawal(saldoSav, cifra);
                 break;
             case 3:
-                deposit(saldoCheck, cifra);
+                cliente.deposit(saldoCheck, cifra);
                 break;
             case 4:
-                deposit(saldoSav, cifra);
+                cliente.deposit(saldoSav, cifra);
                 break;
             case 5:
-                transfer(saldoCheck, saldoSav, cifra);
+                cliente.transfer(saldoCheck, saldoSav, cifra);
                 break;
             case 6:
-                transfer(saldoSav, saldoCheck, cifra);
+                cliente.transfer(saldoSav, saldoCheck, cifra);
                 break;
             default:
                 System.out.println("Numero inserito non valido");
         }
     }
 
-    public static void withdrawal(double conto, double prelievo) {
-        if (prelievo <= conto) {
-            conto -= prelievo;
-            System.out.println(conto);
-        } else {
-            System.out.println("Importo non valido");
-        }
-    }
 
-    public static void deposit(double conto, double prelievo) {
-        if (prelievo > 0) {
-            conto += prelievo;
-            System.out.println(conto);
-        } else {
-            System.out.println("Importo non valido");
-        }
-    }
-
-    public static void transfer(double contoMittente, double contoDestinatario, double cifraDaTrasferire) {
-        if (cifraDaTrasferire <= contoMittente) {
-            contoDestinatario += cifraDaTrasferire;
-            contoMittente -= cifraDaTrasferire;
-            System.out.println(contoDestinatario);
-            System.out.println(contoMittente);
-        } else {
-            System.out.println("Importo non valido");
-        }
-    }
 }
