@@ -30,6 +30,8 @@ public class Eserciziio1 {
         Scanner scanner = new Scanner(System.in);
         int numeroDaConvertire = scanner.nextInt();
         StringBuilder numeroConvertito = new StringBuilder();
+        System.out.println("Inserire numero da convertire in numero romano");
+        System.out.println("Non è possibile convertire un numero maggiore di 3999");
         if(numeroDaConvertire > 3999){
             return;
         }
