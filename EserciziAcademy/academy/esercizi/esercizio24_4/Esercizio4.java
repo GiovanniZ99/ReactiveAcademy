@@ -46,5 +46,13 @@ public class Esercizio4 {
             }
             System.out.println();
         }
+        double proporzioneVerticale = (double) trovaMax(valori) / 20;
+        for (int i = 0; i < titoli.length; i++) {
+            System.out.print(titoli[i] + ": ");
+            for (int j = 0; j < Math.floor(valori[i] / proporzioneVerticale); j++) {
+                System.out.print("\n *");
+            }
+            System.out.println();
+        }
     }
 }
