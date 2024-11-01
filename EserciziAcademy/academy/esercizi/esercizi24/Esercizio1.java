@@ -84,11 +84,6 @@ public class Esercizio1 {
         int target = (int) (Math.pow(2, Math.floor(Math.log(biglie) / Math.log(2))) - 1);
         int numeroBigliePrelevatoDalComprIntelligente = biglie - target;
 
-        // Assicurati di non prelevare più della metà delle biglie
-        if (numeroBigliePrelevatoDalComprIntelligente > biglie / 2) {
-            numeroBigliePrelevatoDalComprIntelligente = biglie / 2;
-        }
-
         // Se biglie è uno dei casi speciali
         if (biglie == 3 || biglie == 7 || biglie == 15 || biglie == 31 || biglie == 63) {
             Random random = new Random();
