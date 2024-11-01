@@ -83,19 +83,19 @@ faiFormaNelloSPazio();    }
         }
         stampaMatrice(spazio);
 
-        distinzioneForma(coordinateForma);
+        distinguiForma(coordinateForma);
 
     }
 
-    public static void distinzioneForma(int[][] coordinate) {
+    public static void distinguiForma(int[][] coordinate) {
         int[] lunghezzeLati = new int[4];
         int[] lunghezzeDiagonali = new int[2];
 
         for (int i = 0; i < 4; i++) {
             int x1 = coordinate[i][0];
             int y1 = coordinate[i][1];
-            int x2 = coordinate[(i + 1) % 4][0];
-            int y2 = coordinate[(i + 1) % 4][1];
+            int x2 = coordinate[(i+1 <4 ? i + 1 : 0)][0];
+            int y2 = coordinate[i+1 <4 ? i + 1 : 0][1];
             lunghezzeLati[i] = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
         }
 
