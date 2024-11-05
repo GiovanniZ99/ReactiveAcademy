@@ -1,6 +1,5 @@
 package academy.esercizi.esercizi25;
 
-import java.sql.SQLOutput;
 
 /*Un lucchetto per bicicletta a combinazione numerica ha quattro anelli (ring),
 ciascuno avente i numeri da 0 a 9. Scrivete un programma che, conoscendo i numeri su cui
@@ -19,33 +18,42 @@ sono attualmente posizionati gli anelli e la combinazione di sblocco, visualizzi
 // se un numero è maggiore di 5 e un altro è minore di 5 allora fai 10 meno il primo numero + il secondo numero
 public class Esercizio3 {
     public static void main(String[] args) {
-        int[] numeriPosizionati = {1, 7, 2, 8};
-        int[] combinazioneDiSblocco = {8, 8, 1, 3};
+        int[] numeriPosizionati = {0, 2, 1, 8};
+        int[] combinazioneDiSblocco = {0, 5, 2, 9};
         StringBuilder istruzioni = new StringBuilder();
+        int numeroDiGiri;
+
         for (int i = 0; i < numeriPosizionati.length; i++) {
-            if (numeriPosizionati[i] > 4 && numeriPosizionati[i] < combinazioneDiSblocco[i]) {
-                int numeroDiVolte = combinazioneDiSblocco[i] - numeriPosizionati[i];
-                istruzioni.append("Ring ").append(i).append(":Twist up ").append(numeroDiVolte == 1 ? "once" : numeroDiVolte).append(numeroDiVolte == 1 ? "" : " times").append("\n");
-            } else if (numeriPosizionati[i] > 4 && combinazioneDiSblocco[i] < 4) {
-                int numeroDiVolte = (10 - numeriPosizionati[i]) + combinazioneDiSblocco[i];
-                istruzioni.append("Ring ").append(i).append(":Twist up ").append(numeroDiVolte == 1 ? "once" : numeroDiVolte).append(numeroDiVolte == 1 ? "" : " times").append("\n");
-            } else if (numeriPosizionati[i] < 4 && combinazioneDiSblocco[i] > 4) {
-                int numeroDiVolte = (10 - combinazioneDiSblocco[i]) + numeriPosizionati[i];
-                istruzioni.append("Ring ").append(i).append(":Twist down ").append(numeroDiVolte == 1 ? "once" : numeroDiVolte).append(numeroDiVolte == 1 ? "" : " times").append("\n");
-            } else if (numeriPosizionati[i] < 5 && numeriPosizionati[i] > combinazioneDiSblocco[i]) {
-                int numeroDiVolte = numeriPosizionati[i] - combinazioneDiSblocco[i];
-                istruzioni.append("Ring ").append(i).append(":Twist down ").append(numeroDiVolte == 1 ? "once" : numeroDiVolte).append(numeroDiVolte == 1 ? "" : " times").append("\n");
-            } else if (numeriPosizionati[i] > 4 && numeriPosizionati[i] > combinazioneDiSblocco[i]) {
-                int numeroDiVolte = numeriPosizionati[i] - combinazioneDiSblocco[i];
-                istruzioni.append("Ring ").append(i).append(":Twist donw").append(numeroDiVolte == 1 ? "once" : numeroDiVolte).append(numeroDiVolte == 1 ? "" : " times").append("\n");
-            } else if (numeriPosizionati[i] < 5 && numeriPosizionati[i] < combinazioneDiSblocco[i]) {
-                int numeroDiVolte = combinazioneDiSblocco[i] - numeriPosizionati[i];
-                istruzioni.append("Ring ").append(i).append(":Twist up").append(numeroDiVolte == 1 ? "once" : numeroDiVolte).append(numeroDiVolte == 1 ? "" : " times").append("\n");
-            } else if (numeriPosizionati[i] == combinazioneDiSblocco[i]) {
-                istruzioni.append("Ring ").append(i).append(":Twist ").append(0).append(" time").append("\n");
+            int distanzaALContrario = 10 - numeriPosizionati[i] + combinazioneDiSblocco[i];
+            if(numeriPosizionati[i] > combinazioneDiSblocco[i]) {
+                if (numeriPosizionati[i] - combinazioneDiSblocco[i] < distanzaALContrario) {
+                    numeroDiGiri = numeriPosizionati[i] - combinazioneDiSblocco[i];
+                    istruzioni.append(" Ring ").append(i + 1).append(": Twist down ")
+                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                } else if (numeriPosizionati[i] - combinazioneDiSblocco[i] >= distanzaALContrario) {
+                    numeroDiGiri = distanzaALContrario;
+                    istruzioni.append(" Ring ").append(i + 1).append(": Twist up ")
+                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                }
+            }else{
+                if (combinazioneDiSblocco[i] - numeriPosizionati[i] < distanzaALContrario) {
+                    numeroDiGiri = combinazioneDiSblocco[i] - numeriPosizionati[i];
+                    istruzioni.append(" Ring ").append(i + 1).append(": Twist up ")
+                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                } else if (numeriPosizionati[i] + combinazioneDiSblocco[i] >= distanzaALContrario) {
+                    numeroDiGiri = 10 - combinazioneDiSblocco[i] + numeriPosizionati[i];
+                    istruzioni.append(" Ring ").append(i + 1).append(": Twist down ")
+                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                }
             }
         }
         System.out.println(istruzioni);
-    }
+        }
+        // se il primo - il secondo è minore di 10 - secondo + primo twist down
+        // 9 - 1 < 10 - 1 + 9
+        // 8 - 2 < 10 - 2 + 8
+        // se il primo - il secondo è maggiore di 10 + secondo
+        // 3 -4 < 3+4
+
 }
 
