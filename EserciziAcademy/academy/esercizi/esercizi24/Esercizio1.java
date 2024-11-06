@@ -38,11 +38,13 @@ public class Esercizio1 {
         if (livelloDifficoltaComputer == 1) {
             while (biglie > 1) {
                 if (turno == 0) {
-
-                    biglie -= scegliBiglie(scanner, biglie);
+                    int biglieScelte;
+                    do {
+                        biglieScelte = scegliBiglie(scanner, biglie);
+                    } while (biglieScelte == 0);
+                    biglie -= biglieScelte;
                     System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
                     turno = 1;
-
                 } else {
                     biglie -= getBiglieIntelligente(biglie);
                     System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
@@ -53,12 +55,16 @@ public class Esercizio1 {
         }else{
             while (biglie > 1) {
                 if (turno == 0) {
-
-                    biglie -= scegliBiglie(scanner, biglie);
-                    System.out.println(biglie);
+                    int biglieScelte;
+                    do {
+                        biglieScelte = scegliBiglie(scanner, biglie);
+                    } while (biglieScelte == 0);
+                    biglie -= biglieScelte;
+                    System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
                     turno = 1;
                 } else {
                     biglie -= getBiglieStupido(biglie);
+                    System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
                     turno = 0;
                 }
             }
@@ -67,6 +73,7 @@ public class Esercizio1 {
         scanner.close();
     }
 
+    // non funziona (?)
     /*private static int getBiglieIntelligente(int biglie) {
         int numeroBigliePrelevatoDalComprIntelligente = (int) Math.pow(2, Math.floor(Math.log(biglie) / Math.log(2)) - 1);
         if (biglie == 3 || biglie == 7 || biglie == 15 || biglie == 31 || biglie == 63) {
@@ -80,6 +87,7 @@ public class Esercizio1 {
         System.out.println("Il computer ha preso " + numeroBigliePrelevatoDalComprIntelligente + " biglia/e");
         return (biglie-numeroBigliePrelevatoDalComprIntelligente);
     }*/
+
     private static int getBiglieIntelligente(int biglie) {
         int target = (int) (Math.pow(2, Math.floor(Math.log(biglie) / Math.log(2))) - 1);
         int numeroBigliePrelevatoDalComprIntelligente = biglie - target;
@@ -113,6 +121,7 @@ public class Esercizio1 {
         if (numeroBigliePrelevato >= 1 && numeroBigliePrelevato <= biglie / 2) {
             return numeroBigliePrelevato;
         }
-        return -1000000;
+        System.out.println("Hai inserito un numero di biglie non valido, riprova");
+        return 0;
     }
 }
