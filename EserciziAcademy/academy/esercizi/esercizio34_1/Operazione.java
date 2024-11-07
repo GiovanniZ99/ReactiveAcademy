@@ -5,8 +5,7 @@ public class Operazione extends OggettoMatematico {
     private double op2;
     private char op;
 
-    public Operazione(double v, double op1, double op2, char op) {
-        super(v);
+    public Operazione (double op1, double op2, char op) {
         this.op1 = op1;
         this.op2 = op2;
         this.op = op;
