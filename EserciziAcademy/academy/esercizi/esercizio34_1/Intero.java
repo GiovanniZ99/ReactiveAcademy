@@ -1,10 +1,8 @@
 package academy.esercizi.esercizio34_1;
 
 public class Intero extends OggettoMatematico implements Raddoppiabile, Triplicabile {
-    private int v;
 
     public Intero(int valore) {
-        super(valore);
         this.v = valore;
     }
 

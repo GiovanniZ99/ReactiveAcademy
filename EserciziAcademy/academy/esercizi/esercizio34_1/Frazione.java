@@ -1,11 +1,10 @@
 package academy.esercizi.esercizio34_1;
 
 public class Frazione extends OggettoMatematico implements  Raddoppiabile, Triplicabile{
-    private int numeratore;
-    private int denominatore;
+    private final int numeratore;
+    private final int denominatore;
 
     public Frazione(double v, int numeratore, int denominatore) {
-        super(v);
         this.numeratore = numeratore;
         this.denominatore = denominatore;
     }
