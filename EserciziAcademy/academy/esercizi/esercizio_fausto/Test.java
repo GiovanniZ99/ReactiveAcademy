@@ -15,92 +15,55 @@ import java.util.Scanner;
 // devono esserci prima le aperte e poi le chiuse
 // devi chiuderle seguendo la stessa posizione in modo speculare
 // quando si aprono e chiudono subito allora le levi
+// La logica della palindromia non aveva senso
 
-public class Test {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        StringBuilder stringa = new StringBuilder(scanner.next());
-        System.out.println(controllaSeCiSonoParentesi(stringa));
-        if (controllaSeCiSonoParentesi(stringa)) {
-            System.out.println(controllaParentesiAperteChiuse(stringa));
+    public class Test {
+        public static void main(String[] args) {
+            System.out.println("Se il programma non stampa parentesi la stringa è corretta, altrimenti stampa le parentesi non valide");
+            Scanner scanner = new Scanner(System.in);
+            StringBuilder stringa = new StringBuilder(scanner.next());
+            if (controllaSeCiSonoParentesi(stringa)) {
+                System.out.println(controllaParentesiAperteChiuse(stringa));
+            } else {
+                System.out.println("Stringa non valida.");
+            }
         }
-    }
 
-    private static int controllaSpeculare(StringBuilder controlloValidita, int c) {
-        int mid = controlloValidita.length() / 2;
-        String primaParteValida = controlloValidita.substring(0, mid);
-        String secondaPartValida = controlloValidita.substring(mid);
-        StringBuilder secondaParteAlContrario = new StringBuilder(secondaPartValida).reverse();
-
-        if(primaParteValida.charAt(c) == '(' && secondaParteAlContrario.charAt(c) == ')'
-                || primaParteValida.charAt(c) == '[' && secondaParteAlContrario.charAt(c) == ']'
-                || primaParteValida.charAt(c) == '{' && secondaParteAlContrario.charAt(c) == '}'){
-         return  mid + c;
-        }
-        return -1;
-    }
-
-    private static StringBuilder controllaParentesiAperteChiuse(StringBuilder controlloValidita) {
-        boolean found;
-        do {
-            found = false;
-
-            for (int i = 0; i < controlloValidita.length() - 1; i++) {
-                if (controlloValidita.charAt(i) == '('
-                        && controlloValidita.charAt(i + 1) == ')') {
-                    controlloValidita.deleteCharAt(i);
-                    controlloValidita.deleteCharAt(i);
-                    i--;
-                    found = true;
-                } else if (controlloValidita.charAt(i) == '('
-                        && controlloValidita.charAt(i + 1) != ')') {
-                    if (controllaSpeculare(controlloValidita, i) == i*2) {
-                        controlloValidita.deleteCharAt(i);
-                        controlloValidita.deleteCharAt(controllaSpeculare(controlloValidita, i));
-                        i--;
+        private static StringBuilder controllaParentesiAperteChiuse(StringBuilder controlloValidita) {
+            boolean found;
+            do {
+                found = false;
+                for (int i = 0; i < controlloValidita.length() - 1; i++) {
+                    if (controlloValidita.charAt(i) == '(' && controlloValidita.charAt(i + 1) == ')') {
+                        controlloValidita.delete(i, i + 2);
                         found = true;
-                    }
-                }else if(controlloValidita.charAt(i) == '['
-                        && controlloValidita.charAt(i+1) == ']'){
-                    controlloValidita.deleteCharAt(i);
-                    controlloValidita.deleteCharAt(i);
-                    i--;
-                    found = true;
-                } else if (controlloValidita.charAt(i) == '['
-                        && controlloValidita.charAt(i + 1) != ']'){
-                    if(controllaSpeculare(controlloValidita, i) == i*2){
-                        controlloValidita.deleteCharAt(i);
-                        controlloValidita.deleteCharAt(controllaSpeculare(controlloValidita, i));
                         i--;
+                    } else if (controlloValidita.charAt(i) == '[' && controlloValidita.charAt(i + 1) == ']') {
+                        controlloValidita.delete(i, i + 2);
                         found = true;
-                    }
-                }else if(controlloValidita.charAt(i) == '{' && controlloValidita.charAt(i+1) == '}'){
-                    controlloValidita.deleteCharAt(i);
-                    controlloValidita.deleteCharAt(i);
-                    i--;
-                    found = true;
-                }else if(controlloValidita.charAt(i) == '{'
-                && controlloValidita.charAt(i + 1) != '}'){
-                    if(controllaSpeculare(controlloValidita, i) == i*2){
-                        controlloValidita.deleteCharAt(i);
-                        controlloValidita.deleteCharAt(controllaSpeculare(controlloValidita,i));
+                        i--;
+                    } else if (controlloValidita.charAt(i) == '{' && controlloValidita.charAt(i + 1) == '}') {
+                        controlloValidita.delete(i, i + 2);
+                        found = true;
+                        i--;
                     }
                 }
-            }
-
-        } while (found);
-        return controlloValidita;
-    }
-
-
-    private static boolean controllaSeCiSonoParentesi(StringBuilder controlloValidita) {
-        for (int i = 0; i < controlloValidita.length(); i++) {
-            char ch = controlloValidita.charAt(i);
-            if ("()[]{}".indexOf(ch) == -1) {
-                return false;
-            }
+            } while (found);
+            return controlloValidita;
         }
-        return true;
+
+        private static boolean controllaSeCiSonoParentesi(StringBuilder controlloValidita) {
+            boolean check = false;
+            for (int i = 0; i < controlloValidita.length(); i++) {
+                char ch = controlloValidita.charAt(i);
+                if(ch == '(' || ch == ')' || ch == '[' || ch == ']'
+                        || ch == '{' || ch == '}'){
+                    check= true;
+                }else{
+                    return false;
+                }
+            }
+            return check;
+        }
     }
-}
 
