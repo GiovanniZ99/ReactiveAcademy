@@ -1,6 +1,5 @@
 package academy.esercizi.esercizi9;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 /* Scrivete un programma che legga le coordinate x e y dei quattro vertici di un quadrilatero
@@ -22,7 +21,8 @@ funzione per fare le figure
  */
 public class Esercizio3 {
     public static void main(String[] args) {
-faiFormaNelloSPazio();    }
+        faiFormaNelloSPazio();
+    }
 
     public static int prendiCoordinata() {
         Scanner scanner = new Scanner(System.in);
@@ -33,8 +33,10 @@ faiFormaNelloSPazio();    }
     public static int[][] creaSpazio() {
         System.out.println("Inserire le dimensioni massime della matrice");
         int[][] spazio = new int[prendiCoordinata()][prendiCoordinata()];
-        for (int[] ints : spazio) {
-            Arrays.fill(ints, 0);
+        for (int i = 0; i < spazio.length; i++) {
+            for (int j = 0; j < spazio[i].length; j++) {
+                spazio[i][j] = 0;
+            }
         }
         return spazio;
     }
@@ -61,68 +63,66 @@ faiFormaNelloSPazio();    }
                 coordinateQuarto[1]};
         int[][] spazio = creaSpazio();
         for (int i = 0; i < tutteLeX.length; i++) {
-            for (int j = 1; j < tutteLeX.length; j++) {
-                {
-                    if (tutteLeX[i] < tutteLeX[j] ||
-                            tutteLeX[i] > tutteLeX[j]
-                            || tutteLeX[i] == tutteLeX[j]
-                            && tutteLeY[i] < tutteLeY[j]) {
+            int x = tutteLeX[i];
+            int y = tutteLeY[i];
 
-                        if (tutteLeX[i] == coordinatePrimo[0]) {
-                            spazio[coordinatePrimo[1]][coordinatePrimo[0]] = 'x';
-                        } else if (tutteLeX[i] == coordinateSecondo[0]) {
-                            spazio[coordinateSecondo[1]][coordinateSecondo[0]] = 'x';
-                        } else if (tutteLeX[i] == coordinateTerzo[0]) {
-                            spazio[coordinateTerzo[1]][coordinateTerzo[0]] = 'x';
-                        } else if (tutteLeX[i] == coordinateQuarto[0]) {
-                            spazio[coordinateQuarto[1]][coordinateQuarto[0]] = 'x';
-                        }
-                    }
-                }
+            if (x == coordinateForma[0][0] && y == coordinateForma[0][1]) {
+                spazio[y][x] = 1;
+            } else if (x == coordinateForma[1][0] && y == coordinateForma[1][1]) {
+                spazio[y][x] = 2;
+            } else if (x == coordinateForma[2][0] && y == coordinateForma[2][1]) {
+                spazio[y][x] = 3;
+            } else if (x == coordinateForma[3][0] && y == coordinateForma[3][1]) {
+                spazio[y][x] = 4;
             }
         }
         stampaMatrice(spazio);
 
-        distinguiForma(coordinateForma);
+        distingui(spazio);
 
     }
 
-    public static void distinguiForma(int[][] coordinate) {
-        int[] lunghezzeLati = new int[4];
-        int[] lunghezzeDiagonali = new int[2];
+    public static void distingui(int[][] spazioConForma) {
+        int[] coordinate = new int[8];
 
-        for (int i = 0; i < 4; i++) {
-            int x1 = coordinate[i][0];
-            int y1 = coordinate[i][1];
-            int x2 = coordinate[(i+1 <4 ? i + 1 : 0)][0];
-            int y2 = coordinate[i+1 <4 ? i + 1 : 0][1];
-            lunghezzeLati[i] = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+        for (int i = 0; i < spazioConForma.length; i++) {
+            for (int j = 0; j < spazioConForma[i].length; j++) {
+                if (spazioConForma[i][j] == 1) {
+                    coordinate[0] = j;
+                    coordinate[1] = i;
+
+                }
+                if (spazioConForma[i][j] == 2) {
+                    coordinate[2] = j;
+                    coordinate[3] = i;
+                }
+                if (spazioConForma[i][j] == 3) {
+                    coordinate[4] = j;
+                    coordinate[5] = i;
+                }
+                if (spazioConForma[i][j] == 4) {
+                    coordinate[6] = j;
+                    coordinate[7] = i;
+                }
+            }
         }
-
-        lunghezzeDiagonali[0] = (coordinate[0][0] - coordinate[2][0]) * (coordinate[0][0] - coordinate[2][0]) +
-                (coordinate[0][1] - coordinate[2][1]) * (coordinate[0][1] - coordinate[2][1]);
-        lunghezzeDiagonali[1] = (coordinate[1][0] - coordinate[3][0]) * (coordinate[1][0] - coordinate[3][0]) +
-                (coordinate[1][1] - coordinate[3][1]) * (coordinate[1][1] - coordinate[3][1]);
-
-        boolean latiUguali = (lunghezzeLati[0] == lunghezzeLati[1] && lunghezzeLati[1] == lunghezzeLati[2] && lunghezzeLati[2] == lunghezzeLati[3]);
-        boolean diagonaliUguali = (lunghezzeDiagonali[0] == lunghezzeDiagonali[1]);
-
-        String forma;
-        if (latiUguali && diagonaliUguali) {
-            forma = "Quadrato";
-        } else if (latiUguali) {
-            forma = "Rombo";
-        } else if (lunghezzeLati[0] == lunghezzeLati[2] && lunghezzeLati[1] == lunghezzeLati[3]) {
-            forma = "Rettangolo";
-        } else if ((coordinate[0][0] == coordinate[1][0] && coordinate[2][0] == coordinate[3][0]) ||
-                (coordinate[0][1] == coordinate[1][1] && coordinate[2][1] == coordinate[3][1])) {
-            forma = "Trapezio";
+        if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[3] == coordinate[6]
+                && coordinate[5] == coordinate[7] && coordinate[3] - coordinate[0] == coordinate[7] - coordinate[3]) {
+            System.out.println("Quadrato");
+        } else if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[3] == coordinate[6]
+                && coordinate[5] == coordinate[7] && coordinate[3] - coordinate[0] != coordinate[7] - coordinate[3]) {
+            System.out.println("Rettangolo");
+        } else if (coordinate[0] == coordinate[4] && coordinate[3] == coordinate[7]) {
+            System.out.println("Rombo");
+        } else if (coordinate[1] == coordinate[3] && coordinate[5] == coordinate[7] && coordinate[2] > coordinate[6]) {
+            System.out.println("Trapezio rettangolo");
         } else {
-            forma = "Nessuna forma";
+            System.out.println("Nessuna forma");
         }
 
-        System.out.println("La forma è: " + forma);
+
     }
+
     public static void stampaMatrice(int[][] matrice) {
         for (int i = matrice.length - 1; i >= 0; i--) {
             for (int j = 0; j < matrice[i].length; j++) {
