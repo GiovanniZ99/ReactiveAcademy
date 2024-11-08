@@ -13,15 +13,15 @@ public class Operazione extends OggettoMatematico {
 
     @Override
     public double getValore() {
-        switch (op) {
+        switch (this.op) {
             case '+':
-                return op1 + op2;
+                return this.op1 + this.op2;
             case '-':
-                return op1 - op2;
+                return this.op1 - this.op2;
             case '/':
-                return op1 / op2;
+                return this.op1 / this.op2;
             case '*':
-                return op1 * op2;
+                return this.op1 * this.op2;
             default:
                 return -1;
         }
@@ -30,11 +30,11 @@ public class Operazione extends OggettoMatematico {
     @Override
     public String stampa() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(op1)
+        stringBuilder.append(this.op1)
                 .append(" ")
-                .append(op)
+                .append(this.op)
                 .append(" ")
-                .append(op2)
+                .append(this.op2)
                 .append(" = ")
                 .append(getValore());
 
@@ -42,14 +42,14 @@ public class Operazione extends OggettoMatematico {
     }
 
     public double getOp1() {
-        return op1;
+        return this.op1;
     }
 
     public double getOp2() {
-        return op2;
+        return this.op2;
     }
 
     public char getOp() {
-        return op;
+        return this.op;
     }
 }

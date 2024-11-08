@@ -13,7 +13,7 @@ public class Intero extends OggettoMatematico implements Raddoppiabile, Triplica
 
     @Override
     public void raddoppia() {
-       v*=2;
+       this.v*=2;
     }
 
     @Override
@@ -21,12 +21,5 @@ public class Intero extends OggettoMatematico implements Raddoppiabile, Triplica
         v*=3;
     }
 
-    public String stampa(){
-        return String.valueOf(getValore());
-    }
 
-    @Override
-    public boolean isDimezzabile() {
-        return Raddoppiabile.super.isDimezzabile();
-    }
 }

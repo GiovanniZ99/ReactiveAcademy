@@ -4,7 +4,7 @@ public class Frazione extends OggettoMatematico implements  Raddoppiabile, Tripl
     private final int numeratore;
     private final int denominatore;
 
-    public Frazione(double v, int numeratore, int denominatore) {
+    public Frazione( int numeratore, int denominatore) {
         this.numeratore = numeratore;
         this.denominatore = denominatore;
     }
@@ -18,12 +18,12 @@ public class Frazione extends OggettoMatematico implements  Raddoppiabile, Tripl
 
     @Override
     public void triplica() {
-        v*=3;
+        this.v*=3;
     }
 
     @Override
     public void raddoppia() {
-        v*=2;
+        this.v*=2;
     }
 
     @Override
