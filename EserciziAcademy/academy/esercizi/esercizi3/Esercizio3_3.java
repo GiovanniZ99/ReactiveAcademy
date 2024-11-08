@@ -13,7 +13,7 @@ public class Esercizio3_3 {
     }
 
 
-    public static char[][] generaOpzioni() {
+    public static void generaOpzioni() {
         char[][] opzioni = new char[3][3];
 
         java.util.Random random = new java.util.Random();
@@ -28,31 +28,28 @@ public class Esercizio3_3 {
                         if (!check) {
                             opzioni[x][y] = 'o';
                             check = true;
-                            stampaMatrice(opzioni);
-                            System.out.println();
                         } else {
                             opzioni[x][y] = 'x';
                             check = false;
-                            stampaMatrice(opzioni);
-                            System.out.println();
                         }
-                        if(trisColonnaX(opzioni, y) || trisRigaX(opzioni, x)
-                        || trisRigaO(opzioni, x) || trisColonnaO(opzioni, y)
+                        stampaMatrice(opzioni);
+                        System.out.println();
+                        if(trisColonna(opzioni, y, 'x') || trisRiga(opzioni, x, 'x')
+                                || trisColonna(opzioni, y, 'o')|| trisRiga(opzioni,x, 'o')
                         || trisDiagonale(opzioni) || trisDiagonaleSecondaria(opzioni)){
-                            return opzioni;
+                            return;
                         }
                     }
                 }
             }
 
         }
-        return opzioni;
     }
 
-    public static boolean trisColonnaX(char[][] matrice, int y) {
+    public static boolean trisColonna(char[][] matrice, int y, char xo) {
                 boolean tris = false;
         for (int i = 0; i < matrice[0].length; i++) {
-            if(matrice[i][y] == 'x'){
+            if(matrice[i][y] == xo){
                 tris = true;
             }else{
                 return false;
@@ -61,10 +58,12 @@ public class Esercizio3_3 {
 
       return tris;
    }
-    public static boolean trisColonnaO(char[][] matrice, int y) {
+
+
+    public static boolean trisRiga(char[][] matrice, int x, char xo) {
         boolean tris = false;
         for (int i = 0; i < matrice[0].length; i++) {
-            if(matrice[i][y] == 'o'){
+            if(matrice[x][i] == xo){
                 tris = true;
             }else{
                 return false;
@@ -74,30 +73,6 @@ public class Esercizio3_3 {
         return tris;
     }
 
-
-    public static boolean trisRigaX(char[][] matrice, int x) {
-        boolean tris = false;
-        for (int i = 0; i < matrice[0].length; i++) {
-            if(matrice[x][i] == 'x'){
-                tris = true;
-            }else{
-                return false;
-            }
-        }
-
-        return tris;
-    }
-    public static boolean trisRigaO(char[][] matrice, int x) {
-        boolean tris = false;
-        for (int i = 0; i < matrice[0].length; i++) {
-            if(matrice[x][i] == 'o'){
-                tris = true;
-            }else{
-                return false;
-            }
-        }
-        return tris;
-    }
     public static boolean trisDiagonale(char[][] matrice) {
         boolean tris = false;
 
