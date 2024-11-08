@@ -9,41 +9,125 @@ inferiore destra?
  */
 public class Esercizio3_3 {
     public static void main(String[] args) {
-        stampaMatrice(creaMatriceTris());
+       generaOpzioni();
     }
 
-    public static String[][] creaMatriceTris() {
-        String[][] tris = new String[3][3];
 
-        for (int i = 0; i < tris.length; i++) {
-            for (int j = 0; j < tris[i].length; j++) {
-                tris[i][j] = String.valueOf(generaOpzioni()[0]);
-            }
-        }
-        tris[0][2] = "x";
-        System.out.println("Gli elementi sono: " + tris[0][0] + tris[1][1] + tris[2][2]);
-        return tris;
-    }
+    public static char[][] generaOpzioni() {
+        char[][] opzioni = new char[3][3];
 
-    public static char[] generaOpzioni() {
-        char[] opzioni = new char[3];
         java.util.Random random = new java.util.Random();
-        char[] valoriPossibili = {'x', 'o', ' '};
-
+        opzioni[0][2] = 'x';
+        boolean check = false;
         for (int i = 0; i < opzioni.length; i++) {
-            int indiceOpzioni = random.nextInt(valoriPossibili.length);
-            opzioni[i] = valoriPossibili[indiceOpzioni];
+            for (int j = 0; j < opzioni[i].length; j++) {
+                while (opzioni[i][j] == '\u0000') {
+                    int x = random.nextInt(opzioni.length);
+                    int y = random.nextInt(opzioni.length);
+                    if (opzioni[x][y] == '\u0000') {
+                        if (!check) {
+                            opzioni[x][y] = 'o';
+                            check = true;
+                            stampaMatrice(opzioni);
+                            System.out.println();
+                        } else {
+                            opzioni[x][y] = 'x';
+                            check = false;
+                            stampaMatrice(opzioni);
+                            System.out.println();
+                        }
+                        if(trisColonnaX(opzioni, y) || trisRigaX(opzioni, x)
+                        || trisRigaO(opzioni, x) || trisColonnaO(opzioni, y)
+                        || trisDiagonale(opzioni) || trisDiagonaleSecondaria(opzioni)){
+                            return opzioni;
+                        }
+                    }
+                }
+            }
+
         }
         return opzioni;
     }
 
-    public static void stampaMatrice(String[][] matrice) {
+    public static boolean trisColonnaX(char[][] matrice, int y) {
+                boolean tris = false;
+        for (int i = 0; i < matrice[0].length; i++) {
+            if(matrice[i][y] == 'x'){
+                tris = true;
+            }else{
+                return false;
+            }
+        }
+
+      return tris;
+   }
+    public static boolean trisColonnaO(char[][] matrice, int y) {
+        boolean tris = false;
+        for (int i = 0; i < matrice[0].length; i++) {
+            if(matrice[i][y] == 'o'){
+                tris = true;
+            }else{
+                return false;
+            }
+        }
+
+        return tris;
+    }
+
+
+    public static boolean trisRigaX(char[][] matrice, int x) {
+        boolean tris = false;
+        for (int i = 0; i < matrice[0].length; i++) {
+            if(matrice[x][i] == 'x'){
+                tris = true;
+            }else{
+                return false;
+            }
+        }
+
+        return tris;
+    }
+    public static boolean trisRigaO(char[][] matrice, int x) {
+        boolean tris = false;
+        for (int i = 0; i < matrice[0].length; i++) {
+            if(matrice[x][i] == 'o'){
+                tris = true;
+            }else{
+                return false;
+            }
+        }
+        return tris;
+    }
+    public static boolean trisDiagonale(char[][] matrice) {
+        boolean tris = false;
+
+            if(matrice[0][0] == 'x' && matrice[1][1] == 'x' && matrice[2][2] == 'x'){
+                tris = true;
+            }else if(matrice[0][0] == 'o' && matrice[1][1] == 'o' && matrice[2][2] == 'o'){
+                tris = true;
+            }
+        return tris;
+    }
+
+    public static boolean trisDiagonaleSecondaria(char[][] matrice) {
+        boolean tris = false;
+
+        if (matrice[0][2] == 'x' && matrice[1][1] == 'x' && matrice[2][0] == 'x') {
+            tris = true;
+        } else if (matrice[0][2] == 'o' && matrice[1][1] == 'o' && matrice[2][0] == 'o') {
+            tris = true;
+        }
+
+        return tris;
+    }
+
+
+    public static void stampaMatrice(char[][] matrice) {
         for (int i = 0; i < matrice.length; i++) {
             for (int j = 0; j < matrice[i].length; j++) {
-                System.out.print(matrice[i][j] + ' ');
+                System.out.print(matrice[i][j] + " ");
             }
             System.out.println();
         }
     }
-
 }
