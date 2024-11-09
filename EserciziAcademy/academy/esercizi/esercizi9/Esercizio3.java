@@ -127,6 +127,9 @@ public class Esercizio3 {
         for (int i = matrice.length - 1; i >= 0; i--) {
             for (int j = 0; j < matrice[i].length; j++) {
                 System.out.print(matrice[i][j] + " ");
+                if(matrice[i][j] != 0){
+                    matrice[i][j] = 'x';
+                }
             }
             System.out.println();
         }
