@@ -9,34 +9,34 @@ inferiore destra?
  */
 public class Esercizio3_3 {
     public static void main(String[] args) {
-       generaOpzioni();
+       generaGiocate();
     }
 
 
-    public static void generaOpzioni() {
-        char[][] opzioni = new char[3][3];
+    public static void generaGiocate() {
+        char[][] tris = new char[3][3];
 
         java.util.Random random = new java.util.Random();
-        opzioni[0][2] = 'x';
+        tris[0][2] = 'x';
         boolean check = false;
-        for (int i = 0; i < opzioni.length; i++) {
-            for (int j = 0; j < opzioni[i].length; j++) {
-                while (opzioni[i][j] == '\u0000') {
-                    int x = random.nextInt(opzioni.length);
-                    int y = random.nextInt(opzioni.length);
-                    if (opzioni[x][y] == '\u0000') {
+        for (int i = 0; i < tris.length; i++) {
+            for (int j = 0; j < tris[i].length; j++) {
+                while (tris[i][j] == '\u0000') {
+                    int x = random.nextInt(tris.length);
+                    int y = random.nextInt(tris.length);
+                    if (tris[x][y] == '\u0000') {
                         if (!check) {
-                            opzioni[x][y] = 'o';
+                            tris[x][y] = 'o';
                             check = true;
                         } else {
-                            opzioni[x][y] = 'x';
+                            tris[x][y] = 'x';
                             check = false;
                         }
-                        stampaMatrice(opzioni);
+                        stampaTris(tris);
                         System.out.println();
-                        if(trisColonna(opzioni, y, 'x') || trisRiga(opzioni, x, 'x')
-                                || trisColonna(opzioni, y, 'o')|| trisRiga(opzioni,x, 'o')
-                        || trisDiagonale(opzioni) || trisDiagonaleSecondaria(opzioni)){
+                        if(trisColonna(tris, y, 'x') || trisRiga(tris, x, 'x')
+                                || trisColonna(tris, y, 'o')|| trisRiga(tris,x, 'o')
+                        || trisDiagonale(tris) || trisDiagonaleSecondaria(tris)){
                             return;
                         }
                     }
@@ -97,7 +97,7 @@ public class Esercizio3_3 {
     }
 
 
-    public static void stampaMatrice(char[][] matrice) {
+    public static void stampaTris(char[][] matrice) {
         for (int i = 0; i < matrice.length; i++) {
             for (int j = 0; j < matrice[i].length; j++) {
                 System.out.print(matrice[i][j] + " ");
