@@ -115,7 +115,8 @@ public class Esercizio3 {
         } else if (coordinate[0] == coordinate[6] && coordinate[2] == coordinate[4] && coordinate[4] - coordinate[0]
         == coordinate[0] - coordinate[2] && coordinate[6] - coordinate[2] == coordinate[4] - coordinate[6]) {
             System.out.println("Rombo");
-        } else if (coordinate[1] == coordinate[3] && coordinate[5] == coordinate[7] && coordinate[2] > coordinate[6]) {
+        } else if (coordinate[1] == coordinate[3] && coordinate[5] == coordinate[7] && coordinate[2] > coordinate[6]
+        && coordinate[0] == coordinate[4]) {
             System.out.println("Trapezio rettangolo");
         } else {
             System.out.println("Nessuna forma");
