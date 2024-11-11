@@ -112,7 +112,8 @@ public class Esercizio3 {
         } else if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[3] == coordinate[6]
                 && coordinate[5] == coordinate[7] && coordinate[3] - coordinate[0] != coordinate[7] - coordinate[3]) {
             System.out.println("Rettangolo");
-        } else if (coordinate[0] == coordinate[4] && coordinate[3] == coordinate[7]) {
+        } else if (coordinate[0] == coordinate[6] && coordinate[2] == coordinate[4] && coordinate[4] - coordinate[0]
+        == coordinate[0] - coordinate[2] && coordinate[6] - coordinate[2] == coordinate[4] - coordinate[6]) {
             System.out.println("Rombo");
         } else if (coordinate[1] == coordinate[3] && coordinate[5] == coordinate[7] && coordinate[2] > coordinate[6]) {
             System.out.println("Trapezio rettangolo");
@@ -126,9 +127,10 @@ public class Esercizio3 {
     public static void stampaMatrice(int[][] matrice) {
         for (int i = matrice.length - 1; i >= 0; i--) {
             for (int j = 0; j < matrice[i].length; j++) {
-                System.out.print(matrice[i][j] + " ");
-                if(matrice[i][j] != 0){
-                    matrice[i][j] = 'x';
+                if (matrice[i][j] == 0) {
+                    System.out.print("O ");
+                } else {
+                    System.out.print("X ");
                 }
             }
             System.out.println();
