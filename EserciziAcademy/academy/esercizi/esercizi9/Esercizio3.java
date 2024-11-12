@@ -26,33 +26,25 @@ public class Esercizio3 {
 
     public static int prendiCoordinata() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Inserire qui la coordinata: ");
         return scanner.nextInt();
-    }
-
-    public static int[][] creaSpazio() {
-        System.out.println("Inserire le dimensioni massime della matrice");
-        int[][] spazio = new int[prendiCoordinata()][prendiCoordinata()];
-        for (int i = 0; i < spazio.length; i++) {
-            for (int j = 0; j < spazio[i].length; j++) {
-                spazio[i][j] = 0;
-            }
-        }
-        return spazio;
     }
 
     public static int[][] faiForma() {
         System.out.println("Fai una forma con le coordinate");
+        System.out.println("Inserire le coordinate del primo vertice");
         int[] coordinatePrimo = {prendiCoordinata(), prendiCoordinata()};
+        System.out.println("Inserire le coordinate del secondo vertice");
         int[] coordinateSecondo = {prendiCoordinata(), prendiCoordinata()};
+        System.out.println("Inserire le coordinate del terzo vertice");
         int[] coordinateTerzo = {prendiCoordinata(), prendiCoordinata()};
+        System.out.println("Inserire le coordinate del quarto vertice");
         int[] coordinateQuarto = {prendiCoordinata(), prendiCoordinata()};
         return new int[][]{coordinatePrimo, coordinateSecondo, coordinateTerzo, coordinateQuarto};
     }
 
     public static void faiFormaNelloSPazio() {
         int[][] coordinateForma = faiForma();
-        System.out.println("Fai una forma con le coordinate");
+
         int[] coordinatePrimo = {coordinateForma[0][0], coordinateForma[0][1]};
         int[] coordinateSecondo = {coordinateForma[1][0], coordinateForma[1][1]};
         int[] coordinateTerzo = {coordinateForma[2][0], coordinateForma[2][1]};
@@ -61,7 +53,8 @@ public class Esercizio3 {
                 coordinateQuarto[0]};
         int[] tutteLeY = {coordinatePrimo[1], coordinateSecondo[1], coordinateTerzo[1],
                 coordinateQuarto[1]};
-        int[][] spazio = creaSpazio();
+        int[][] spazio = new int[10][10];
+
         for (int i = 0; i < tutteLeX.length; i++) {
             int x = tutteLeX[i];
             int y = tutteLeY[i];
@@ -106,14 +99,14 @@ public class Esercizio3 {
                 }
             }
         }
-        if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[3] == coordinate[6]
-                && coordinate[5] == coordinate[7] && coordinate[3] - coordinate[0] == coordinate[7] - coordinate[3]) {
-            System.out.println("Quadrato");
-        } else if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[3] == coordinate[6]
-                && coordinate[5] == coordinate[7] && coordinate[3] - coordinate[0] != coordinate[7] - coordinate[3]) {
-            System.out.println("Rettangolo");
-        } else if (coordinate[0] == coordinate[6] && coordinate[2] == coordinate[4] && coordinate[4] - coordinate[0]
-        == coordinate[0] - coordinate[2] && coordinate[6] - coordinate[2] == coordinate[4] - coordinate[6]) {
+            if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[2] == coordinate[6]
+                    && coordinate[5] == coordinate[7] && coordinate[2] - coordinate[0] == coordinate[7] - coordinate[3]) {
+                System.out.println("Quadrato");
+            } else if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[2] == coordinate[6]
+                    && coordinate[5] == coordinate[7] && coordinate[3] - coordinate[0] != coordinate[7] - coordinate[3]) {
+                System.out.println("Rettangolo");
+        } else if (coordinate[0] == coordinate[6] && coordinate[3] == coordinate[5] && coordinate[4] - coordinate[2]
+        != coordinate[7] - coordinate[3]) {
             System.out.println("Rombo");
         } else if (coordinate[1] == coordinate[3] && coordinate[5] == coordinate[7] && coordinate[2] > coordinate[6]
         && coordinate[0] == coordinate[4]) {
@@ -121,8 +114,6 @@ public class Esercizio3 {
         } else {
             System.out.println("Nessuna forma");
         }
-
-
     }
 
     public static void stampaMatrice(int[][] matrice) {
