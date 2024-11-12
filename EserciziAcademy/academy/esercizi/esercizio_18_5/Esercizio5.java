@@ -8,6 +8,8 @@ package academy.esercizi.esercizio_18_5;
 public class Esercizio5 {
     public static void main(String[] args) {
         Conto conto = new Conto(1824, 0.69 / 100);
-        System.out.println(conto.calcolaInteresse(conto.getSaldo(), conto.getInteressi()));
+        double risultato = conto.calcolaInteresse(conto.getSaldo(), conto.getInteressi());
+
+        System.out.printf("%.4f\n", risultato);
     }
 }
