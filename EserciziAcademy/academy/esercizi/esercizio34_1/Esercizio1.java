@@ -56,6 +56,5 @@ op2 = valore»  usando uno StringBuilder e richiamando getValore()
 */
 public class Esercizio1 {
     public static void main(String[] args) {
-
     }
 }

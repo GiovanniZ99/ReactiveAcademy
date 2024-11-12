@@ -9,7 +9,7 @@ public class Frazione extends OggettoMatematico implements  Raddoppiabile, Tripl
         this.denominatore = denominatore;
     }
     public boolean isFrazionePropria(){
-        return numeratore % denominatore == 0;
+        return this.numeratore % this.denominatore == 0;
     }
 
     public double frazioneInversa(){
