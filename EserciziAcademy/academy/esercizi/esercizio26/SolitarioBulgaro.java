@@ -1,6 +1,5 @@
 package academy.esercizi.esercizio26;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -49,19 +48,17 @@ public class SolitarioBulgaro {
     }
 
     private static void gioca() {
-        System.out.println("Inserisci il numero iniziale massimo di pile");
+        System.out.println("Inserisci il numero iniziale di pile");
         Scanner scanner = new Scanner(System.in);
         int numeroMucchietti = scanner.nextInt();
-        int[] pile = configurazioneIniziale(numeroCasuale(numeroMucchietti)) ;
-
+        int[] pile = configurazioneIniziale(numeroMucchietti) ;
+        int count = 0;
         do{
+            count++;
           muovi(pile);
 
         }while(!finito(pile));
-    }
-
-    public static int numeroCasuale(int numeroMucchietto) {
-        return RANDOM.nextInt(numeroMucchietto) + 1;
+        System.out.println("Il numero di mosse che sono state necessarie è " + count);
     }
 
     public static int[] configurazioneIniziale(int numeroMucchietto) {
@@ -76,9 +73,11 @@ public class SolitarioBulgaro {
             sum += pile[i];
         }
         pile[numeroMucchietto -1] = 45 - sum;
+        System.out.println("Pile iniziali:");
         for (int i = 0; i < pile.length; i++) {
             System.out.println(pile[i]);
         }
+        System.out.println("---------------------------");
         return pile;
     }
 
@@ -113,7 +112,8 @@ public class SolitarioBulgaro {
                 sum += pile[i];
             }
         }
-        System.out.println(sum);
+        System.out.println("La somma delle carte è " + sum);
+        System.out.println("-----------------------------------------------");
     }
 
     private static boolean finito(int[] pile) {
