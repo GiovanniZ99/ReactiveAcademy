@@ -2,6 +2,7 @@ package academy.esercizi.esercizio26;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 /* Scrivere un programma per giocare al solitario «bulgaro». Il gioco inizia con 45 carte
 (non è necessario che siano carte da gioco, bastano dei cartoncini impilabili senza segni di
@@ -43,13 +44,20 @@ public class SolitarioBulgaro {
     private static final Random RANDOM = new Random();
 
     public static void main(String[] args) {
-        int[] pile = configurazioneIniziale(numeroCasuale(6));
+        gioca();
 
-       do{
-         muovi(pile);
+    }
 
-       }while(!finito(pile));
+    private static void gioca() {
+        System.out.println("Inserisci il numero iniziale massimo di pile");
+        Scanner scanner = new Scanner(System.in);
+        int numeroMucchietti = scanner.nextInt();
+        int[] pile = configurazioneIniziale(numeroCasuale(numeroMucchietti)) ;
 
+        do{
+          muovi(pile);
+
+        }while(!finito(pile));
     }
 
     public static int numeroCasuale(int numeroMucchietto) {
@@ -60,14 +68,14 @@ public class SolitarioBulgaro {
         int[] pile = new int[45];
         int carteDisponibili = 45;
         for (int i = 0; i < numeroMucchietto - 1; i++) {
-            pile[i] = RANDOM.nextInt(carteDisponibili / numeroMucchietto + 1) + 1;
+            pile[i] = RANDOM.nextInt(carteDisponibili / numeroMucchietto) + 1;
             carteDisponibili -= pile[i];
         }
         int sum = 0;
         for (int i = 0; i < pile.length; i++) {
             sum += pile[i];
         }
-        pile[numeroMucchietto - 1] = 45 - sum;
+        pile[numeroMucchietto -1] = 45 - sum;
         for (int i = 0; i < pile.length; i++) {
             System.out.println(pile[i]);
         }
