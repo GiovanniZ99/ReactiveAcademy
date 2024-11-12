@@ -31,27 +31,25 @@ public class Esercizio4 {
         double cifra = scanner.nextDouble();
         switch (scelta) {
             case 1:
-                cliente.withdrawal(saldoCheck, cifra);
+                cliente.withdrawal(true, cifra);
                 break;
             case 2:
-                cliente.withdrawal(saldoSav, cifra);
+                cliente.withdrawal(false, cifra);
                 break;
             case 3:
-                cliente.deposit(saldoCheck, cifra);
+                cliente.deposit(true, cifra);
                 break;
             case 4:
-                cliente.deposit(saldoSav, cifra);
+                cliente.deposit(false, cifra);
                 break;
             case 5:
-                cliente.transfer(saldoCheck, saldoSav, cifra);
+                cliente.transfer(true, cifra);
                 break;
             case 6:
-                cliente.transfer(saldoSav, saldoCheck, cifra);
+                cliente.transfer(false ,cifra);
                 break;
             default:
                 System.out.println("Numero inserito non valido");
         }
     }
-
-
 }

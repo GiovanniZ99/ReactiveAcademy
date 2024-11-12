@@ -9,37 +9,58 @@ public class Cliente {
         this.saldoSav = saldoSav;
     }
 
-
-    public void withdrawal(double conto, double prelievo) {
-        if (prelievo <= conto) {
-            conto -= prelievo;
-            System.out.println(conto);
+    public void withdrawal(boolean IsSaldoCheck, double prelievo) {
+        if (IsSaldoCheck) {
+            if (prelievo <= this.saldoCheck) {
+                this.saldoCheck -= prelievo;
+                System.out.println(this.saldoCheck);
+            } else {
+                System.out.println("Importo non valido");
+            }
         } else {
-            System.out.println("Importo non valido");
+            if (prelievo <= this.saldoSav) {
+                this.saldoSav -= prelievo;
+                System.out.println(this.saldoSav);
+            } else {
+                System.out.println("Importo non valido");
+            }
         }
     }
 
-    public void deposit(double conto, double prelievo) {
-        if (prelievo > 0) {
-            conto += prelievo;
-            System.out.println(conto);
+    public void deposit(boolean IsSaldoCheck, double deposito) {
+        if (IsSaldoCheck) {
+            this.saldoCheck += deposito;
+            System.out.println(this.saldoCheck);
         } else {
-            System.out.println("Importo non valido");
+            this.saldoSav += deposito;
+            System.out.println(this.saldoSav);
+
         }
     }
 
-    public void transfer(double contoMittente, double contoDestinatario, double cifraDaTrasferire) {
-        if (cifraDaTrasferire <= contoMittente) {
-            contoDestinatario += cifraDaTrasferire;
-            contoMittente -= cifraDaTrasferire;
-            System.out.println(contoDestinatario);
-            System.out.println(contoMittente);
+    public void transfer(boolean IsSaldoCheck, double cifraDaTrasferire) {
+        if (IsSaldoCheck) {
+            if (cifraDaTrasferire <= this.saldoCheck) {
+                this.saldoCheck -= cifraDaTrasferire;
+                this.saldoSav += cifraDaTrasferire;
+                System.out.println("Il nuovo saldo del conto corrente è" + this.saldoCheck);
+                System.out.println("Il nuovo saldo del conto risparmio è" + this.saldoSav);
+            } else {
+                System.out.println("Importo non valido");
+            }
         } else {
-            System.out.println("Importo non valido");
+            if (cifraDaTrasferire <= this.saldoSav) {
+                this.saldoCheck += cifraDaTrasferire;
+                this.saldoSav -= cifraDaTrasferire;
+                System.out.println("Il nuovo saldo del conto corrente è" + this.saldoCheck);
+                System.out.println("Il nuovo saldo del conto risparmio è" + this.saldoSav);
+            } else {
+                System.out.println("Importo non valido");
+            }
         }
     }
     public double getSaldoCheck() {
-        return saldoCheck;
+        return this.saldoCheck;
     }
 
     public void setSaldoCheck(double saldoCheck) {
@@ -47,7 +68,7 @@ public class Cliente {
     }
 
     public double getSaldoSav() {
-        return saldoSav;
+        return this.saldoSav;
     }
 
     public void setSaldoSav(double saldoSav) {
