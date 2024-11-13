@@ -16,10 +16,20 @@ public class Esercizio1 {
     public static void main(String[] args) {
         int[][] quadrato = inserisciValori(prendiValori(SCANNER));
 
-        System.out.println(checkNumeri(quadrato));
-        System.out.println(checkSommeRighe(quadrato));
-        System.out.println(checkSommeColonne(quadrato));
-        System.out.println(checkSommaDiagonali(quadrato));
+        if(checkNumeri(quadrato)){
+            System.out.println("I dati inseriti sono da 1 a 16");
+        }else{
+            System.out.println("I dati inseriti non sono da 1 a 16");
+        }
+        if(checkSommeRighe(quadrato)){
+            System.out.println("Le somme delle righe sono uguali");
+        }
+       if(checkSommeColonne(quadrato)){
+           System.out.println("Le somme delle colonne sono uguali");
+       }
+       if(checkSommaDiagonali(quadrato)) {
+           System.out.println("Le somme delle diagonali sono uguali");
+       }
     }
 
     public static int[] prendiValori(Scanner scanner) {
@@ -112,7 +122,7 @@ public class Esercizio1 {
         }
 
         for (int i = 0; i < matriceDaVerificare.length; i++) {
-            sumSecondaDiagonale += matriceDaVerificare[i][matriceDaVerificare.length - i - 1]; // Diagonale secondaria
+            sumSecondaDiagonale += matriceDaVerificare[i][matriceDaVerificare.length - i - 1];
         }
 
         return sumPrimaDiagonale == sumSecondaDiagonale;
