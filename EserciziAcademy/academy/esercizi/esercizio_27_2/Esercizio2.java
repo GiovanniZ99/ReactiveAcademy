@@ -44,10 +44,10 @@ public class Esercizio2 {
             System.out.println(carteGiocatoreCambiate[i].getValore());
             System.out.println(carteGiocatoreCambiate[i].getSeme());
         }
-        Carta []carteEsempio = {new Carta(Seme.PICCHE,10),new Carta(Seme.PICCHE,11),
-                new Carta(Seme.PICCHE,12),new Carta(Seme.PICCHE,13),new Carta(Seme.PICCHE,1), };
+        Carta []carteEsempio = {new Carta(Seme.QUADRI,10),new Carta(Seme.PICCHE,9),
+                new Carta(Seme.PICCHE,12),new Carta(Seme.PICCHE,13),new Carta(Seme.PICCHE,11), };
 
-        System.out.println(daiPunteggio(carteGiocatoreCambiate));
+        System.out.println(daiPunteggio(carteEsempio));
     }
 
     public static Carta[] faiMazzo() {
@@ -93,11 +93,9 @@ public class Esercizio2 {
 
     public static Carta[] daiCarte(Carta[] carte) {
         Carta[] carteGiocatore = new Carta[5];
-        carteGiocatore[0] = carte[0];
-        carteGiocatore[1] = carte[1];
-        carteGiocatore[2] = carte[2];
-        carteGiocatore[3] = carte[3];
-        carteGiocatore[4] = carte[4];
+        for (int i = 0; i < carteGiocatore.length; i++) {
+            carteGiocatore[i] = carte[i];
+        }
         return carteGiocatore;
     }
 
@@ -112,7 +110,7 @@ public class Esercizio2 {
 
         }
 
-        System.out.println("Inserisci il numero della posizione delle carte che vuoi cambiare e premi invio");
+        System.out.println("Inserisci il numero della posizione delle carte che vuoi cambiare e premi invio (da 1)");
         int[] scelte = new int[numeroCarteDaCambiare];
         for (int i = 0; i < numeroCarteDaCambiare; i++) {
             scelte[i] = scanner.nextInt();
@@ -186,24 +184,22 @@ public class Esercizio2 {
                 countScalaReale++;
             }
         }
-
-        Arrays.sort(carteGiocatore, Comparator.comparingInt(Carta::getValore));
-        boolean scala = true;
-        for (int i = 0; i < carteGiocatore.length - 1; i++) {
-            int valoreCorrente = carteGiocatore[i].getValore();
-            int valoreSuccessivo = carteGiocatore[i + 1].getValore();
-            if (valoreSuccessivo != valoreCorrente + 1 && !(valoreCorrente == 1 && valoreSuccessivo == 13)) {
-                scala = false;
-                break;
+        int countScala = 0;
+        for (int i = 0; i < carteGiocatore.length- 1; i++) {
+            for (int j = 0; j < carteGiocatore.length; j++) {
+                if( carteGiocatore[i].getValore() == (carteGiocatore[j].getValore() +1)){
+                    countScala++;
+                }
             }
         }
-        if(countScalaReale == 5 && countColore == 10){
+
+        if(countScalaReale == 4 && countColore == 10){
             return "Scala reale";
         }
-        if(scala && countColore == 5){
+        if(countScala == 4 && countColore == 5){
            return "Scala colore";
         }
-        if (scala) {
+        if (countScala == 3) {
             return "Scala";
         }
         if (countColore == 5) {
