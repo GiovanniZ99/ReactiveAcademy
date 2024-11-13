@@ -31,8 +31,10 @@ public class Esercizio2 {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Carte mazzo");
         Carta[] carte = mischiaCarte(faiMazzo());
         Carta[] carteGiocatore = daiCarte(carte);
+        System.out.println("Carte iniziali");
         for (int i = 0; i < carteGiocatore.length; i++) {
             System.out.println();
             System.out.println(carteGiocatore[i].getValore());
@@ -44,10 +46,10 @@ public class Esercizio2 {
             System.out.println(carteGiocatoreCambiate[i].getValore());
             System.out.println(carteGiocatoreCambiate[i].getSeme());
         }
-        Carta []carteEsempio = {new Carta(Seme.QUADRI,10),new Carta(Seme.PICCHE,9),
-                new Carta(Seme.PICCHE,12),new Carta(Seme.PICCHE,13),new Carta(Seme.PICCHE,11), };
+        Carta[] carteEsempio = {new Carta(Seme.PICCHE, 10), new Carta(Seme.PICCHE, 9),
+                new Carta(Seme.PICCHE, 10), new Carta(Seme.PICCHE, 13), new Carta(Seme.PICCHE, 11),};
 
-        System.out.println(daiPunteggio(carteEsempio));
+        System.out.println(daiPunteggio(carteGiocatore));
     }
 
     public static Carta[] faiMazzo() {
@@ -88,6 +90,7 @@ public class Esercizio2 {
             System.out.println(carte[i].getSeme());
             System.out.println(carte[i].getValore());
         }
+        System.out.println("-----------------------------------------------");
         return carte;
     }
 
@@ -116,9 +119,9 @@ public class Esercizio2 {
             scelte[i] = scanner.nextInt();
         }
 
-        for (int i = 0; i < numeroCarteDaCambiare - 1 ; i++) {
-            for (int j = i+1; j < numeroCarteDaCambiare; j++) {
-                if(scelte[i] == scelte[j]){
+        for (int i = 0; i < numeroCarteDaCambiare - 1; i++) {
+            for (int j = i + 1; j < numeroCarteDaCambiare; j++) {
+                if (scelte[i] == scelte[j]) {
                     scelte[j] = 0;
                 }
             }
@@ -163,19 +166,19 @@ public class Esercizio2 {
     public static String daiPunteggio(Carta[] carteGiocatore) {
         int countCoppia = 0;
         int countColore = 0;
-       int countScalaReale = 0;
+        int countScalaReale = 0;
         for (int i = 0; i < carteGiocatore.length - 1; i++) {
-            for (int j = i + 1; j < carteGiocatore.length; j++) {
-
-                if (carteGiocatore[i].getValore() == carteGiocatore[j].getValore()) {
+            if (carteGiocatore[i].getSeme().equals(carteGiocatore[i + 1].getSeme())) {
+                countColore++;
+            }
+        }
+        for (int i = 0; i <carteGiocatore.length-1 ; i++) {
+            for (int j = 0; j < carteGiocatore.length; j++) {
+                if (i != j && carteGiocatore[i].getValore() == carteGiocatore[j].getValore()) {
                     countCoppia++;
-                }
-                if (carteGiocatore[i].getSeme().equals(carteGiocatore[j].getSeme())) {
-                    countColore++;
                 }
             }
         }
-
 
         for (int i = 0; i < carteGiocatore.length; i++) {
             if (carteGiocatore[i].getValore() == 10 || carteGiocatore[i].getValore() == 11
@@ -185,19 +188,19 @@ public class Esercizio2 {
             }
         }
         int countScala = 0;
-        for (int i = 0; i < carteGiocatore.length- 1; i++) {
+        for (int i = 0; i < carteGiocatore.length - 1; i++) {
             for (int j = 0; j < carteGiocatore.length; j++) {
-                if( carteGiocatore[i].getValore() == (carteGiocatore[j].getValore() +1)){
+                if (carteGiocatore[i].getValore() == (carteGiocatore[j].getValore() + 1)) {
                     countScala++;
                 }
             }
         }
 
-        if(countScalaReale == 4 && countColore == 10){
+        if (countScalaReale == 5 && countColore == 4) {
             return "Scala reale";
         }
-        if(countScala == 4 && countColore == 5){
-           return "Scala colore";
+        if (countScala == 3 && countColore == 4) {
+            return "Scala colore";
         }
         if (countScala == 3) {
             return "Scala";
@@ -206,7 +209,7 @@ public class Esercizio2 {
             return "Colore";
         }
 
-        if (countCoppia == 6) {
+        if (countCoppia == 10) {
             return "Poker";
         } else if (countCoppia == 4) {
             return "Full";
