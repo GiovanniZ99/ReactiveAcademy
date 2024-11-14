@@ -46,10 +46,10 @@ public class Esercizio2 {
             System.out.println(carteGiocatoreCambiate[i].getValore());
             System.out.println(carteGiocatoreCambiate[i].getSeme());
         }
-        Carta[] carteEsempio = {new Carta(Seme.PICCHE, 10), new Carta(Seme.PICCHE, 9),
-                new Carta(Seme.PICCHE, 10), new Carta(Seme.PICCHE, 13), new Carta(Seme.PICCHE, 11),};
+        Carta[] carteEsempio = {new Carta(Seme.PICCHE, 6), new Carta(Seme.PICCHE, 8),
+                new Carta(Seme.PICCHE, 10), new Carta(Seme.PICCHE, 9), new Carta(Seme.PICCHE, 7),};
 
-        System.out.println(daiPunteggio(carteGiocatore));
+        System.out.println(daiPunteggio(carteGiocatoreCambiate));
     }
 
     public static Carta[] faiMazzo() {
@@ -166,29 +166,43 @@ public class Esercizio2 {
     public static String daiPunteggio(Carta[] carteGiocatore) {
         int countCoppia = 0;
         int countColore = 0;
-        int countScalaReale = 0;
+        boolean countScalaReale = true;
         for (int i = 0; i < carteGiocatore.length - 1; i++) {
             if (carteGiocatore[i].getSeme().equals(carteGiocatore[i + 1].getSeme())) {
                 countColore++;
             }
         }
-        for (int i = 0; i <carteGiocatore.length-1 ; i++) {
+        for (int i = 0; i < carteGiocatore.length - 1; i++) {
             for (int j = 0; j < carteGiocatore.length; j++) {
                 if (i != j && carteGiocatore[i].getValore() == carteGiocatore[j].getValore()) {
                     countCoppia++;
                 }
             }
         }
-
-        for (int i = 0; i < carteGiocatore.length; i++) {
-            if (carteGiocatore[i].getValore() == 10 || carteGiocatore[i].getValore() == 11
-                    || carteGiocatore[i].getValore() == 12 || carteGiocatore[i].getValore() == 13
-                    || carteGiocatore[i].getValore() == 1) {
-                countScalaReale++;
+        int[] array = new int[5];
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < carteGiocatore.length; j++) {
+                if (carteGiocatore[i].getValore() == 10) {
+                    array[i] += 1;
+                } else if (carteGiocatore[i].getValore() == 11) {
+                    array[i] += 1;
+                } else if (carteGiocatore[i].getValore() == 12) {
+                    array[i] += 1;
+                } else if (carteGiocatore[i].getValore() == 13) {
+                    array[i] += 1;
+                } else if (carteGiocatore[i].getValore() == 1) {
+                    array[i] += 1;
+                }
             }
         }
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != 1) {
+                countScalaReale = false;
+            }
+        }
+
         int countScala = 0;
-        for (int i = 0; i < carteGiocatore.length - 1; i++) {
+        for (int i = 0; i < carteGiocatore.length; i++) {
             for (int j = 0; j < carteGiocatore.length; j++) {
                 if (carteGiocatore[i].getValore() == (carteGiocatore[j].getValore() + 1)) {
                     countScala++;
@@ -196,28 +210,28 @@ public class Esercizio2 {
             }
         }
 
-        if (countScalaReale == 5 && countColore == 4) {
+        if (countScalaReale && countColore == 4) {
             return "Scala reale";
         }
-        if (countScala == 3 && countColore == 4) {
+        if (countScala == 4 && countColore == 4) {
             return "Scala colore";
         }
-        if (countScala == 3) {
+        if (countScala == 4) {
             return "Scala";
         }
         if (countColore == 5) {
             return "Colore";
         }
 
-        if (countCoppia == 10) {
+        if (countCoppia == 12) {
             return "Poker";
-        } else if (countCoppia == 4) {
+        } else if (countCoppia == 7) {
             return "Full";
-        } else if (countCoppia == 3) {
+        } else if (countCoppia == 6) {
             return "Tris";
-        } else if (countCoppia == 2) {
+        } else if (countCoppia == 4) {
             return "Doppia coppia";
-        } else if (countCoppia == 1) {
+        } else if (countCoppia == 2) {
             return "Coppia";
         }
         return "Niente";
