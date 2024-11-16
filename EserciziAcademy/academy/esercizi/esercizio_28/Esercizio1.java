@@ -16,35 +16,26 @@ osservato in una successione di cinque generazioni: ogni quattro generazioni rip
 import java.util.Scanner;
 
 public class Esercizio1 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-        int[][] scacchiera = faiScacchieraIniziale();  // Scacchiera iniziale vuota
+        int[][] scacchiera = faiScacchieraInizialeVuota();  // Scacchiera iniziale vuota
 
-        Scanner scanner = new Scanner(System.in);
-        for (int i = 0; i < 5; i++) {
-            System.out.println("Inserisci le coordinate x e y per riempire la matrice di 6 righe e 7 colonne con o ");
-            int riga = scanner.nextInt();
-            int colonna = scanner.nextInt();
-
-            if (riga >= 0 && riga < scacchiera.length && colonna >= 0 && colonna < scacchiera[0].length) {
-                scacchiera[riga][colonna] = 1;
-            }
-        }
+        faiScacchieraIniziale(scacchiera);
 
         System.out.println("Scacchiera iniziale:");
         stampaScacchiera(scacchiera);
-        int count = 0;
-        int countWhile = 0;
 
         // non modifico direttamente la matrice, mi salvo le coordinate in una matrice d'appoggio insieme al numero
         // una volta che mi sono segnato tutte le coordinate che devono essere cambiate con 1 o 0 (quindi dopo i for)
         // modifico la matrice
-        // no, non metto nelle coordinate, devo modificare in corsa avendo come riferimento la matrice iniziale
-        while (countWhile != 4) {
+        // no, non usp le coordinate, devo modificare in corsa avendo come riferimento la matrice iniziale
+
+        int count;
+        while (true) {
             int[][] matriceModificata = copiaMatrice(scacchiera);
             for (int i = 0; i < scacchiera.length; i++) {
                 for (int j = 0; j < scacchiera[i].length; j++) {
-
+                    count=0;
                     if (i < scacchiera.length - 1 && scacchiera[i + 1][j] == 1) {
                         count++;
                     }
@@ -76,36 +67,41 @@ public class Esercizio1 {
                     if (i > 0 && j > 0 && scacchiera[i - 1][j - 1] == 1) {
                         count++;
                     }
+
                     if (count < 2 && scacchiera[i][j] == 1) {
                         matriceModificata[i][j] = 0;
-                        count = 0;
                     } else if (count == 3 && scacchiera[i][j] == 0) {
                         matriceModificata[i][j] = 1;
-                        count = 0;
-
                     } else if (count >= 4 && scacchiera[i][j] == 1) {
                         matriceModificata[i][j] = 0;
-                        count = 0;
-                    } else {
-                        count = 0;
+
                     }
                 }
 
             }
-
+            Thread.sleep(3000);
             System.out.println();
-            for (int i = 0; i < scacchiera.length; i++) {
-                for (int j = 0; j < scacchiera[i].length; j++) {
-                    System.out.print(matriceModificata[i][j] == 1 ? "o " : "  ");
-                }
-                System.out.println();
-            }
+            stampaScacchiera(matriceModificata);
             scacchiera = matriceModificata;
-            countWhile++;
         }
     }
 
-    private static int[][] faiScacchieraIniziale() {
+    private static void faiScacchieraIniziale(int[][] scacchiera) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Inserisci le coordinate x e y per riempire la matrice di 6 righe e 7 colonne con o ");
+        System.out.println("Le coordinate dell'esempio sono 1,2, 2,3, 3,1, 3,2, 3,3 ");
+        for (int i = 0; i < 5; i++) {
+
+            int riga = scanner.nextInt();
+            int colonna = scanner.nextInt();
+
+            if (riga >= 0 && riga < scacchiera.length && colonna >= 0 && colonna < scacchiera[0].length) {
+                scacchiera[riga][colonna] = 1;
+            }
+        }
+    }
+
+    private static int[][] faiScacchieraInizialeVuota() {
         int[][] scacchiera = new int[6][7];
         for (int i = 0; i < scacchiera.length; i++) {
             for (int j = 0; j < scacchiera[i].length; j++) {
