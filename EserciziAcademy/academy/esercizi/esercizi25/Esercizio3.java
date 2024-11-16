@@ -1,6 +1,8 @@
 package academy.esercizi.esercizi25;
 
 
+import java.util.Scanner;
+
 /*Un lucchetto per bicicletta a combinazione numerica ha quattro anelli (ring),
 ciascuno avente i numeri da 0 a 9. Scrivete un programma che, conoscendo i numeri su cui
 sono attualmente posizionati gli anelli e la combinazione di sblocco, visualizzi le istruzioni
@@ -18,42 +20,58 @@ sono attualmente posizionati gli anelli e la combinazione di sblocco, visualizzi
 // se un numero è maggiore di 5 e un altro è minore di 5 allora fai 10 meno il primo numero + il secondo numero
 public class Esercizio3 {
     public static void main(String[] args) {
-        int[] numeriPosizionati = {0, 2, 1, 8};
-        int[] combinazioneDiSblocco = {0, 5, 2, 9};
+        Scanner scanner = new Scanner(System.in);
+        int[] numeriPosizionati = prendiCombinazioneIniziale(scanner);
+        final int[] combinazioneDiSblocco = {1, 2, 1, 9};
         StringBuilder istruzioni = new StringBuilder();
         int numeroDiGiri;
 
+        // se il primo numero è maggiore del secondo allora vediamo cos'è maggiore tra
+        // la differenza del primo e il secondo e la differenza tra 10 e il primo aumentata del secondo
+        // se il secondo numero è minore del secondo facciamo la stessa cosa ma al contrario
+
         for (int i = 0; i < numeriPosizionati.length; i++) {
+            int diff = numeriPosizionati[i] - combinazioneDiSblocco[i];
+            int diffContraria = combinazioneDiSblocco[i] - numeriPosizionati[i];
             int distanzaALContrario = 10 - numeriPosizionati[i] + combinazioneDiSblocco[i];
-            if(numeriPosizionati[i] > combinazioneDiSblocco[i]) {
-                if (numeriPosizionati[i] - combinazioneDiSblocco[i] < distanzaALContrario) {
+            int distanzaAlContrarioSecondadiff = 10 - combinazioneDiSblocco[i] + numeriPosizionati[i];
+
+            if (numeriPosizionati[i] > combinazioneDiSblocco[i]) {
+                if (diff < distanzaALContrario) {
                     numeroDiGiri = numeriPosizionati[i] - combinazioneDiSblocco[i];
+
                     istruzioni.append(" Ring ").append(i + 1).append(": Twist down ")
                             .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
-                } else if (numeriPosizionati[i] - combinazioneDiSblocco[i] >= distanzaALContrario) {
+                } else {
                     numeroDiGiri = distanzaALContrario;
+
                     istruzioni.append(" Ring ").append(i + 1).append(": Twist up ")
                             .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
                 }
-            }else{
-                if (combinazioneDiSblocco[i] - numeriPosizionati[i] < distanzaALContrario) {
-                    numeroDiGiri = combinazioneDiSblocco[i] - numeriPosizionati[i];
+            } else {
+                if (diffContraria < distanzaAlContrarioSecondadiff) {
+                    numeroDiGiri = diffContraria;
+
                     istruzioni.append(" Ring ").append(i + 1).append(": Twist up ")
                             .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
-                } else if (numeriPosizionati[i] + combinazioneDiSblocco[i] >= distanzaALContrario) {
-                    numeroDiGiri = 10 - combinazioneDiSblocco[i] + numeriPosizionati[i];
+                } else {
+                    numeroDiGiri = distanzaAlContrarioSecondadiff;
+
                     istruzioni.append(" Ring ").append(i + 1).append(": Twist down ")
                             .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
                 }
             }
         }
         System.out.println(istruzioni);
-        }
-        // se il primo - il secondo è minore di 10 - secondo + primo twist down
-        // 9 - 1 < 10 - 1 + 9
-        // 8 - 2 < 10 - 2 + 8
-        // se il primo - il secondo è maggiore di 10 + secondo
-        // 3 -4 < 3+4
+    }
 
+    public static int[] prendiCombinazioneIniziale(Scanner scanner) {
+        System.out.println("Inserisci la combinazione di 4 numeri");
+        int[] arrayCombinazione = new int[4];
+        for (int i = 0; i < 4; i++) {
+            arrayCombinazione[i] = scanner.nextInt();
+        }
+        return arrayCombinazione;
+    }
 }
 
