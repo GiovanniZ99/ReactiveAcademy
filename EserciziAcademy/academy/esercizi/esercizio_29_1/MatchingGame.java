@@ -38,7 +38,7 @@ public class MatchingGame {
             Location locationSecondaCarta = new Location(xSecondaCarta, ySecondaCarta);
             Tile secondaCarta = tiles[locationSecondaCarta.getCoordinataX()][locationSecondaCarta.getCoordinataY()];
 
-            if (primaCarta.getValore() == secondaCarta.getValore() && primaCarta.isCoperta()) {
+            if (primaCarta.getValore() == secondaCarta.getValore() && primaCarta.isCoperta() && secondaCarta.isCoperta()) {
                 if (grid.checkAdiacenza(locationPrimaCarta.getCoordinataX(), locationPrimaCarta.getCoordinataY(),
                         locationSecondaCarta.getCoordinataX(), locationSecondaCarta.getCoordinataY())) {
                     punteggio += 2;
