@@ -19,9 +19,11 @@ sono attualmente posizionati gli anelli e la combinazione di sblocco, visualizzi
 // se sta nella metà non conviene andare al contrario
 // se un numero è maggiore di 5 e un altro è minore di 5 allora fai 10 meno il primo numero + il secondo numero
 public class Esercizio3 {
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final int[] numeriPosizionati = prendiCombinazioneIniziale(scanner);
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int[] numeriPosizionati = prendiCombinazioneIniziale(scanner);
+
         final int[] combinazioneDiSblocco = {1, 2, 1, 9};
         StringBuilder istruzioni = new StringBuilder();
         int numeroDiGiri;
@@ -40,29 +42,30 @@ public class Esercizio3 {
                 if (diff < distanzaALContrario) {
                     numeroDiGiri = numeriPosizionati[i] - combinazioneDiSblocco[i];
 
-                    istruzioni.append(" Ring ").append(i + 1).append(": Twist down ")
-                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                    generaIstruzione(istruzioni, i, ": Twist down ", numeroDiGiri);
                 } else {
                     numeroDiGiri = distanzaALContrario;
 
-                    istruzioni.append(" Ring ").append(i + 1).append(": Twist up ")
-                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                    generaIstruzione(istruzioni, i, ": Twist up ", numeroDiGiri);
                 }
             } else {
                 if (diffContraria < distanzaAlContrarioSecondadiff) {
                     numeroDiGiri = diffContraria;
 
-                    istruzioni.append(" Ring ").append(i + 1).append(": Twist up ")
-                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                    generaIstruzione(istruzioni, i, ": Twist up ", numeroDiGiri);
                 } else {
                     numeroDiGiri = distanzaAlContrarioSecondadiff;
 
-                    istruzioni.append(" Ring ").append(i + 1).append(": Twist down ")
-                            .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
+                    generaIstruzione(istruzioni, i, ": Twist down ", numeroDiGiri);
                 }
             }
         }
         System.out.println(istruzioni);
+    }
+
+    private static void generaIstruzione(StringBuilder istruzioni, int i, String str, int numeroDiGiri) {
+        istruzioni.append(" Ring ").append(i + 1).append(str)
+                .append(numeroDiGiri == 1 ? "once " : numeroDiGiri + " times");
     }
 
     public static int[] prendiCombinazioneIniziale(Scanner scanner) {
