@@ -23,24 +23,38 @@ public class MatchingGame {
         int punteggio = 0;
 
         while (!grid.checkCarteScoperte()) {
-            System.out.println("Inserisci le coordinate delle due carte che vuoi scoprire");
 
-            Scanner scanner = new Scanner(System.in);
+            boolean checkImbroglio;
+            Location locationPrimaCarta;
+            Location locationSecondaCarta;
 
-            int x = scanner.nextInt();
-            int y = scanner.nextInt();
+            do {
+                System.out.println("Inserisci le coordinate delle due carte che vuoi scoprire");
 
-            Location locationPrimaCarta = new Location(x, y);
+                Scanner scanner = new Scanner(System.in);
+
+                int x = scanner.nextInt();
+                int y = scanner.nextInt();
+
+                locationPrimaCarta = new Location(x, y);
+
+                int xSecondaCarta = scanner.nextInt();
+                int ySecondaCarta = scanner.nextInt();
+
+                locationSecondaCarta = new Location(xSecondaCarta, ySecondaCarta);
+
+                checkImbroglio = locationPrimaCarta.getCoordinataX() == locationSecondaCarta.getCoordinataX() && locationPrimaCarta.getCoordinataY() == locationSecondaCarta.getCoordinataY();
+
+                if (checkImbroglio) {
+                    System.out.println("Non puoi scoprire la stessa carta due volte, Riprova!");
+                }
+            } while (checkImbroglio);
+
             Tile primaCarta = tiles[locationPrimaCarta.getCoordinataX()][locationPrimaCarta.getCoordinataY()];
-
-            int xSecondaCarta = scanner.nextInt();
-            int ySecondaCarta = scanner.nextInt();
-            Location locationSecondaCarta = new Location(xSecondaCarta, ySecondaCarta);
             Tile secondaCarta = tiles[locationSecondaCarta.getCoordinataX()][locationSecondaCarta.getCoordinataY()];
 
             if (primaCarta.getValore() == secondaCarta.getValore() && primaCarta.isCoperta() && secondaCarta.isCoperta()) {
-                if (grid.checkAdiacenza(locationPrimaCarta.getCoordinataX(), locationPrimaCarta.getCoordinataY(),
-                        locationSecondaCarta.getCoordinataX(), locationSecondaCarta.getCoordinataY())) {
+                if (grid.checkAdiacenza(locationPrimaCarta.getCoordinataX(), locationPrimaCarta.getCoordinataY(), locationSecondaCarta.getCoordinataX(), locationSecondaCarta.getCoordinataY())) {
                     punteggio += 2;
                     System.out.println("Carte uguali e adiacenti, punteggio aumentato di 2");
                 } else {
