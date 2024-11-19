@@ -69,10 +69,17 @@ public class Esercizio3 {
     }
 
     public static int[] prendiCombinazioneIniziale(Scanner scanner) {
-        System.out.println("Inserisci la combinazione di 4 numeri");
+        System.out.println("Inserisci la combinazione di 4 numeri con numeri da 1 a 9");
         int[] arrayCombinazione = new int[4];
         for (int i = 0; i < 4; i++) {
             arrayCombinazione[i] = scanner.nextInt();
+            do {
+                if (arrayCombinazione[i] < 1 || arrayCombinazione[i] > 9) {
+                    System.out.println("Numero inserito non valido, reinserire il numero");
+                    arrayCombinazione[i] = scanner.nextInt();
+                }
+            }while(arrayCombinazione[i] < 1 || arrayCombinazione[i] > 9);
+
         }
         return arrayCombinazione;
     }
