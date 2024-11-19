@@ -1,6 +1,7 @@
 package academy.esercizi.esercizi25;
 
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /*Un lucchetto per bicicletta a combinazione numerica ha quattro anelli (ring),
@@ -72,14 +73,20 @@ public class Esercizio3 {
         System.out.println("Inserisci la combinazione di 4 numeri con numeri da 1 a 9");
         int[] arrayCombinazione = new int[4];
         for (int i = 0; i < 4; i++) {
-            arrayCombinazione[i] = scanner.nextInt();
-            do {
-                if (arrayCombinazione[i] < 1 || arrayCombinazione[i] > 9) {
-                    System.out.println("Numero inserito non valido, reinserire il numero");
+            boolean numeroValido = false;
+            while (!numeroValido) {
+                try {
                     arrayCombinazione[i] = scanner.nextInt();
+                    if (arrayCombinazione[i] < 1 || arrayCombinazione[i] > 9) {
+                        System.out.println("Numero inserito non valido, reinserire il numero");
+                    } else {
+                        numeroValido = true;
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Inserisci numero valido");
+                    scanner.next();
                 }
-            }while(arrayCombinazione[i] < 1 || arrayCombinazione[i] > 9);
-
+            }
         }
         return arrayCombinazione;
     }
