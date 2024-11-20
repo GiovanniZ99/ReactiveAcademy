@@ -26,11 +26,23 @@ public class Esercizio1 {
         AccountingFormatter acf = new AccountingFormatter();
         System.out.println(acf.format(1));
         System.out.println(acf.format(-12121211));
-        BaseFormatter bsf = new BaseFormatter(2);
-        System.out.println(bsf.format(2));
+
+        try {
+            BaseFormatter bsf = new BaseFormatter(1);
+            System.out.println(bsf.format(2));
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            BaseFormatter bsfValido = new BaseFormatter(2);
+            System.out.println(bsfValido.format(2));
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
         NumberFormatter numberFormatter = new DefaultFormatter();
 
-        int[] prova = {1,2,3,4};
+        int[] prova = {1, 2, 3, 4};
         formattaResult(prova, numberFormatter);
 
     }
