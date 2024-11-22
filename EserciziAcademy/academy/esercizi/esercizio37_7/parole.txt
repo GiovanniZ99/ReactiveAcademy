@@ -1,0 +1,4 @@
+casa, gatto, albero, mare, cielo, sole
+libro, luna
+casa, cielo, sole
+casa, cielo, sole
