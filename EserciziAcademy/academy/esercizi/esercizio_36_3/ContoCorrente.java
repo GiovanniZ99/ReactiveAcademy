@@ -2,7 +2,7 @@ package academy.esercizi.esercizio_36_3;
 
 public class ContoCorrente {
     private double saldo;
-    private String numeroConto;
+    private final String numeroConto;
 
     public ContoCorrente(double saldo, String numeroConto) {
         this.saldo = saldo;
@@ -24,20 +24,4 @@ public class ContoCorrente {
         throw new ErroreVersamento("Importo superiore al saldo", importo, this.numeroConto, this.saldo, importo);
     }
 
-
-    public double getSaldo() {
-        return saldo;
-    }
-
-    public void setSaldo(double saldo) {
-        this.saldo = saldo;
-    }
-
-    public String getNumeroConto() {
-        return numeroConto;
-    }
-
-    public void setNumeroConto(String numeroConto) {
-        this.numeroConto = numeroConto;
-    }
 }
