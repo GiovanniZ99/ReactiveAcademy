@@ -14,111 +14,83 @@ public class Esercizio1 {
     static Scanner SCANNER = new Scanner(System.in);
 
     public static void main(String[] args) {
-        int[][] quadrato = inserisciValori(prendiValori(SCANNER));
+        System.out.println("Inserisci 16 valori da 1 a 16 per riempire il quadrato");
+        int[][] quadrato = (prendiValori(SCANNER));
 
-        if(checkNumeri(quadrato)){
-            System.out.println("I dati inseriti sono da 1 a 16");
-        }else{
-            System.out.println("I dati inseriti non sono da 1 a 16");
-        }
-        if(checkSommeRighe(quadrato)){
-            System.out.println("Le somme delle righe sono uguali");
-        }
-       if(checkSommeColonne(quadrato)){
-           System.out.println("Le somme delle colonne sono uguali");
-       }
-       if(checkSommaDiagonali(quadrato)) {
-           System.out.println("Le somme delle diagonali sono uguali");
-       }
+        if (checkQuadratoMagico(quadrato)) return;
+        System.out.println("Le somme delle righe, delle colonne e delle diagonali sono uguali");
     }
 
-    public static int[] prendiValori(Scanner scanner) {
-        int[] valori = new int[16];
-        System.out.println("Inserisci i 16 valori da inserire nella matrice");
-        for (int i = 0; i < valori.length; i++) {
-            valori[i] = scanner.nextInt();
-        }
-        return valori;
-    }
+    private static boolean checkQuadratoMagico(int[][] quadrato) {
+        int sumRighe = 0;
+        int sumPrimaRiga = 0;
+        int sumPrimaColonna = 0;
+        int sumColonne = 0;
 
-    public static int[][] inserisciValori(int[] valori) {
-        int[][] matriceQuadrata = new int[4][4];
-        int index = 0;
-        for (int i = 0; i < matriceQuadrata.length; i++) {
-            for (int j = 0; j < matriceQuadrata[i].length; j++) {
-                matriceQuadrata[i][j] = valori[index];
-                index++;
-            }
-        }
-        for (int i = 0; i < matriceQuadrata.length; i++) {
-            for (int j = 0; j < matriceQuadrata[i].length; j++) {
-                System.out.print(matriceQuadrata[i][j] + " ");
-            }
-            System.out.println();
-        }
-        return matriceQuadrata;
-    }
+        for (int i = 0; i < quadrato.length; i++) {
+            for (int j = 0; j < quadrato[i].length; j++) {
+                if (!checkNumeri(quadrato[i][j])) {
+                    System.out.println("I valori inseriti non sono da 1 a 16");
+                    return true;
+                }
+                sumPrimaRiga += quadrato[0][i];
+                sumRighe += quadrato[i][j];
+                if (!checkSommeRighe(sumPrimaRiga, sumRighe)) {
+                    System.out.println("Le somme delle righe sono diverse");
+                    return true;
+                }
 
-    public static boolean checkNumeri(int[][] matriceDaVerificare) {
-        boolean check = false;
-        for (int i = 0; i < matriceDaVerificare.length; i++) {
-            for (int j = 0; j < matriceDaVerificare[i].length; j++) {
-                if (matriceDaVerificare[i][j] <= 16 || matriceDaVerificare[i][j] > 0) {
-                    check = true;
-                } else {
-                    return false;
+                sumPrimaColonna += quadrato[i][0];
+                sumColonne += quadrato[j][i];
+
+                if (!checkSommeColonne(sumPrimaColonna, sumColonne)) {
+                    System.out.println("Le somme delle colonne sono diverse");
+                    return true;
                 }
             }
         }
-        return check;
+        if (!checkSommaDiagonali(quadrato)) {
+            System.out.println("Le somme delle diagonali sono diverse");
+            return true;
+        }
+        return false;
     }
 
-    public static boolean checkSommeRighe(int[][] matriceDaVerificare) {
-        int sum = 0;
-        int sumPrimaRiga = 0;
-
-        for (int i = 0; i < matriceDaVerificare.length; i++) {
-            sumPrimaRiga += matriceDaVerificare[0][i];
-        }
-        for (int i = 1; i < matriceDaVerificare.length; i++) {
-            for (int j = 0; j < matriceDaVerificare[i].length; j++) {
-                sum += matriceDaVerificare[i][j];
+    public static int[][] prendiValori(Scanner scanner) {
+        int[][] matriceQuadrata = new int[4][4];
+        for (int i = 0; i < matriceQuadrata.length; i++) {
+            for (int j = 0; j < matriceQuadrata[i].length; j++) {
+                matriceQuadrata[i][j] = scanner.nextInt();
             }
-            if (sum != sumPrimaRiga) {
-                return false;
-            }
-            sum = 0;
         }
-        return true;
+            for (int n = 0; n < matriceQuadrata.length; n++) {
+                for (int k = 0; k < matriceQuadrata[n].length; k++) {
+                    System.out.print(matriceQuadrata[n][k] + " ");
+                }
+                System.out.println();
+            }
+        return matriceQuadrata;
     }
 
-    private static boolean checkSommeColonne(int[][] matriceDaVerificare) {
-        int sumPrimaColonna = 0;
-        int sum;
-        for (int i = 0; i < matriceDaVerificare.length; i++) {
-            sumPrimaColonna += matriceDaVerificare[i][0];
-        }
-
-        for (int i = 0; i < matriceDaVerificare[0].length; i++) {
-            sum = 0;
-            for (int j = 0; j < matriceDaVerificare.length; j++) {
-                sum += matriceDaVerificare[j][i];
-
-            }
-            if (sum != sumPrimaColonna) {
-                return false;
-            }
-
-        }
-        return true;
+    public static boolean checkNumeri(int valore) {
+        return valore > 0 && valore <= 16;
     }
-    private static boolean checkSommaDiagonali(int [][] matriceDaVerificare){
+
+    public static boolean checkSommeRighe(int sumPrimaRiga, int sum) {
+        return sum == sumPrimaRiga;
+    }
+
+    private static boolean checkSommeColonne(int sumPrimaColonna, int sum) {
+        return sumPrimaColonna == sum;
+    }
+
+    private static boolean checkSommaDiagonali(int[][] matriceDaVerificare) {
         int sumPrimaDiagonale = 0;
         int sumSecondaDiagonale = 0;
         int index = 0;
-        for (int i = 0; i < matriceDaVerificare.length ; i++) {
-                sumPrimaDiagonale += matriceDaVerificare[i][index];
-                index ++;
+        for (int i = 0; i < matriceDaVerificare.length; i++) {
+            sumPrimaDiagonale += matriceDaVerificare[i][index];
+            index++;
         }
 
         for (int i = 0; i < matriceDaVerificare.length; i++) {
