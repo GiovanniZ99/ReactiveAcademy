@@ -10,16 +10,12 @@ Il giocatore tenta null dopo la terza mossa ma è valorizzato
 Se il giocatore tenta null nelle prime tre mosse ed è valorizzato perde solamente la mossa e può continuare a giocare.*/
 public class GiocoDelSognoOptional {
     private final ElementoCasualeOptional casualeOptional;
-    private int count;
 
     public GiocoDelSognoOptional(ElementoCasualeOptional casualeOptional) {
         this.casualeOptional = casualeOptional;
-        count = 0;
     }
 
     public boolean checkRisposta(boolean valoreInput, int i) {
-        // contiamo numero di mosse
-        this.count++;
 
         boolean check = true;
         if (!casualeOptional.getValore().isPresent() && valoreInput){
