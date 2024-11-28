@@ -27,7 +27,7 @@ Per spiegazioni e/o suggerimenti è possible guardare su git dove è presente  u
 anche se è consigliato sviluppare l’esercizio da zero.
 */
 public class Test {
-    final static Scanner SCANNER = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in);
 
     public static void main(String[] args) {
 
@@ -36,19 +36,20 @@ public class Test {
         boolean continua;
         System.out.println("Indovinare se il numero casuale è null");
         System.out.println("Inserire false se pensi che il numero sia null, altrimenti inserire true");
+        int i = 0;
         do {
             try {
                 boolean valore = SCANNER.nextBoolean();
-                continua = giocoDelSognoOptional.checkRisposta(valore);
+                continua = giocoDelSognoOptional.checkRisposta(valore, i);
             } catch (InputMismatchException e) {
                 System.out.println("Il valore inserito non è un booleano, il valore sarà forzato a true");
                 // non avevo usato l'orElse quindi me ho forzato l'uso
                 Optional<Boolean> valoreDaSostituire = Optional.empty();
                 valoreDaSostituire = Optional.of(valoreDaSostituire.orElse(true));
 
-                continua = giocoDelSognoOptional.checkRisposta(valoreDaSostituire.get());
+                continua = giocoDelSognoOptional.checkRisposta(valoreDaSostituire.get(), i);
             }
-
+            i++;
         } while (!continua);
     }
 }

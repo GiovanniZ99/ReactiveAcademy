@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class ElementoCasualeOptional {
     private Optional<Integer> valore;
-    private static final Random RANDOM = new Random();
+    private final static Random RANDOM = new Random();
 
     public ElementoCasualeOptional() {
         int randomOrNull = RANDOM.nextInt(2);

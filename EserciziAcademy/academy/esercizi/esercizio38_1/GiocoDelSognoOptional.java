@@ -17,26 +17,29 @@ public class GiocoDelSognoOptional {
         count = 0;
     }
 
-    public boolean checkRisposta(boolean valoreInput) {
+    public boolean checkRisposta(boolean valoreInput, int i) {
         // contiamo numero di mosse
         this.count++;
 
         boolean check = true;
-
-        if (!casualeOptional.getValore().isPresent() && valoreInput) {
+        if (!casualeOptional.getValore().isPresent() && valoreInput){
             System.out.println("Hai perso la mossa, riprova");
             check = false;
         }
-        if (this.count < 3) {
+        if (casualeOptional.getValore().isPresent() && !valoreInput && i<3) {
+            System.out.println("Hai perso la mossa, riprova");
+            check = false;
+        }
+        if (i < 3) {
             if(casualeOptional.getValore().isPresent() && casualeOptional.getValore().get().equals(1)){
                 System.out.println("Il numero è diventato 1, hai perso");
                 check = true;
             } else if (!valoreInput) {
-                System.out.println("Il numero non è null, il valore sarà dimezzato");
                 casualeOptional.setValore(Optional.ofNullable(casualeOptional.getValore().map(v -> (v / 2)).orElseThrow(() -> new NullPointerException("Il valore è null, hai vinto!"))));
+                System.out.println("Il numero non è null, il valore sarà dimezzato");
                 check = false;
             }
-        } else {
+        } else if(!valoreInput){
             System.out.println("Hai tentato null dopo la terza mossa, hai perso!");
             check = true;
         }
@@ -44,7 +47,6 @@ public class GiocoDelSognoOptional {
             System.out.println("Hai vinto!");
             check = true;
         }
-
         return check;
     }
 }
