@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1d5de6e3-1154-42ba-84d7-3b8b9c03670f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizi0_30_1/FillinQuestion.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizi0_30_1/FillinQuestion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizi0_30_1/NumericQuestion.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizi0_30_1/NumericQuestion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizi1/Esercizio1_1.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizi1/Esercizio1_1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizio26/SolitarioBulgaro.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizio26/SolitarioBulgaro.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizio34_1/Frazione.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizio34_1/Frazione.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizio_31_2/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../EserciziAcademy/academy/esercizi/esercizio_31_2/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/Computer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/ComputerApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/Configurazione.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/ConfigurazioneAdmin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/HD.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/HardDisk.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/Linux.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/SSD.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/Schermo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/SistemaOperativo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/Tastiera.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/java/it/reactive/academy/computer/Windows.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../computer/src/test/java/it/reactive/academy/computer/ComputerApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2pOEtj1vRF3uyt3vTr1jqhxRqTU" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.ComputerApplication.executor": "Run",
+    "Maven.computer [clean,spring-boot:run].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Zaffinellli",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/G.Zaffinelli-cons/Documents/rootGit/gitAcademy/EserciziSpring/computer",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="computer [clean,spring-boot:run]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="cmdOptions" />
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+                <option value="spring-boot:run" />
+              </list>
+            </option>
+            <option name="multimoduleDir" />
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="projectsCmdOptionValues">
+              <list />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1d5de6e3-1154-42ba-84d7-3b8b9c03670f" name="Changes" comment="" />
+      <created>1732628937260</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1732628937260</updated>
+    </task>
+    <servers />
+  </component>
+</project>
