@@ -7,19 +7,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import it.reactive.esercizioTesting.entrypoint.Asta;
-import org.junit.function.ThrowingRunnable;
 
 import static org.junit.Assert.*;
 
 public class ServiceAstaTest {
+	ServiceAsta serviceAsta;
+	List<String> partecipanti;
 	@Before
 	public void setupt(){
+		serviceAsta = new ServiceAsta();
+		partecipanti = new ArrayList<>();
 		partecipanti.add("partecipante");
 		partecipanti.add("secondoPartecipante");
+		serviceAsta.inizializza(partecipanti);
 	}
-	static ServiceAsta serviceAsta = new ServiceAsta();
-	static  List<String> partecipanti = new ArrayList<>();
-
 
 	@Test
 	public void test() {
@@ -41,26 +42,21 @@ public class ServiceAstaTest {
 
 	@Test
 	public void inizializzaTest() {
-		partecipanti.add("boh");
-		this.serviceAsta.inizializza(partecipanti);
-		assertEquals(partecipanti.size(), this.serviceAsta.getPartecipanti().size());
+		assertEquals(partecipanti.size(), serviceAsta.getPartecipanti().size());
 	}
 
 	@Test(expected = AstaTerminataException.class)
 	public void rilanciaTest(){
-		this.serviceAsta.inizializza(partecipanti);
-		serviceAsta.rilancia("partecipante", -1);
-		serviceAsta.rilancia("secondoPartecipante", 1);
-
+		serviceAsta.rilancia("partecipante", 1);
+		serviceAsta.rilancia("secondoPartecipante", -1);
+		serviceAsta.rilancia("partecipante", 1);
 	}
 	@Test(expected = ValoreNonAmmessoException.class)
 	public void rilanciaValoreNonAmmessoException(){
-		this.serviceAsta.inizializza(partecipanti);
 		serviceAsta.rilancia("partecipante", 0);
 	}
 	@Test(expected = PartecipanteNonCensitoException.class)
 	public void rilanciaPartecipanteNonAmmessoException(){
-		this.serviceAsta.inizializza(partecipanti);
 		serviceAsta.rilancia("partecipanteNonEsistente", 0);
 	}
 	@Test(expected = UnsupportedOperationException.class)
@@ -69,27 +65,33 @@ public class ServiceAstaTest {
 	}
 	@Test(expected = AstaInCorsoException.class)
 	public void addPartecipanteTestAstaInCorsoException(){
-		serviceAsta.inizializza(partecipanti);
 		serviceAsta.addPartecipante("partecipante");
 	}
 	@Test(expected = PartecipanteEsistenteException.class)
 	public void addPartecipanteTestNonCensitoException(){
-		this.serviceAsta.inizializza(partecipanti);
 		serviceAsta.fine();
 		serviceAsta.addPartecipante("secondoPartecipante");
 	}
 	@Test(expected = TurnoNonValidoException.class)
 	public void turnoCorrenteException(){
-		this.serviceAsta.inizializza(partecipanti);
-
 		serviceAsta.rilancia("secondoPartecipante", 1);
+	}
+	@Test
+	public void addPartecipante(){
+		serviceAsta.fine();
+		serviceAsta.addPartecipante("PartecipanteDaInserire");
+		assert(serviceAsta.getPartecipanti().contains("PartecipanteDaInserire"));
+	}
+	@Test
+	public void testVincitore(){
+		serviceAsta.rilancia("partecipante", 1);
+		assertEquals("partecipante", serviceAsta.getVincitore());
 	}
 
 	/*
 	 * Questa non � una classe di test perch� non contiene Assert!!!!!
 	 * E' stata lasciata per documentare come pu� avvenire un flow di chiamate
 	 */
-	@Test
 	public void test2() {
 		Asta asta = new Asta(new ServiceAsta());
 		asta.avvia("Auto");

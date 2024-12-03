@@ -95,7 +95,6 @@ public class ServiceAsta implements IServiceAsta {
 
 	public List<String> getPartecipanti() {
 		return sessioneAsta.getPartecipanti();
-
 	}
 
 	public void fine() {
