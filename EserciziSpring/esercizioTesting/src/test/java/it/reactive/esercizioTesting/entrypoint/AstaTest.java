@@ -66,6 +66,30 @@ public class AstaTest {
 		verify(serviceAsta, times(1)).fine();
 	}
 	@Test
+	public void rilanciaTest() {
+		String oggettoBandito = "oggettoBandito";
+		asta.rilancia(oggettoBandito, 1);
+		verify(serviceAsta, times(1)).rilancia(oggettoBandito, 1);
+		verify(serviceAsta, times(1)).getValoreSessioneAsta();
+
+	}
+	@Test
+	public void fineAstaForzataTest(){
+		Map<String, Object> mappa = new HashMap<>();
+		mappa.put("fine asta", false);
+		mappa.put("valore", 0);
+		mappa.put("vincitore", null);
+		Map<String, Object> mappaRisultante = asta.fineAstaForzata();
+		verify(serviceAsta, times(1)).fine();
+		assertEquals(mappa, mappaRisultante);
+	}
+	@Test
+	public void passaTest(){
+		asta.passa("boh");
+		verify(serviceAsta, times(1)).rilancia("boh", -1);
+		verify(serviceAsta,times(1)).verificaFineAsta();
+	}
+	@Test
 	public void getSessioneAstaTest(){
 		when(serviceAsta.getValoreSessioneAsta()).thenReturn(2);
 		when(serviceAsta.getVincitore()).thenReturn("Giovanni");
