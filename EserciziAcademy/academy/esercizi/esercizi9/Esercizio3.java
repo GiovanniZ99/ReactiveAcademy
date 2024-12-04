@@ -103,7 +103,7 @@ public class Esercizio3 {
                     && coordinate[5] == coordinate[7] && coordinate[2] - coordinate[0] == coordinate[7] - coordinate[3]) {
                 System.out.println("Quadrato");
             } else if (coordinate[0] == coordinate[4] && coordinate[1] == coordinate[3] && coordinate[2] == coordinate[6]
-                    && coordinate[5] == coordinate[7] && coordinate[3] - coordinate[0] != coordinate[7] - coordinate[3]) {
+                    && coordinate[5] == coordinate[7] && coordinate[2] - coordinate[0] != coordinate[7] - coordinate[3]) {
                 System.out.println("Rettangolo");
         } else if (coordinate[0] == coordinate[6] && coordinate[3] == coordinate[5] && coordinate[4] - coordinate[2]
         != coordinate[7] - coordinate[3]) {
