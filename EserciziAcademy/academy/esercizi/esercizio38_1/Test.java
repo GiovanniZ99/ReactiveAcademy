@@ -40,6 +40,7 @@ public class Test {
         do {
             try {
                 boolean valore = SCANNER.nextBoolean();
+                SCANNER.nextLine();
                 continua = giocoDelSognoOptional.checkRisposta(valore, i);
             } catch (InputMismatchException e) {
                 System.out.println("Il valore inserito non è un booleano, il valore sarà forzato a true");
@@ -48,6 +49,9 @@ public class Test {
                 valoreDaSostituire = Optional.of(valoreDaSostituire.orElse(true));
 
                 continua = giocoDelSognoOptional.checkRisposta(valoreDaSostituire.get(), i);
+            }catch (NullPointerException e){
+                System.out.println(e.getMessage());
+                return;
             }
             i++;
         } while (!continua);
