@@ -52,7 +52,8 @@ public class AstaTest {
 
 	@Test
 	public void setPartecipantiTest(){
-		asta.setPartecipanti(new ArrayList<>());
+		asta.setPartecipanti(anyList());
+		verify(serviceAsta, times(1)).setPartecipanti(anyList());
 	}
 	@Test
 	public void testAvvia() {
