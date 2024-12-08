@@ -5,10 +5,6 @@ import java.util.Random;
 public class Grid {
     private final static Tile[][] carte = new Tile[4][4];
 
-    public Tile[][] getCarta() {
-        return carte;
-    }
-
     public Tile[][] faiGriglia() {
         int count = 1;
         for (int i = 0; i < carte.length; i++) {
@@ -43,7 +39,7 @@ public class Grid {
     }
 
     public void stampaGriglia(Tile[][] carte) {
-        for (int i = 0; i < carte.length; i++) {
+        for (int i = carte.length - 1; i >= 0; i--){
             for (int j = 0; j < carte[i].length; j++) {
                 System.out.print(carte[i][j].getValore() + "\t");
             }
@@ -62,7 +58,6 @@ public class Grid {
 
     public boolean checkAdiacenza(int coordinataX, int coordinataY, int coordinataXSeconda, int coordinataYSeconda){
         return coordinataX == coordinataXSeconda + 1 && coordinataY == coordinataYSeconda ||
-
                 coordinataX == coordinataXSeconda - 1  && coordinataY == coordinataYSeconda
                 || coordinataY == coordinataYSeconda + 1 && coordinataX == coordinataXSeconda
                 || coordinataY == coordinataYSeconda - 1 && coordinataX == coordinataXSeconda;
