@@ -1,11 +1,15 @@
-package it.reactive.academy.SpringMvcStep1.model;
+package it.reactive.academy.SpringMvcStep1.resource;
 
 public class Tifoseria {
-   private Integer idTifoseria;
-   private String nomeTifoseria;
-   private Squadra squadra;
+
+    Integer idTifoseria;
+    String nomeTifoseria;
+    Squadra squadra;
+
+    public Tifoseria(){}
 
     public Tifoseria(Integer idTifoseria, String nomeTifoseria, Squadra squadra) {
+        super();
         this.idTifoseria = idTifoseria;
         this.nomeTifoseria = nomeTifoseria;
         this.squadra = squadra;

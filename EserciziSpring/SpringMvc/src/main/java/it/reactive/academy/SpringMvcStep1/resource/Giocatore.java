@@ -1,17 +1,23 @@
-package it.reactive.academy.SpringMvcStep1.model;
+package it.reactive.academy.SpringMvcStep1.resource;
+
+import java.util.Set;
 
 public class Giocatore {
-    private Integer idGiocatore;
-    private String nomeCognome;
-    private Integer numeroAmmonizioni;
-    private Squadra squadra;
+
+    Integer idGiocatore;
+    String nomeCognome;
+    Integer numeroAmmonizioni;
+    Squadra squadra;
+    Set<Trasferimenti> trasferimenti;
+
+    public Giocatore(){}
 
     public Giocatore(Integer idGiocatore, String nomeCognome, Integer numeroAmmonizioni, Squadra squadra) {
+        super();
         this.idGiocatore = idGiocatore;
         this.nomeCognome = nomeCognome;
         this.numeroAmmonizioni = numeroAmmonizioni;
         this.squadra = squadra;
-
     }
 
     public Integer getIdGiocatore() {

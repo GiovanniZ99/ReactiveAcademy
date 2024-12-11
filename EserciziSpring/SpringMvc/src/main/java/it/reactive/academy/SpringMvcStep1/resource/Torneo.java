@@ -1,13 +1,17 @@
-package it.reactive.academy.SpringMvcStep1.model;
+package it.reactive.academy.SpringMvcStep1.resource;
 
 import java.util.Set;
 
 public class Torneo {
-   private Integer idTorneo;
-   private String nomeTorneo;
-   private Set<Squadra> squadre;
+
+    Integer idTorneo;
+    String nomeTorneo;
+    Set<Squadra> squadre;
+
+    public Torneo(){}
 
     public Torneo(Integer idTorneo, String nomeTorneo, Set<Squadra> squadre) {
+       super();
         this.idTorneo = idTorneo;
         this.nomeTorneo = nomeTorneo;
         this.squadre = squadre;

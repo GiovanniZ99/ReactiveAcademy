@@ -1,22 +1,31 @@
-package it.reactive.academy.SpringMvcStep1.model;
+package it.reactive.academy.SpringMvcStep1.resource;
 
 import java.util.Set;
 
 public class Squadra {
-  private Integer idSquadra;
-  private String nome;
-  private String coloriSociali;
-  private Set<Giocatore> giocatori;
-  private Tifoseria tifoseria;
-  private Set<Torneo> tornei;
+
+    Integer idSquadra;
+    String nome;
+    String coloriSociali;
+    Set<Giocatore> giocatori;
+    Tifoseria tifoseria;
+
+
+    public Squadra(){}
 
     public Squadra(Integer idSquadra, String nome, String coloriSociali, Set<Giocatore> giocatori, Tifoseria tifoseria, Set<Torneo> tornei) {
+        super();
         this.idSquadra = idSquadra;
         this.nome = nome;
         this.coloriSociali = coloriSociali;
         this.giocatori = giocatori;
         this.tifoseria = tifoseria;
-        this.tornei = tornei;
+
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 
     public Integer getIdSquadra() {
@@ -59,11 +68,4 @@ public class Squadra {
         this.tifoseria = tifoseria;
     }
 
-    public Set<Torneo> getTornei() {
-        return tornei;
-    }
-
-    public void setTornei(Set<Torneo> tornei) {
-        this.tornei = tornei;
-    }
 }
