@@ -5,7 +5,7 @@ import javax.validation.constraints.Size;
 
 public class TorneoDTO {
     @NotBlank
-    @Size(min = 3)
+    @Size(min = 3, message = "Il nome del torneo deve avere almeno 3 caratteri")
     private String nomeTorneo;
 
 
