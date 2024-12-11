@@ -1,22 +1,30 @@
 package it.reactive.academy.SpringMvcStep1.exception;
 
 public class ErrorResponse {
-    private String desc;
-    private String code;
+    private String cod;
+    private String des;
 
-    public String getDesc() {
-        return desc;
+    public ErrorResponse(String COD, String DES) {
+        this.cod = COD;
+        this.des = DES;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public ErrorResponse() {
     }
 
-    public String getCode() {
-        return code;
+    public String getCod() {
+        return cod;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCod(String cod) {
+        this.cod = cod;
+    }
+
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
     }
 }

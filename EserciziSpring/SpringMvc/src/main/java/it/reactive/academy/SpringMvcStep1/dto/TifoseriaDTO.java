@@ -3,7 +3,7 @@ package it.reactive.academy.SpringMvcStep1.dto;
 import javax.validation.constraints.NotBlank;
 
 public class TifoseriaDTO {
-    @NotBlank
+    @NotBlank(message = "Il nome della tifoseria è obbligatorio.")
     String nomeTifoseria;
 
     public String getNomeTifoseria() {
@@ -16,5 +16,8 @@ public class TifoseriaDTO {
 
     public TifoseriaDTO(String nomeTifoseria) {
         this.nomeTifoseria = nomeTifoseria;
+    }
+
+    public TifoseriaDTO() {
     }
 }
