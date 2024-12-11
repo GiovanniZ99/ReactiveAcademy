@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1.configuration;
+package it.reactive.academy.springMvc.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

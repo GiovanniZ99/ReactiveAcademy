@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1.dto;
+package it.reactive.academy.springMvc.dto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1.exception;
+package it.reactive.academy.springMvc.exception;
 
 public class CustomException extends RuntimeException {
   public CustomException(String message) {

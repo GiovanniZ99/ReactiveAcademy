@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1.service;
+package it.reactive.academy.springMvc.service;
 
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1.exception;
+package it.reactive.academy.springMvc.exception;
 
 public class ErrorResponse {
     private String cod;

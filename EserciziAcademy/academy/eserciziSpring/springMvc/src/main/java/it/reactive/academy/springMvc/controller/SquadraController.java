@@ -1,13 +1,13 @@
-package it.reactive.academy.SpringMvcStep1.controller;
+package it.reactive.academy.springMvc.controller;
 
 import io.swagger.annotations.*;
-import it.reactive.academy.SpringMvcStep1.dto.GiocatoreDTO;
-import it.reactive.academy.SpringMvcStep1.dto.SquadraDTO;
-import it.reactive.academy.SpringMvcStep1.dto.SquadraDiGiocatoriDTO;
-import it.reactive.academy.SpringMvcStep1.dto.TifoseriaDTO;
-import it.reactive.academy.SpringMvcStep1.exception.ErrorResponse;
-import it.reactive.academy.SpringMvcStep1.resource.Squadra;
-import it.reactive.academy.SpringMvcStep1.resource.Tifoseria;
+import it.reactive.academy.springMvc.dto.GiocatoreDTO;
+import it.reactive.academy.springMvc.dto.SquadraDTO;
+import it.reactive.academy.springMvc.dto.SquadraDiGiocatoriDTO;
+import it.reactive.academy.springMvc.dto.TifoseriaDTO;
+import it.reactive.academy.springMvc.exception.ErrorResponse;
+import it.reactive.academy.springMvc.resource.Squadra;
+import it.reactive.academy.springMvc.resource.Tifoseria;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

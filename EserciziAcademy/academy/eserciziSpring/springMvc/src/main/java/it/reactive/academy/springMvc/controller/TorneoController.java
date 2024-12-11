@@ -1,12 +1,12 @@
-package it.reactive.academy.SpringMvcStep1.controller;
+package it.reactive.academy.springMvc.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import it.reactive.academy.SpringMvcStep1.dto.TorneoDTO;
-import it.reactive.academy.SpringMvcStep1.exception.ErrorResponse;
-import it.reactive.academy.SpringMvcStep1.resource.Torneo;
+import it.reactive.academy.springMvc.dto.TorneoDTO;
+import it.reactive.academy.springMvc.exception.ErrorResponse;
+import it.reactive.academy.springMvc.resource.Torneo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

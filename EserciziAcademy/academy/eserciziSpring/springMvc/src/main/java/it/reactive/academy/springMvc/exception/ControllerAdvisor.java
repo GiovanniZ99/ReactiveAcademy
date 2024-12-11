@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1.exception;
+package it.reactive.academy.springMvc.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

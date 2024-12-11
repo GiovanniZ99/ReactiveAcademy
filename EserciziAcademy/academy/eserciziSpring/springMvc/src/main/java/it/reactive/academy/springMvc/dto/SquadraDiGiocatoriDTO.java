@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1.dto;
+package it.reactive.academy.springMvc.dto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
