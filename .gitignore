@@ -1,5 +1,6 @@
 *.iml
 EserciziAcademy/.idea/
+EserciziAcademy/academy/eserciziSpring/.idea/
 EserciziAcademy/out/
 EserciziAcademy/bin/
 *.classpath
