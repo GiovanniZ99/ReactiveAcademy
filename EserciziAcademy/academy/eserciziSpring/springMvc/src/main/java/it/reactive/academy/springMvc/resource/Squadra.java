@@ -1,4 +1,4 @@
-package it.reactive.academy.springMvc.models;
+package it.reactive.academy.springMvc.resource;
 
 import java.util.Set;
 
@@ -10,8 +10,7 @@ public class Squadra {
     private Tifoseria tifoseria;
 
 
-    public Squadra() {
-    }
+    public Squadra() {}
 
     public Squadra(Integer idSquadra, String nome, String coloriSociali, Set<Giocatore> giocatori, Tifoseria tifoseria, Set<Torneo> tornei) {
         super();

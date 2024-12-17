@@ -4,20 +4,18 @@ import java.util.Set;
 
 public class Giocatore {
 
-    Integer idGiocatore;
-    String nomeCognome;
-    Integer numeroAmmonizioni;
-    Squadra squadra;
-    Set<Trasferimenti> trasferimenti;
+   private Integer idGiocatore;
+   private String nomeCognome;
+   private Integer numeroAmmonizioni;
+   private Set<Trasferimenti> trasferimenti;
 
     public Giocatore(){}
 
-    public Giocatore(Integer idGiocatore, String nomeCognome, Integer numeroAmmonizioni, Squadra squadra) {
+    public Giocatore(Integer idGiocatore, String nomeCognome, Integer numeroAmmonizioni) {
         super();
         this.idGiocatore = idGiocatore;
         this.nomeCognome = nomeCognome;
         this.numeroAmmonizioni = numeroAmmonizioni;
-        this.squadra = squadra;
     }
 
     public Integer getIdGiocatore() {
@@ -44,11 +42,11 @@ public class Giocatore {
         this.numeroAmmonizioni = numeroAmmonizioni;
     }
 
-    public Squadra getSquadra() {
-        return squadra;
+    public Set<Trasferimenti> getTrasferimenti() {
+        return trasferimenti;
     }
 
-    public void setSquadra(Squadra squadra) {
-        this.squadra = squadra;
+    public void setTrasferimenti(Set<Trasferimenti> trasferimenti) {
+        this.trasferimenti = trasferimenti;
     }
 }

@@ -1,24 +1,34 @@
 package it.reactive.academy.springMvc.model;
 
-import it.reactive.academy.springMvc.resource.Giocatore;
-import it.reactive.academy.springMvc.resource.Tifoseria;
-
 import java.util.Set;
 
-public class SquadraResource {
-  private String nome;
-  private String coloriSociali;
-  private Set<Giocatore> giocatori;
-  private Tifoseria tifoseria;
+public class SquadraModel {
+    private Integer idSquadra;
+    private String nome;
+    private String coloriSociali;
+    private Set<GiocatoreModel> giocatori;
+    private TifoseriaModel tifoseria;
+    private TorneoModel torneo;
 
-    public SquadraResource(String nome, String coloriSociali, Set<Giocatore> giocatori, Tifoseria tifoseria) {
+    public SquadraModel(Integer idSquadra, String nome, String coloriSociali,
+                        Set<GiocatoreModel> giocatori, TifoseriaModel tifoseria, TorneoModel torneo) {
+        this.idSquadra = idSquadra;
         this.nome = nome;
         this.coloriSociali = coloriSociali;
         this.giocatori = giocatori;
         this.tifoseria = tifoseria;
+        this.torneo = torneo;
     }
 
-    public SquadraResource() {
+    public SquadraModel() {
+    }
+
+    public Integer getIdSquadra() {
+        return idSquadra;
+    }
+
+    public void setIdSquadra(Integer idSquadra) {
+        this.idSquadra = idSquadra;
     }
 
     public String getNome() {
@@ -37,19 +47,27 @@ public class SquadraResource {
         this.coloriSociali = coloriSociali;
     }
 
-    public Set<Giocatore> getGiocatori() {
+    public Set<GiocatoreModel> getGiocatori() {
         return giocatori;
     }
 
-    public void setGiocatori(Set<Giocatore> giocatori) {
+    public void setGiocatori(Set<GiocatoreModel> giocatori) {
         this.giocatori = giocatori;
     }
 
-    public Tifoseria getTifoseria() {
+    public TifoseriaModel getTifoseria() {
         return tifoseria;
     }
 
-    public void setTifoseria(Tifoseria tifoseria) {
+    public void setTifoseria(TifoseriaModel tifoseria) {
         this.tifoseria = tifoseria;
+    }
+
+    public TorneoModel getTorneo() {
+        return torneo;
+    }
+
+    public void setTorneo(TorneoModel torneo) {
+        this.torneo = torneo;
     }
 }

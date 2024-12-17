@@ -1,10 +1,9 @@
-package it.reactive.academy.springMvc.models;
+package it.reactive.academy.springMvc.resource;
 
 public class Tifoseria {
 
   private Integer idTifoseria;
   private String nomeTifoseria;
-  private Squadra squadra;
 
     public Tifoseria(){}
 
@@ -12,7 +11,6 @@ public class Tifoseria {
         super();
         this.idTifoseria = idTifoseria;
         this.nomeTifoseria = nomeTifoseria;
-        this.squadra = squadra;
     }
 
     public Integer getIdTifoseria() {
@@ -29,13 +27,5 @@ public class Tifoseria {
 
     public void setNomeTifoseria(String nomeTifoseria) {
         this.nomeTifoseria = nomeTifoseria;
-    }
-
-    public Squadra getSquadra() {
-        return squadra;
-    }
-
-    public void setSquadra(Squadra squadra) {
-        this.squadra = squadra;
     }
 }

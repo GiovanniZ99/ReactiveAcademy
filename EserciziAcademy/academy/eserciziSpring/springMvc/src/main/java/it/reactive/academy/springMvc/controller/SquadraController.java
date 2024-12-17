@@ -2,7 +2,6 @@ package it.reactive.academy.springMvc.controller;
 
 import io.swagger.annotations.*;
 import it.reactive.academy.springMvc.dto.GiocatoreDTO;
-import it.reactive.academy.springMvc.dto.SquadraDTO;
 import it.reactive.academy.springMvc.dto.SquadraDiGiocatoriDTO;
 import it.reactive.academy.springMvc.dto.TifoseriaDTO;
 import it.reactive.academy.springMvc.exception.ErrorResponse;
@@ -25,8 +24,8 @@ public class SquadraController {
     @ApiOperation(value = "inserimento nuova squadra", response = Squadra.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Squadra inserita!"), @ApiResponse(code = 550, message = "C1 in caso di squadra già censita \n" + "C6 in caso di errore di validazione ", response = ErrorResponse.class)})
     @PostMapping
-    public ResponseEntity<SquadraDTO> salvaSquadra(@Valid @RequestBody SquadraDTO squadraDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new SquadraDTO());
+    public ResponseEntity<Squadra> salvaSquadra(@Valid @RequestBody Squadra squadra) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new Squadra());
     }
 
     @ApiOperation(value = "Inserisci una squadra e la lista di giocatori", response = Squadra.class)
@@ -47,6 +46,7 @@ public class SquadraController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Success | OK"), @ApiResponse(code = 550, message = "C3 Giocatore già censito\n" + "C4 Squadra non presente \n" + "C6 Errore di validazione", response = ErrorResponse.class)})
     @PutMapping("/addGiocatore/{id}")
     public ResponseEntity<Squadra> addGiocatore(@PathVariable @ApiParam(value = "id squadra", required = true) @Min(value = 0) @Max(value = 9999) Long id, @Valid @RequestBody @ApiParam(value = "giocatoreDTO") GiocatoreDTO giocatoreDTO) {
+
         return ResponseEntity.ok(new Squadra());
     }
 

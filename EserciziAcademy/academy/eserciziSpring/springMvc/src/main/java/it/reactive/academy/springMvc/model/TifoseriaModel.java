@@ -1,19 +1,18 @@
 package it.reactive.academy.springMvc.model;
 
-import it.reactive.academy.springMvc.resource.Squadra;
 
-public class TifoseriaResource {
+public class TifoseriaModel {
    private Integer idTifoseria;
    private String nomeTifoseria;
-   private Squadra squadra;
+   private SquadraModel squadra;
 
-    public TifoseriaResource(Integer idTifoseria, String nomeTifoseria, Squadra squadra) {
+    public TifoseriaModel(Integer idTifoseria, String nomeTifoseria, SquadraModel squadra) {
         this.idTifoseria = idTifoseria;
         this.nomeTifoseria = nomeTifoseria;
         this.squadra = squadra;
     }
 
-    public TifoseriaResource() {
+    public TifoseriaModel() {
     }
 
     public Integer getIdTifoseria() {
@@ -32,11 +31,11 @@ public class TifoseriaResource {
         this.nomeTifoseria = nomeTifoseria;
     }
 
-    public Squadra getSquadra() {
+    public SquadraModel getSquadra() {
         return squadra;
     }
 
-    public void setSquadra(Squadra squadra) {
+    public void setSquadra(SquadraModel squadra) {
         this.squadra = squadra;
     }
 }

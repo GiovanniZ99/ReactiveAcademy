@@ -1,4 +1,4 @@
-package it.reactive.academy.springMvc.models;
+package it.reactive.academy.springMvc.resource;
 
 public class Trasferimenti {
    private Integer anno;

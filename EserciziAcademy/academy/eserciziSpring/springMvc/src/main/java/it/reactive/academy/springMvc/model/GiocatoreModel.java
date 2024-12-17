@@ -1,21 +1,32 @@
 package it.reactive.academy.springMvc.model;
 
-import it.reactive.academy.springMvc.resource.Squadra;
-import it.reactive.academy.springMvc.resource.Trasferimenti;
-
 import java.util.Set;
 
-public class GiocatoreResource {
-  private String nomeCognome;
-  private Integer numeroAmmonizioni;
-  private Squadra squadra;
-  private Set<Trasferimenti> trasferimenti;
+public class GiocatoreModel {
+    private Integer idGiocatore;
+    private String nomeCognome;
+    private Integer numeroAmmonizioni;
+    private SquadraModel squadra;
+    private Set<TrasferimentiModel> trasferimenti;
 
-    public GiocatoreResource(String nomeCognome, Integer numeroAmmonizioni, Squadra squadra, Set<Trasferimenti> trasferimenti) {
+    public GiocatoreModel(Integer idGiocatore, String nomeCognome, Integer numeroAmmonizioni,
+                          SquadraModel squadra, Set<TrasferimentiModel> trasferimenti) {
+        this.idGiocatore = idGiocatore;
         this.nomeCognome = nomeCognome;
         this.numeroAmmonizioni = numeroAmmonizioni;
         this.squadra = squadra;
         this.trasferimenti = trasferimenti;
+    }
+
+    public GiocatoreModel() {
+    }
+
+    public void setIdGiocatore(Integer idGiocatore) {
+        this.idGiocatore = idGiocatore;
+    }
+
+    public Integer getIdGiocatore() {
+        return idGiocatore;
     }
 
     public String getNomeCognome() {
@@ -34,19 +45,19 @@ public class GiocatoreResource {
         this.numeroAmmonizioni = numeroAmmonizioni;
     }
 
-    public Squadra getSquadra() {
+    public SquadraModel getSquadra() {
         return squadra;
     }
 
-    public void setSquadra(Squadra squadra) {
+    public void setSquadra(SquadraModel squadra) {
         this.squadra = squadra;
     }
 
-    public Set<Trasferimenti> getTrasferimenti() {
+    public Set<TrasferimentiModel> getTrasferimenti() {
         return trasferimenti;
     }
 
-    public void setTrasferimenti(Set<Trasferimenti> trasferimenti) {
+    public void setTrasferimenti(Set<TrasferimentiModel> trasferimenti) {
         this.trasferimenti = trasferimenti;
     }
 }

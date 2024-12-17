@@ -1,18 +1,11 @@
 package it.reactive.academy.springMvc.exception;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
@@ -51,20 +44,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 //        body.put("timestamp:", formatDateTime);
 //        body.put("error", "C6");
 //        body.put("message", ex.getMessage());
-        ErrorResponse er = new ErrorResponse("C6", ex.getMessage());
-        return ResponseEntity.status(550).body(er);
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        List<String> errors = new ArrayList<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
-        }
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setCod("C6");
-        errorResponse.setDes("Validation failed: " + String.join(", ", errors));
-        return ResponseEntity.status(550).body(errorResponse);
+       return metodoResponse("C6", ex.getMessage());
     }
 
     private ResponseEntity<Object> metodoResponse(String codice, String des) {
