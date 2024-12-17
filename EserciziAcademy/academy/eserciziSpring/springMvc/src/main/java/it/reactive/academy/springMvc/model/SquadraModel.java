@@ -1,34 +1,24 @@
-package it.reactive.academy.springMvc.models;
+package it.reactive.academy.springMvc.model;
+
+import it.reactive.academy.springMvc.resource.Giocatore;
+import it.reactive.academy.springMvc.resource.Tifoseria;
 
 import java.util.Set;
 
-public class Squadra {
-    private Integer idSquadra;
-    private String nome;
-    private String coloriSociali;
-    private Set<Giocatore> giocatori;
-    private Tifoseria tifoseria;
+public class SquadraResource {
+  private String nome;
+  private String coloriSociali;
+  private Set<Giocatore> giocatori;
+  private Tifoseria tifoseria;
 
-
-    public Squadra() {
-    }
-
-    public Squadra(Integer idSquadra, String nome, String coloriSociali, Set<Giocatore> giocatori, Tifoseria tifoseria, Set<Torneo> tornei) {
-        super();
-        this.idSquadra = idSquadra;
+    public SquadraResource(String nome, String coloriSociali, Set<Giocatore> giocatori, Tifoseria tifoseria) {
         this.nome = nome;
         this.coloriSociali = coloriSociali;
         this.giocatori = giocatori;
         this.tifoseria = tifoseria;
-
     }
 
-    public Integer getIdSquadra() {
-        return idSquadra;
-    }
-
-    public void setIdSquadra(Integer idSquadra) {
-        this.idSquadra = idSquadra;
+    public SquadraResource() {
     }
 
     public String getNome() {
@@ -62,5 +52,4 @@ public class Squadra {
     public void setTifoseria(Tifoseria tifoseria) {
         this.tifoseria = tifoseria;
     }
-
 }

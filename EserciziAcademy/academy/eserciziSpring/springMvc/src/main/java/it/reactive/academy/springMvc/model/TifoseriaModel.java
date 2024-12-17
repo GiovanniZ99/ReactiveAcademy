@@ -1,18 +1,19 @@
-package it.reactive.academy.springMvc.models;
+package it.reactive.academy.springMvc.model;
 
-public class Tifoseria {
+import it.reactive.academy.springMvc.resource.Squadra;
 
-  private Integer idTifoseria;
-  private String nomeTifoseria;
-  private Squadra squadra;
+public class TifoseriaResource {
+   private Integer idTifoseria;
+   private String nomeTifoseria;
+   private Squadra squadra;
 
-    public Tifoseria(){}
-
-    public Tifoseria(Integer idTifoseria, String nomeTifoseria, Squadra squadra) {
-        super();
+    public TifoseriaResource(Integer idTifoseria, String nomeTifoseria, Squadra squadra) {
         this.idTifoseria = idTifoseria;
         this.nomeTifoseria = nomeTifoseria;
         this.squadra = squadra;
+    }
+
+    public TifoseriaResource() {
     }
 
     public Integer getIdTifoseria() {

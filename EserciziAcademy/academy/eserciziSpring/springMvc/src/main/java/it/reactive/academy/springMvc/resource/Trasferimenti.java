@@ -1,8 +1,8 @@
-package it.reactive.academy.springMvc.resource;
+package it.reactive.academy.springMvc.models;
 
 public class Trasferimenti {
-    Integer anno;
-    String nomeSquadraStorica;
+   private Integer anno;
+   private String nomeSquadraStorica;
 
     public Integer getAnno() {
         return anno;
