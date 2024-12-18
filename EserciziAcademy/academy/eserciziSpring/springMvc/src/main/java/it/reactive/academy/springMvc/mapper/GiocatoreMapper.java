@@ -2,15 +2,13 @@ package it.reactive.academy.springMvc.mapper;
 
 import it.reactive.academy.springMvc.dto.GiocatoreDTO;
 import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
-import it.reactive.academy.springMvc.dto.extended.TrasferimentiDTOExtended;
 import it.reactive.academy.springMvc.model.GiocatoreModel;
 import it.reactive.academy.springMvc.resource.Giocatore;
-import it.reactive.academy.springMvc.resource.Trasferimenti;
 
 import java.util.stream.Collectors;
 
 public class GiocatoreMapper {
-    // DTO-IN -> DTO-EXTENDED  S//    DTO-EXTEDNED -> MODEL S//    MODEL -> DTO-EXTENDED S//    DTO-EXTENDED -> RESOURCE
+    // DTO-IN -> DTO-EXTENDED s  //    DTO-EXTEDNED -> MODEL s //    MODEL -> DTO-EXTENDED s //    DTO-EXTENDED -> RESOURCE s
     public static GiocatoreDTOExtended giocatoreModelToDTOExtended(GiocatoreModel giocatoreModel) {
         GiocatoreDTOExtended giocatoreDTOExtended = new GiocatoreDTOExtended();
         giocatoreDTOExtended.setNomeCognome(giocatoreModel.getNomeCognome());
@@ -47,12 +45,5 @@ public class GiocatoreMapper {
                 .map(trasferimento -> TrasferimentiMapper.trasferimentiDTOExtendedToResource(trasferimento))
                 .collect(Collectors.toSet()));
         return giocatore;
-    }
-
-    public static Trasferimenti trasferimentiDTOExtendedToResource(TrasferimentiDTOExtended trasferimentiDTOExtended) {
-        Trasferimenti trasferimenti = new Trasferimenti();
-        trasferimenti.setAnno(trasferimentiDTOExtended.getAnno());
-        trasferimenti.setNomeSquadraStorica(trasferimentiDTOExtended.getNomeSquadraStorica());
-        return trasferimenti;
     }
 }
