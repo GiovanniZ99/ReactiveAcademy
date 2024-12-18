@@ -1,18 +1,18 @@
-SELECT * FROM libri, autori WHERE libri.id = autori.id
+SELECT * FROM libri, autori WHERE libri.id_autore = autori.id
 
 SELECT libri.titolo, generi.genere, autori.nome FROM libri
-INNER JOIN generi ON libri.id = generi.id
-INNER JOIN autori ON libri.id = autori.id
+INNER JOIN generi ON libri.id_genere = generi.id
+INNER JOIN autori ON libri.id_autore = autori.id
 
 SELECT concat(a.nome, ' ', a.cognome), l.titolo
 FROM autori a 
 LEFT JOIN libri l
-ON a.id = l.id
+ON a.id = l.id_autore 
 
 SELECT concat(a.nome,' ', a.cognome), l.titolo
 FROM libri l
 RIGHT JOIN autori a
-ON a.id = l.id
+ON a.id = l.id_autore 
 
 SELECT *
 FROM case_editrici c
