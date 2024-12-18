@@ -1,11 +1,10 @@
 package it.reactive.academy.springMvc.repository.dao;
 
-import it.reactive.academy.springMvc.dto.GiocatoreDTO;
-import it.reactive.academy.springMvc.model.GiocatoreModel;
+import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 
 public interface GiocatoreDao {
-    GiocatoreModel create(GiocatoreDTO giocatoreDTO);
-    GiocatoreModel read(int id);
-    GiocatoreModel update(int id, GiocatoreDTO giocatoreDTO);
-    GiocatoreModel delete(int id);
+    GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended);
+    GiocatoreDTOExtended read(int id);
+    GiocatoreDTOExtended update(int id, GiocatoreDTOExtended giocatoreDTOExtended);
+    GiocatoreDTOExtended delete(int id);
 }

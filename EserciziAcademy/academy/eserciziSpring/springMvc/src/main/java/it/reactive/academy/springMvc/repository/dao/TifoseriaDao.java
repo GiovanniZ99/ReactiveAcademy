@@ -1,11 +1,11 @@
 package it.reactive.academy.springMvc.repository.dao;
 
 import it.reactive.academy.springMvc.dto.TifoseriaDTO;
-import it.reactive.academy.springMvc.model.TifoseriaModel;
+import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
 
 public interface TifoseriaDao {
-    TifoseriaModel create(TifoseriaDTO tifoseriaDTO);
-    TifoseriaModel read(int id);
-    TifoseriaModel update(int id, TifoseriaDTO tifoseriaDTO);
-    TifoseriaModel delete(int id);
+    TifoseriaDTOExtended create(TifoseriaDTOExtended tifoseriaDTOExtended);
+    TifoseriaDTOExtended read(int id);
+    TifoseriaDTOExtended update(int id, TifoseriaDTOExtended tifoseriaDTOExtended);
+    TifoseriaDTOExtended delete(int id);
 }

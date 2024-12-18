@@ -1,20 +1,21 @@
-package it.reactive.academy.springMvc.model;
+package it.reactive.academy.springMvc.dto.extended;
+
 
 import java.util.Set;
 
-public class TorneoModel {
+public class TorneoDTOExtended {
+
     private Integer idTorneo;
     private String nomeTorneo;
-    private Set<SquadraModel> squadre;
+    private Set<SquadraDTOExtended> squadre;
 
-    public TorneoModel(Integer idTorneo, String nomeTorneo, Set<SquadraModel> squadre) {
+    public TorneoDTOExtended(){}
+
+    public TorneoDTOExtended(Integer idTorneo, String nomeTorneo,
+                             Set<SquadraDTOExtended> squadre) {
         this.idTorneo = idTorneo;
         this.nomeTorneo = nomeTorneo;
         this.squadre = squadre;
-    }
-
-    public TorneoModel() {
-
     }
 
     public Integer getIdTorneo() {
@@ -33,11 +34,11 @@ public class TorneoModel {
         this.nomeTorneo = nomeTorneo;
     }
 
-    public Set<SquadraModel> getSquadre() {
+    public Set<SquadraDTOExtended> getSquadre() {
         return squadre;
     }
 
-    public void setSquadre(Set<SquadraModel> squadre) {
+    public void setSquadre(Set<SquadraDTOExtended> squadre) {
         this.squadre = squadre;
     }
 }

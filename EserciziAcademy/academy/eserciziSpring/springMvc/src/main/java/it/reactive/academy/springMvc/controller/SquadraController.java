@@ -2,11 +2,15 @@ package it.reactive.academy.springMvc.controller;
 
 import io.swagger.annotations.*;
 import it.reactive.academy.springMvc.dto.GiocatoreDTO;
+import it.reactive.academy.springMvc.dto.SquadraDTO;
 import it.reactive.academy.springMvc.dto.SquadraDiGiocatoriDTO;
 import it.reactive.academy.springMvc.dto.TifoseriaDTO;
 import it.reactive.academy.springMvc.exception.ErrorResponse;
 import it.reactive.academy.springMvc.resource.Squadra;
 import it.reactive.academy.springMvc.resource.Tifoseria;
+import it.reactive.academy.springMvc.service.ServiceInterface;
+import it.reactive.academy.springMvc.service.SquadraService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +25,15 @@ import java.util.List;
 @RequestMapping(value = "squadre", produces = {MediaType.APPLICATION_JSON_VALUE, "application/json"})
 @Validated
 public class SquadraController {
+    @Autowired
+    SquadraService squadraService;
+
+
     @ApiOperation(value = "inserimento nuova squadra", response = Squadra.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Squadra inserita!"), @ApiResponse(code = 550, message = "C1 in caso di squadra già censita \n" + "C6 in caso di errore di validazione ", response = ErrorResponse.class)})
     @PostMapping
-    public ResponseEntity<Squadra> salvaSquadra(@Valid @RequestBody Squadra squadra) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Squadra());
+    public ResponseEntity<Squadra> salvaSquadra(@Valid @RequestBody SquadraDTO squadraDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(squadraService.create(squadraDto));
     }
 
     @ApiOperation(value = "Inserisci una squadra e la lista di giocatori", response = Squadra.class)

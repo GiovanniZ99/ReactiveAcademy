@@ -6,18 +6,11 @@ public class SquadraModel {
     private Integer idSquadra;
     private String nome;
     private String coloriSociali;
-    private Set<GiocatoreModel> giocatori;
-    private TifoseriaModel tifoseria;
-    private TorneoModel torneo;
 
-    public SquadraModel(Integer idSquadra, String nome, String coloriSociali,
-                        Set<GiocatoreModel> giocatori, TifoseriaModel tifoseria, TorneoModel torneo) {
+    public SquadraModel(Integer idSquadra, String nome, String coloriSociali) {
         this.idSquadra = idSquadra;
         this.nome = nome;
         this.coloriSociali = coloriSociali;
-        this.giocatori = giocatori;
-        this.tifoseria = tifoseria;
-        this.torneo = torneo;
     }
 
     public SquadraModel() {
@@ -47,27 +40,4 @@ public class SquadraModel {
         this.coloriSociali = coloriSociali;
     }
 
-    public Set<GiocatoreModel> getGiocatori() {
-        return giocatori;
-    }
-
-    public void setGiocatori(Set<GiocatoreModel> giocatori) {
-        this.giocatori = giocatori;
-    }
-
-    public TifoseriaModel getTifoseria() {
-        return tifoseria;
-    }
-
-    public void setTifoseria(TifoseriaModel tifoseria) {
-        this.tifoseria = tifoseria;
-    }
-
-    public TorneoModel getTorneo() {
-        return torneo;
-    }
-
-    public void setTorneo(TorneoModel torneo) {
-        this.torneo = torneo;
-    }
 }
