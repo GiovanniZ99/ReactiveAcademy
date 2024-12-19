@@ -36,20 +36,37 @@ public class SquadraDaoImpl implements SquadraDao {
                     + squadraModel.getNome()
                     + "' and  colori_sociali =  '" + squadraModel.getColoriSociali() + "'");
             if (rs.next()) {
-                squadraDTOExtResult.setIdSquadra(rs.getInt(1));
-                squadraDTOExtResult.setNome(rs.getString(2));
-                squadraDTOExtResult.setColoriSociali(rs.getString(3));
+                squadraModel.setIdSquadra(rs.getInt(1));
+                squadraModel.setNome(rs.getString(2));
+                squadraModel.setColoriSociali(rs.getString(3));
             }
             statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return squadraDTOExtResult;
+        return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
     }
 
     @Override
     public SquadraDTOExtended read(int id) {
-        return null;
+        SquadraModel squadraModel = new SquadraModel();
+
+        Statement statement;
+        try {
+            statement = databaseConfig.getCon().createStatement();
+            ResultSet rs = statement.executeQuery("select * from squadra where id =" + id);
+            databaseConfig.getCon().commit();
+
+            if (rs.next()) {
+                squadraModel.setIdSquadra(rs.getInt(1));
+                squadraModel.setNome(rs.getString(2));
+                squadraModel.setColoriSociali(rs.getString(3));
+            }
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
     }
 
     @Override

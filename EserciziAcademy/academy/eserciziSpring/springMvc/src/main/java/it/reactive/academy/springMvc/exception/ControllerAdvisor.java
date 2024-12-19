@@ -11,27 +11,27 @@ import javax.validation.ConstraintViolationException;
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(SquadraGiaCensitaException.class)
     public ResponseEntity<Object> handleSquadraGiaCensitaException(SquadraGiaCensitaException ex) {
-        return metodoResponse("C1", "Squadra già censita");
+        return metodoResponse("C1", ex.getMessage());
     }
 
     @ExceptionHandler(SquadraNonPresenteException.class)
     public ResponseEntity<Object> handleSquadraNonPresenteException(SquadraNonPresenteException ex) {
-        return metodoResponse("C4", "Squadra non trovata");
+        return metodoResponse("C4", ex.getMessage());
     }
 
     @ExceptionHandler(GiocatoreGiaCensitoException.class)
     public ResponseEntity<Object> handleGiocatoreGiaCensitoException(GiocatoreGiaCensitoException ex) {
-        return metodoResponse("C3", "Giocatore già censito");
+        return metodoResponse("C3", ex.getMessage());
     }
 
     @ExceptionHandler(TorneoNonTrovatoException.class)
     public ResponseEntity<Object> handleTorneoNonTrovatoException(TorneoNonTrovatoException ex) {
-        return metodoResponse("C2", "Torneo non trovato");
+        return metodoResponse("C2", ex.getMessage());
     }
 
     @ExceptionHandler(SquadraNonTrovataException.class)
     public ResponseEntity<Object> handleSquadraNonTrovataException(SquadraNonTrovataException ex) {
-        return metodoResponse("C5", "Giocatore non trovato");
+        return metodoResponse("C5", ex.getMessage());
     }
 
 

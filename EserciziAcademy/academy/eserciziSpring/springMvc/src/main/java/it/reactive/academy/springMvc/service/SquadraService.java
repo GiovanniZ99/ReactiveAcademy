@@ -1,6 +1,5 @@
 package it.reactive.academy.springMvc.service;
 
-
 import it.reactive.academy.springMvc.dto.SquadraDTO;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.exception.SquadraNonPresenteException;
@@ -23,13 +22,13 @@ public class SquadraService implements ServiceInterface<SquadraDTO, Squadra>{
           SquadraDTOExtended squadraDTOResult =  squadraDaoImpl.create(squadraDTOExtended);
             return SquadraMapper.squadraDtoExtendedToResource(squadraDTOResult);
         }else{
-            throw new SquadraNonPresenteException("Squadra");
+            throw new SquadraNonPresenteException("Squadra inserita assente");
         }
     }
 
     @Override
     public Squadra read(int id) {
-        return null;
+    return  SquadraMapper.squadraDtoExtendedToResource(squadraDaoImpl.read(id));
     }
 
     @Override
