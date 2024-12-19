@@ -1,6 +1,5 @@
 package it.reactive.academy.springMvc.model;
 
-import java.util.Set;
 
 public class SquadraModel {
     private Integer idSquadra;

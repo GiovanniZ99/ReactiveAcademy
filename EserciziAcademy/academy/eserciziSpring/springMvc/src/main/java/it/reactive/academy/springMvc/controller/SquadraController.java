@@ -8,7 +8,6 @@ import it.reactive.academy.springMvc.dto.TifoseriaDTO;
 import it.reactive.academy.springMvc.exception.ErrorResponse;
 import it.reactive.academy.springMvc.resource.Squadra;
 import it.reactive.academy.springMvc.resource.Tifoseria;
-import it.reactive.academy.springMvc.service.ServiceInterface;
 import it.reactive.academy.springMvc.service.SquadraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,7 @@ public class SquadraController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Success | OK")})
     @GetMapping
     public ResponseEntity<List<Squadra>> getSquadre(@Valid @RequestParam @ApiParam(value = "booleano", required = true) Boolean completo) {
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(squadraService.read(completo));
     }
 
     @ApiOperation(value = "aggiunge giocatore a squadra e restituisce la squadra aggiornata", response = Squadra.class)

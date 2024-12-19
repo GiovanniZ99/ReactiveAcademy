@@ -26,12 +26,13 @@ public class SquadraMapper {
 
     public static Squadra squadraDtoExtendedToResource(SquadraDTOExtended squadraDTOExtended) {
         Squadra squadra = new Squadra();
-        if (squadra.getTifoseria() != null) {
             squadra.setIdSquadra(squadraDTOExtended.getIdSquadra());
             squadra.setNome(squadraDTOExtended.getNome());
             squadra.setColoriSociali(squadraDTOExtended.getColoriSociali());
-
+        if (squadra.getTifoseria() != null) {
             squadra.setTifoseria(TifoseriaMapper.tifoseriaDtoExtendedToResource(squadraDTOExtended.getTifoseria()));
+        }
+        if(squadraDTOExtended.getGiocatori() != null) {
             squadra.setGiocatori(squadraDTOExtended.getGiocatori()
                     .stream()
                     .map(elem -> GiocatoreMapper.giocatoreDTOExtendedToResource(elem))

@@ -1,9 +1,11 @@
 package it.reactive.academy.springMvc.service;
 
+import java.util.List;
+
 public interface ServiceInterface<I, O> {
     O create(I input);
 
-    O read(int id);
+    List<O> read(Boolean input);
 
     O update(int id, I input);
 

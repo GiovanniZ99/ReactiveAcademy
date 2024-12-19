@@ -11,8 +11,8 @@ public class GiocatoreMapper {
     // DTO-IN -> DTO-EXTENDED s  //    DTO-EXTEDNED -> MODEL s //    MODEL -> DTO-EXTENDED s //    DTO-EXTENDED -> RESOURCE s
     public static GiocatoreDTOExtended giocatoreModelToDTOExtended(GiocatoreModel giocatoreModel) {
         GiocatoreDTOExtended giocatoreDTOExtended = new GiocatoreDTOExtended();
-        giocatoreDTOExtended.setNomeCognome(giocatoreModel.getNomeCognome());
         giocatoreDTOExtended.setIdGiocatore(giocatoreModel.getIdGiocatore());
+        giocatoreDTOExtended.setNomeCognome(giocatoreModel.getNomeCognome());
         giocatoreDTOExtended.setSquadra(SquadraMapper.squadraModelToDtoExtendended(giocatoreModel.getSquadra()));
         return giocatoreDTOExtended;
     }
@@ -40,10 +40,11 @@ public class GiocatoreMapper {
         giocatore.setIdGiocatore(giocatoreDTOExtended.getIdGiocatore());
         giocatore.setNomeCognome(giocatoreDTOExtended.getNomeCognome());
         giocatore.setNumeroAmmonizioni(giocatoreDTOExtended.getNumeroAmmonizioni());
-
-        giocatore.setTrasferimenti(giocatoreDTOExtended.getTrasferimenti().stream()
-                .map(trasferimento -> TrasferimentiMapper.trasferimentiDTOExtendedToResource(trasferimento))
-                .collect(Collectors.toSet()));
+        if(giocatoreDTOExtended.getTrasferimenti()!=null) {
+            giocatore.setTrasferimenti(giocatoreDTOExtended.getTrasferimenti().stream()
+                    .map(trasferimento -> TrasferimentiMapper.trasferimentiDTOExtendedToResource(trasferimento))
+                    .collect(Collectors.toSet()));
+        }
         return giocatore;
     }
 }

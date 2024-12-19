@@ -9,6 +9,9 @@ import it.reactive.academy.springMvc.resource.Squadra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class SquadraService implements ServiceInterface<SquadraDTO, Squadra>{
 
@@ -27,8 +30,10 @@ public class SquadraService implements ServiceInterface<SquadraDTO, Squadra>{
     }
 
     @Override
-    public Squadra read(int id) {
-    return  SquadraMapper.squadraDtoExtendedToResource(squadraDaoImpl.read(id));
+    public List<Squadra> read(Boolean input) {
+        return squadraDaoImpl.readAll(input)
+                .stream()
+                .map(SquadraMapper::squadraDtoExtendedToResource).collect(Collectors.toList());
     }
 
     @Override
