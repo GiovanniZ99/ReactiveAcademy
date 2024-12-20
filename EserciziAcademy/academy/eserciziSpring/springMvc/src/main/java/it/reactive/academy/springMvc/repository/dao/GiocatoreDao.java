@@ -7,7 +7,8 @@ import java.sql.SQLException;
 import java.util.Set;
 
 public interface GiocatoreDao {
-    GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended);
+    GiocatoreDTOExtended createAll(GiocatoreDTOExtended giocatoreDTOExtended);
+
 
     Set<GiocatoreDTOExtended> readAll(SquadraModel squadraModel) throws SQLException;
 

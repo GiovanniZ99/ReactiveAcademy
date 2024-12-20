@@ -24,7 +24,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     }
 
     @Override
-    public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) {
+    public GiocatoreDTOExtended createAll(GiocatoreDTOExtended giocatoreDTOExtended) {
         return null;
     }
 

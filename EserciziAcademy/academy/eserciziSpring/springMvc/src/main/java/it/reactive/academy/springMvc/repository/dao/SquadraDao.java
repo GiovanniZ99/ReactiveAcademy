@@ -13,6 +13,7 @@ public interface SquadraDao {
 
     List<SquadraDTOExtended> readAll();
 
+
     SquadraDTOExtended update(int id, SquadraDTOExtended squadraDTOExtended);
 
     SquadraDTOExtended delete(int id);

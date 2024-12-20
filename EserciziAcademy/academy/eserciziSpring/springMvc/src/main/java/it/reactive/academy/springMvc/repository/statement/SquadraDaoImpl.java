@@ -6,7 +6,6 @@ import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
