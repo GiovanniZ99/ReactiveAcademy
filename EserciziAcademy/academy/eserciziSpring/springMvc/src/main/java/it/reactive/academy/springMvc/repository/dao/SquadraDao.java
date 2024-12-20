@@ -8,7 +8,12 @@ import java.util.List;
 @Repository
 public interface SquadraDao {
     SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended);
-    List<SquadraDTOExtended> readAll(Boolean completo);
+
+    List<SquadraDTOExtended> readTeamsAndPlayers();
+
+    List<SquadraDTOExtended> readAll();
+
     SquadraDTOExtended update(int id, SquadraDTOExtended squadraDTOExtended);
+
     SquadraDTOExtended delete(int id);
 }
