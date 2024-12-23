@@ -10,17 +10,28 @@ import java.util.stream.Collectors;
 public class SquadraMapper {
     public static SquadraDTOExtended squadraModelToDtoExtendended(SquadraModel squadraModel) {
         SquadraDTOExtended squadraDTOExtended = new SquadraDTOExtended();
+        if(squadraModel.getIdSquadra() != null){
         squadraDTOExtended.setIdSquadra(squadraModel.getIdSquadra());
+        }
+        if(squadraModel.getNome()!= null){
         squadraDTOExtended.setNome(squadraModel.getNome());
+        }
+        if(squadraModel.getColoriSociali() != null){
         squadraDTOExtended.setColoriSociali(squadraModel.getColoriSociali());
+        }
         return squadraDTOExtended;
     }
 
     public static SquadraModel squadraDtoExtendedToModel(SquadraDTOExtended squadraDTOExtended) {
         SquadraModel squadraModel = new SquadraModel();
-        squadraModel.setIdSquadra(null);
-        squadraModel.setNome(squadraDTOExtended.getNome());
+        if(squadraDTOExtended.getIdSquadra()!= null){
+            squadraModel.setIdSquadra(squadraDTOExtended.getIdSquadra());
+        }
+        if(squadraDTOExtended.getNome() != null){
+        squadraModel.setNome(squadraDTOExtended.getNome());}
+        if(squadraDTOExtended.getColoriSociali() != null){
         squadraModel.setColoriSociali(squadraDTOExtended.getColoriSociali());
+        }
         return squadraModel;
     }
 

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.reactive.academy.springMvc.exception.ErrorResponse;
 import it.reactive.academy.springMvc.resource.Giocatore;
+import it.reactive.academy.springMvc.service.GiocatoreService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,13 @@ import javax.validation.constraints.Min;
 @Validated
 public class GiocatoreController {
 
+    private final GiocatoreService giocatoreService;
+
+    public GiocatoreController(GiocatoreService giocatoreService) {
+        this.giocatoreService = giocatoreService;
+    }
+
+
     @ApiOperation(value = "Aumenta di 1 le ammonizioni", response = Giocatore.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Giocatore aggiornato con successo"),
@@ -33,7 +41,7 @@ public class GiocatoreController {
     @PutMapping("/updateAmmonizioni/{id}")
     public ResponseEntity<Giocatore> aumentaAmmonizioni(@Valid @PathVariable @ApiParam(value = "id giocatore", required = true)
                                                         @Min(value = 0, message = "L'ID deve essere positivo")
-                                                        @Max(value = 9999, message = "L'ID deve essere inferiore a 10000") Long id) {
-        return ResponseEntity.ok(new Giocatore());
+                                                        @Max(value = 9999, message = "L'ID deve essere inferiore a 10000") Integer id) {
+        return ResponseEntity.ok(giocatoreService.updateAmmonizioni(id));
     }
 }

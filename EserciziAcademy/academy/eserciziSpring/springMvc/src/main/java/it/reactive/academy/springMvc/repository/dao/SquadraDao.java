@@ -1,18 +1,21 @@
 package it.reactive.academy.springMvc.repository.dao;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
-import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
-@Repository
 public interface SquadraDao {
-    SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended);
 
-    List<SquadraDTOExtended> readTeamsAndPlayers();
+    SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException;
 
-    List<SquadraDTOExtended> readAll();
+    List<SquadraDTOExtended> readTeamsAndPlayers() throws SQLException;
 
+    List<SquadraDTOExtended> readAll() throws SQLException;
+
+    boolean checkSquadraByName(String nomeSquadra) throws SQLException;
+
+    SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException;
 
     SquadraDTOExtended update(int id, SquadraDTOExtended squadraDTOExtended);
 

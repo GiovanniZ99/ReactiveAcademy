@@ -13,7 +13,10 @@ public class GiocatoreMapper {
         GiocatoreDTOExtended giocatoreDTOExtended = new GiocatoreDTOExtended();
         giocatoreDTOExtended.setIdGiocatore(giocatoreModel.getIdGiocatore());
         giocatoreDTOExtended.setNomeCognome(giocatoreModel.getNomeCognome());
-        giocatoreDTOExtended.setSquadra(SquadraMapper.squadraModelToDtoExtendended(giocatoreModel.getSquadra()));
+        giocatoreDTOExtended.setNumeroAmmonizioni(giocatoreModel.getNumeroAmmonizioni());
+        if(giocatoreModel.getSquadra() != null) {
+            giocatoreDTOExtended.setSquadra(SquadraMapper.squadraModelToDtoExtendended(giocatoreModel.getSquadra()));
+        }
         return giocatoreDTOExtended;
     }
 
@@ -25,13 +28,21 @@ public class GiocatoreMapper {
 
     public static GiocatoreModel giocatoreDtoExtendedToModel(GiocatoreDTOExtended giocatoreDTOExtended) {
         GiocatoreModel giocatoreModel = new GiocatoreModel();
-        giocatoreModel.setNomeCognome(giocatoreDTOExtended.getNomeCognome());
-        giocatoreModel.setNumeroAmmonizioni(giocatoreModel.getNumeroAmmonizioni());
-        giocatoreModel.setSquadra(SquadraMapper.squadraDtoExtendedToModel(giocatoreDTOExtended.getSquadra()));
+        if(giocatoreDTOExtended.getNomeCognome()!= null) {
+            giocatoreModel.setNomeCognome(giocatoreDTOExtended.getNomeCognome());
+        }
+        if(giocatoreDTOExtended.getNumeroAmmonizioni() != null) {
+            giocatoreModel.setNumeroAmmonizioni(giocatoreModel.getNumeroAmmonizioni());
+        }
+        if(giocatoreDTOExtended.getSquadra()!= null) {
+            giocatoreModel.setSquadra(SquadraMapper.squadraDtoExtendedToModel(giocatoreDTOExtended.getSquadra()));
+            giocatoreModel.getSquadra().setIdSquadra(giocatoreDTOExtended.getSquadra().getIdSquadra());
+        }
+        if(giocatoreDTOExtended.getTrasferimenti()!= null){
         giocatoreModel.setTrasferimenti(giocatoreDTOExtended.getTrasferimenti()
                 .stream()
                 .map(elem -> TrasferimentiMapper.trasferimentiDtoExtendedToModel(elem))
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet()));}
         return giocatoreModel;
     }
 

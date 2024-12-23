@@ -13,13 +13,11 @@ public class Squadra {
     public Squadra() {}
 
     public Squadra(Integer idSquadra, String nome, String coloriSociali, Set<Giocatore> giocatori, Tifoseria tifoseria, Set<Torneo> tornei) {
-        super();
         this.idSquadra = idSquadra;
         this.nome = nome;
         this.coloriSociali = coloriSociali;
         this.giocatori = giocatori;
         this.tifoseria = tifoseria;
-
     }
 
     public Integer getIdSquadra() {
