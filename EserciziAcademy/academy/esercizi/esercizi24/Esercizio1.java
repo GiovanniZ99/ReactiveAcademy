@@ -30,63 +30,38 @@ public class Esercizio1 {
         Random random = new Random();
         int biglie = (random.nextInt(91)) + 10;
         System.out.println("Il numero di biglie iniziale è: " + biglie);
-        Scanner scanner = new Scanner(System.in);
         int livelloDifficoltaComputer = random.nextInt(2);
         System.out.println("Il livello di difficolta è: " + livelloDifficoltaComputer);
-        int turno = random.nextInt(2);
+        int turnoIniziale = random.nextInt(2);
 
-        if (livelloDifficoltaComputer == 1) {
-            while (biglie > 1) {
-                if (turno == 0) {
-                    int biglieScelte;
-                    do {
-                        biglieScelte = scegliBiglie(scanner, biglie);
-                    } while (biglieScelte == 0);
-                    biglie -= biglieScelte;
-                    System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
-                    turno = 1;
-                } else {
-                    biglie -= getBiglieIntelligente(biglie);
-                    System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
-                    turno = 0;
-                }
-
-            }
-        }else{
-            while (biglie > 1) {
-                if (turno == 0) {
-                    int biglieScelte;
-                    do {
-                        biglieScelte = scegliBiglie(scanner, biglie);
-                    } while (biglieScelte == 0);
-                    biglie -= biglieScelte;
-                    System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
-                    turno = 1;
-                } else {
-                    biglie -= getBiglieStupido(biglie);
-                    System.out.printf("Il numero di biglie rimaste é: %d %n", biglie);
-                    turno = 0;
-                }
-            }
-        }
-        System.out.println("L'ultimo giocatore ha perso");
-        scanner.close();
+        gioca(biglie, turnoIniziale, livelloDifficoltaComputer);
     }
 
-    // non funziona (?)
-    /*private static int getBiglieIntelligente(int biglie) {
-        int numeroBigliePrelevatoDalComprIntelligente = (int) Math.pow(2, Math.floor(Math.log(biglie) / Math.log(2)) - 1);
-        if (biglie == 3 || biglie == 7 || biglie == 15 || biglie == 31 || biglie == 63) {
-            Random random = new Random();
-            int maxPrelevare = biglie / 2;
-            int numeroBigliePrelevato = random.nextInt(maxPrelevare) + 1;
-            System.out.println("Il computer ha preso " + numeroBigliePrelevato + " biglia/e");
-            return numeroBigliePrelevato;
-        }
+    private static void gioca(int biglie, int turno, int livelloDifficoltaComputer) {
+        while (biglie > 1) {
+            if (turno == 0) {
+                int biglieScelte;
 
-        System.out.println("Il computer ha preso " + numeroBigliePrelevatoDalComprIntelligente + " biglia/e");
-        return (biglie-numeroBigliePrelevatoDalComprIntelligente);
-    }*/
+                do {
+                   biglieScelte = scegliBiglie(biglie);
+                } while (biglieScelte == 0);
+                biglie -= biglieScelte;
+                System.out.printf("Il numero di biglie rimaste è: %d %n", biglie);
+                turno = 1;
+            } else {
+                if(livelloDifficoltaComputer ==1){
+                    biglie -= getBiglieIntelligente(biglie);
+                }else{
+                    biglie -= getBiglieStupido(biglie);
+                }
+                System.out.printf("Il numero di biglie rimaste è: %d %n", biglie);
+                turno = 0;
+            }
+            if(biglie ==1){
+                checkVincitore(turno);
+            }
+        }
+    }
 
     private static int getBiglieIntelligente(int biglie) {
         int target = (int) (Math.pow(2, Math.floor(Math.log(biglie) / Math.log(2))) - 1);
@@ -113,7 +88,7 @@ public class Esercizio1 {
         return numeroBigliePrelevato;
     }
 
-    private static int scegliBiglie(Scanner scanner, int biglie) {
+    private static int scegliBiglie(int biglie) {
         System.out.println("Scegli il numero di biglie");
         int numeroBigliePrelevato;
         numeroBigliePrelevato = scanner.nextInt();
@@ -123,5 +98,12 @@ public class Esercizio1 {
         }
         System.out.println("Hai inserito un numero di biglie non valido, riprova");
         return 0;
+    }
+    private static void checkVincitore(int turno){
+            if(turno == 0){
+                System.out.println("Hai perso...");
+            }else{
+                System.out.println("Complimenti, hai vinto!");
+            }
     }
 }
