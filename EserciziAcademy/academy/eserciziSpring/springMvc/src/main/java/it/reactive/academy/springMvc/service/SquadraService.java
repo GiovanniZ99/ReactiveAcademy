@@ -108,37 +108,36 @@ public class SquadraService {
             throw new RuntimeException(e);
         }
         SquadraDTOExtended squadraDTOExtended = SquadraDiGiocatoriMapper.squadraDiGiocatoriToDTOExtended(squadraDiGiocatori);
-        // il metodo .create fa perdere i giocatori ai dto extended, squadraDtoResult non li ha
-        SquadraDTOExtended squadraDTOResult;
+
         try {
-            squadraDTOResult = squadraDao.create(squadraDTOExtended);
+          squadraDTOExtended = squadraDao.create(squadraDTOExtended);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        // quindi glieli setto prendendoli da squadraDtoExtended
-        squadraDTOResult.setGiocatori(squadraDTOExtended.getGiocatori());
-        // i giocatori di squadraDtoResult non hanno la squadra quindi la setto
-        for (GiocatoreDTOExtended elem : squadraDTOResult.getGiocatori()) {
-            elem.setSquadra(squadraDTOResult);
-        }
-        // inserisco i giocatori nel db
-        Set<GiocatoreDTOExtended> giocatori;
+        SquadraDTOExtended finalSquadraDTOExtended = squadraDTOExtended;
+        squadraDTOExtended.getGiocatori().forEach(elem -> elem.setSquadra(finalSquadraDTOExtended));
         try {
-            giocatori = giocatoreDao.createAll(squadraDTOResult.getGiocatori());
+            squadraDTOExtended.setGiocatori(giocatoreDao.createAll(squadraDTOExtended.getGiocatori()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        // setto i giocaotri risultanti che hanno anche l'id
-        squadraDTOResult.setGiocatori(giocatori);
-        return SquadraMapper.squadraDtoExtendedToResource(squadraDTOResult);
+        return SquadraMapper.squadraDtoExtendedToResource(squadraDTOExtended);
     }
 
     public List<Squadra> read(Boolean completo) {
         if (completo) {
             try {
-                return squadraDao.readTeamsAndPlayers()
-                        .stream()
-                        .map(SquadraMapper::squadraDtoExtendedToResource).collect(Collectors.toList());
+                List<SquadraDTOExtended> listaSquadreDtoExt = squadraDao.readAll();
+                listaSquadreDtoExt.forEach(elem-> {
+                    try {
+                        elem.setGiocatori(giocatoreDao.readAllByTeam(elem));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                return listaSquadreDtoExt.stream()
+                        .map(SquadraMapper::squadraDtoExtendedToResource)
+                        .collect(Collectors.toList());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -153,6 +152,11 @@ public class SquadraService {
             throw new RuntimeException(e);
         }
     }
-
-
+    public void delete(Integer id){
+        try {
+            squadraDao.delete(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

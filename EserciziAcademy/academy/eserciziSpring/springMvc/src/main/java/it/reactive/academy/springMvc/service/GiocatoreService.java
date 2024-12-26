@@ -5,6 +5,8 @@ import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.resource.Giocatore;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
+
 @Service
 public class GiocatoreService {
 
@@ -15,6 +17,11 @@ public class GiocatoreService {
     }
 
     public Giocatore updateAmmonizioni(Integer id){
-       return GiocatoreMapper.giocatoreDTOExtendedToResource(giocatoreDao.updateAmmonizioni(id));
+        try {
+            giocatoreDao.updateAmmonizioni(id);
+            return GiocatoreMapper.giocatoreDTOExtendedToResource(giocatoreDao.findGiocatoreById(id));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

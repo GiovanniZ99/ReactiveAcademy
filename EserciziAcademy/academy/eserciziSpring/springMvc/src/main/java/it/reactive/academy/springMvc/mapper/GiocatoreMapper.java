@@ -36,7 +36,6 @@ public class GiocatoreMapper {
         }
         if(giocatoreDTOExtended.getSquadra()!= null) {
             giocatoreModel.setSquadra(SquadraMapper.squadraDtoExtendedToModel(giocatoreDTOExtended.getSquadra()));
-            giocatoreModel.getSquadra().setIdSquadra(giocatoreDTOExtended.getSquadra().getIdSquadra());
         }
         if(giocatoreDTOExtended.getTrasferimenti()!= null){
         giocatoreModel.setTrasferimenti(giocatoreDTOExtended.getTrasferimenti()

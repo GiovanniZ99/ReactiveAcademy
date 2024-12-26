@@ -9,15 +9,11 @@ public interface SquadraDao {
 
     SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException;
 
-    List<SquadraDTOExtended> readTeamsAndPlayers() throws SQLException;
-
     List<SquadraDTOExtended> readAll() throws SQLException;
-
-    boolean checkSquadraByName(String nomeSquadra) throws SQLException;
 
     SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException;
 
-    SquadraDTOExtended update(int id, SquadraDTOExtended squadraDTOExtended);
+    boolean checkSquadraByName(String nomeSquadra) throws SQLException;
 
-    SquadraDTOExtended delete(int id);
+    void delete(Integer id) throws SQLException;
 }

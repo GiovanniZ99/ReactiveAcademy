@@ -40,7 +40,7 @@ public class SquadraMapper {
             squadra.setIdSquadra(squadraDTOExtended.getIdSquadra());
             squadra.setNome(squadraDTOExtended.getNome());
             squadra.setColoriSociali(squadraDTOExtended.getColoriSociali());
-        if (squadra.getTifoseria() != null) {
+        if (squadraDTOExtended.getTifoseria() != null) {
             squadra.setTifoseria(TifoseriaMapper.tifoseriaDtoExtendedToResource(squadraDTOExtended.getTifoseria()));
         }
         if(squadraDTOExtended.getGiocatori() != null) {

@@ -9,6 +9,7 @@ import it.reactive.academy.springMvc.exception.ErrorResponse;
 import it.reactive.academy.springMvc.resource.Squadra;
 import it.reactive.academy.springMvc.resource.Tifoseria;
 import it.reactive.academy.springMvc.service.SquadraService;
+import it.reactive.academy.springMvc.service.TifoseriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,8 +29,10 @@ public class SquadraController {
 
     private final SquadraService squadraService;
 
-    public SquadraController(SquadraService squadraService) {
+    private final TifoseriaService tifoseriaService;
+    public SquadraController(SquadraService squadraService, TifoseriaService tifoseriaService) {
         this.squadraService = squadraService;
+        this.tifoseriaService = tifoseriaService;
     }
 
     @ApiOperation(value = "inserimento nuova squadra", response = Squadra.class)
@@ -64,14 +67,15 @@ public class SquadraController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Success | OK"), @ApiResponse(code = 550, message = "C4 Squadra non presente \n" +
             "C6 Errore di validazione", response = ErrorResponse.class)})
     @PutMapping("/addTifoseria/{id}")
-    public ResponseEntity<Tifoseria> aggiornaSquadraConTifoseria(@PathVariable @ApiParam(value = "id squadra", required = true) @Min(value = 0) @Max(value = 9999) Long id,
+    public ResponseEntity<Tifoseria> aggiornaSquadraConTifoseria(@PathVariable @ApiParam(value = "id squadra", required = true) @Min(value = 0) @Max(value = 9999) Integer id,
                                                                @Valid @RequestBody TifoseriaDTO tifoseriaDTO) {
-        return ResponseEntity.ok(new Tifoseria());
+        return ResponseEntity.ok(tifoseriaService.create(tifoseriaDTO,id));
     }
 
     @ApiOperation(value = "rimuovi una squadra")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSquadra(@PathVariable @ApiParam(value = "id squadra", required = true) @Min(0) @Max(9999) Long id) {
+    public ResponseEntity<Void> deleteSquadra(@PathVariable @ApiParam(value = "id squadra", required = true) @Min(0) @Max(9999) Integer id) {
+        squadraService.delete(id);
         return ResponseEntity.noContent().build();
     }
 

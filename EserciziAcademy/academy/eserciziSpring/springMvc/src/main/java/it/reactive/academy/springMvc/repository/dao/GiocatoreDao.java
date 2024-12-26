@@ -12,14 +12,12 @@ public interface GiocatoreDao {
 
     Set<GiocatoreDTOExtended> createAll(Set<GiocatoreDTOExtended> giocatoreDTOExtended) throws SQLException;
 
-    Set<GiocatoreDTOExtended> readAll() throws SQLException;
     Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException;
 
     GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException;
 
     boolean checkdByName(String input) throws SQLException;
 
-    GiocatoreDTOExtended updateAmmonizioni(int id);
+    void updateAmmonizioni(Integer id) throws SQLException;
 
-    GiocatoreDTOExtended delete(int id);
 }

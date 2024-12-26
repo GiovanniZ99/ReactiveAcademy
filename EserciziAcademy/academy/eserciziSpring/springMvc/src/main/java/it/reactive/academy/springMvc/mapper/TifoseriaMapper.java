@@ -12,23 +12,28 @@ public class TifoseriaMapper {
         tifoseria.setNomeTifoseria(tifoseriaDTOExtended.getNomeTifoseria());
         return tifoseria;
     }
-    public static TifoseriaDTOExtended tifoseriaToDtoExtended(Tifoseria tifoseria){
-        TifoseriaDTOExtended tifoseriaDTOExtended = new TifoseriaDTOExtended();
-        tifoseriaDTOExtended.setIdTifoseria(tifoseria.getIdTifoseria());
-        tifoseriaDTOExtended.setNomeTifoseria(tifoseria.getNomeTifoseria());
-        return tifoseriaDTOExtended;
-    }
+
     public static TifoseriaDTOExtended tifoseriaDTOToDTOExtended(TifoseriaDTO tifoseriaDTO){
         TifoseriaDTOExtended tifoseriaDTOExtended = new TifoseriaDTOExtended();
         tifoseriaDTOExtended.setNomeTifoseria(tifoseriaDTO.getNomeTifoseria());
         return tifoseriaDTOExtended;
     }
+    public static TifoseriaDTOExtended tifoseriaModelToDtoExtended(TifoseriaModel tifoseriaModel){
+        TifoseriaDTOExtended tifoseriaDTOExtended = new TifoseriaDTOExtended();
+        tifoseriaDTOExtended.setIdTifoseria(tifoseriaModel.getIdTifoseria());
+        tifoseriaDTOExtended.setNomeTifoseria(tifoseriaModel.getNomeTifoseria());
+        if(tifoseriaModel.getSquadra()!=null) {
+            tifoseriaDTOExtended.setSquadra(SquadraMapper.squadraModelToDtoExtendended(tifoseriaModel.getSquadra()));
+        }
+        return tifoseriaDTOExtended;
+    }
     public static TifoseriaModel tifoseriaDtoExtendedToModel(TifoseriaDTOExtended tifoseriaDTOExtended){
         TifoseriaModel tifoseriaModel = new TifoseriaModel();
         tifoseriaModel.setIdTifoseria(tifoseriaDTOExtended.getIdTifoseria());
-        tifoseriaModel.setNomeTifoseria(tifoseriaModel.getNomeTifoseria());
-        tifoseriaModel.setSquadra(
-                SquadraMapper.squadraDtoExtendedToModel(tifoseriaDTOExtended.getSquadra()));
+        tifoseriaModel.setNomeTifoseria(tifoseriaDTOExtended.getNomeTifoseria());
+        if(tifoseriaDTOExtended.getSquadra()!= null) {
+            tifoseriaModel.setSquadra(SquadraMapper.squadraDtoExtendedToModel(tifoseriaDTOExtended.getSquadra()));
+        }
         return tifoseriaModel;
     }
 }

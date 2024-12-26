@@ -30,29 +30,27 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
         GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
         try {
-            Statement statement = databaseConfig.getCon().createStatement();
-            String s = "insert into giocatore (nome_cognome, numero_ammonizioni, id_squadra) values ('" +
-                    giocatoreModel.getNomeCognome() + "', " +
-                    giocatoreModel.getNumeroAmmonizioni() + ", " +
-                    giocatoreModel.getSquadra().getIdSquadra() + ")";
-            statement.executeUpdate(s);
-            databaseConfig.getCon().commit();
+            ResultSet rs;
+            try (Statement statement = databaseConfig.getCon().createStatement()) {
+                String s = "insert into giocatore (nome_cognome,id_squadra) values ('" +
+                        giocatoreModel.getNomeCognome() + "', " +
+                        giocatoreModel.getSquadra().getIdSquadra() + ")";
+                statement.executeUpdate(s);
+                databaseConfig.getCon().commit();
 
-            ResultSet rs = statement.executeQuery("select * from giocatore where nome_cognome = '"
-                    + giocatoreModel.getNomeCognome() + "'");
-            if (rs.next()) {
-                giocatoreModel.setIdGiocatore(rs.getInt(1));
-                giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-                giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+                rs = statement.executeQuery("select * from giocatore where nome_cognome = '"
+                        + giocatoreModel.getNomeCognome() + "'");
+
+                if (rs.next()) {
+                    giocatoreModel.setIdGiocatore(rs.getInt(1));
+                    giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
+                }
             }
-
         } catch (SQLException e) {
             if (databaseConfig.getCon() != null) {
                 databaseConfig.getCon().rollback();
             }
             throw new RuntimeException(e);
-        } finally {
-            databaseConfig.getCon().close();
         }
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
@@ -62,65 +60,39 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         Set<GiocatoreModel> giocatoriModel = giocatoriDTOExtended.stream()
                 .map(GiocatoreMapper::giocatoreDtoExtendedToModel)
                 .collect(Collectors.toSet());
-
+        Set<GiocatoreModel> giocatoriResult = new HashSet<>();
         try {
-            Statement statement = databaseConfig.getCon().createStatement();
-            for (GiocatoreModel giocatoreModel : giocatoriModel) {
-                String s = "insert into giocatore (nome_cognome, numero_ammonizioni, id_squadra) values ('" +
-                        giocatoreModel.getNomeCognome() + "', " +
-                        giocatoreModel.getNumeroAmmonizioni() + ", " +
-                        giocatoreModel.getSquadra().getIdSquadra() + ")";
-                statement.executeUpdate(s);
+            try (Statement statement = databaseConfig.getCon().createStatement()) {
+                for (GiocatoreModel giocatoreModel : giocatoriModel) {
+                    String s = "insert into giocatore (nome_cognome, id_squadra) values ('" +
+                            giocatoreModel.getNomeCognome() + "', " +
+                            giocatoreModel.getSquadra().getIdSquadra() + ")";
+                    statement.executeUpdate(s);
+                }
                 databaseConfig.getCon().commit();
 
+                GiocatoreModel giocatoreModel = giocatoriModel.stream().findAny().get();
                 ResultSet rs = statement.executeQuery("select * from giocatore where id_squadra = "
                         + giocatoreModel.getSquadra().getIdSquadra());
 
                 while (rs.next()) {
-                    for (GiocatoreModel giocatoreResult : giocatoriModel) {
-                        giocatoreResult.setIdGiocatore(rs.getInt(1));
-                        giocatoreResult.setNomeCognome(rs.getString("nome_cognome"));
-                        giocatoreResult.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
-                        giocatoreResult.setSquadra(giocatoreModel.getSquadra());
-                    }
+                    GiocatoreModel giocatoreModel1 = new GiocatoreModel();
+                    giocatoreModel1.setIdGiocatore(rs.getInt("id"));
+                    giocatoreModel1.setNomeCognome(rs.getString("nome_cognome"));
+                    giocatoreModel1.setSquadra(giocatoreModel.getSquadra());
+
+                    giocatoriResult.add(giocatoreModel1);
                 }
             }
-
         } catch (SQLException e) {
             if (databaseConfig.getCon() != null) {
                 databaseConfig.getCon().rollback();
             }
             throw new RuntimeException(e);
-        } finally {
-            databaseConfig.closeCon();
         }
-        return giocatoriModel.stream()
+        return giocatoriResult.stream()
                 .map(GiocatoreMapper::giocatoreModelToDTOExtended)
                 .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<GiocatoreDTOExtended> readAll() throws SQLException {
-        Set<GiocatoreDTOExtended> listaGiocatori = new HashSet<>();
-        try {
-            Statement statement = databaseConfig.getCon().createStatement();
-            String s = "select * from giocatore";
-            ResultSet resultGiocatori = statement.executeQuery(s);
-
-            while (resultGiocatori.next()) {
-                GiocatoreModel giocatoreModel = new GiocatoreModel();
-                giocatoreModel.setIdGiocatore(resultGiocatori.getInt("id"));
-                giocatoreModel.setNomeCognome(resultGiocatori.getString("nome_cognome"));
-                giocatoreModel.setNumeroAmmonizioni(resultGiocatori.getInt("numero_ammonizioni"));
-                listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
-            }
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
-        }
-        return listaGiocatori;
     }
 
     @Override
@@ -128,18 +100,21 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         Set<GiocatoreDTOExtended> listaGiocatori = new HashSet<>();
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
         try {
-            Statement statement = databaseConfig.getCon().createStatement();
-            String s = "select * from giocatore where id_squadra = "
-                    + squadraModel.getIdSquadra();
-            ResultSet resultGiocatori = statement.executeQuery(s);
+            ResultSet resultGiocatori;
+            try (Statement statement = databaseConfig.getCon().createStatement()) {
+                String s = "select * from giocatore where id_squadra = "
+                        + squadraModel.getIdSquadra();
+                resultGiocatori = statement.executeQuery(s);
 
-            while (resultGiocatori.next()) {
-                GiocatoreModel giocatoreModel = new GiocatoreModel();
-                giocatoreModel.setIdGiocatore(resultGiocatori.getInt("id"));
-                giocatoreModel.setNomeCognome(resultGiocatori.getString("nome_cognome"));
-                giocatoreModel.setNumeroAmmonizioni(resultGiocatori.getInt("numero_ammonizioni"));
-                giocatoreModel.setSquadra(squadraModel);
-                listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
+
+                while (resultGiocatori.next()) {
+                    GiocatoreModel giocatoreModel = new GiocatoreModel();
+                    giocatoreModel.setIdGiocatore(resultGiocatori.getInt("id"));
+                    giocatoreModel.setNomeCognome(resultGiocatori.getString("nome_cognome"));
+                    giocatoreModel.setNumeroAmmonizioni(resultGiocatori.getInt("numero_ammonizioni"));
+                    giocatoreModel.setSquadra(squadraModel);
+                    listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
+                }
             }
         } catch (SQLException e) {
             if (databaseConfig.getCon() != null) {
@@ -152,11 +127,13 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     public boolean checkdByName(String nomeGiocatore) throws SQLException {
         try {
-            Statement statement = databaseConfig.getCon().createStatement();
-            String s = "select * from squadra where nome = '" + nomeGiocatore + "'";
-            ResultSet rs = statement.executeQuery(s);
-            return rs.next();
+            ResultSet rs;
+            try (Statement statement = databaseConfig.getCon().createStatement()) {
+                String s = "select * from squadra where nome = '" + nomeGiocatore + "'";
+                rs = statement.executeQuery(s);
 
+                return rs.next();
+            }
         } catch (SQLException e) {
             if (databaseConfig.getCon() != null) {
                 databaseConfig.getCon().rollback();
@@ -169,53 +146,41 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
         GiocatoreModel giocatoreModel = new GiocatoreModel();
         try {
-            Statement statement = databaseConfig.getCon().createStatement();
-            String s = "select * from squadra where id = " + id;
-            ResultSet rs = statement.executeQuery(s);
-            if (rs.next()) {
-                giocatoreModel.setIdGiocatore(rs.getInt("id"));
-                giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-                giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+            ResultSet rs;
+            try (Statement statement = databaseConfig.getCon().createStatement()) {
+                String s = "select * from giocatore where id = " + id;
+                rs = statement.executeQuery(s);
+
+                if (rs.next()) {
+                    giocatoreModel.setIdGiocatore(rs.getInt("id"));
+                    giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
+                    giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+                }
             }
-
         } catch (SQLException e) {
+            if (databaseConfig.getCon() != null) {
+                databaseConfig.getCon().rollback();
+            }
             throw new RuntimeException(e);
         }
-        if (databaseConfig.getCon() != null) {
-            databaseConfig.getCon().rollback();
-        }
+
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
 
     @Override
-    public GiocatoreDTOExtended updateAmmonizioni(int id) {
-        GiocatoreDTOExtended giocatoreDTOExtended;
+    public void updateAmmonizioni(Integer id) throws SQLException {
         try {
-            giocatoreDTOExtended = findGiocatoreById(id);
+            try (Statement statement = databaseConfig.getCon().createStatement()) {
+                String s = "update giocatore set numero_ammonizioni = numero_ammonizioni +1" +
+                        " where id = " + id;
+                statement.executeUpdate(s);
+                databaseConfig.getCon().commit();
+            }
         } catch (SQLException e) {
+            if (databaseConfig.getCon() != null) {
+                databaseConfig.getCon().rollback();
+            }
             throw new RuntimeException(e);
         }
-        GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
-        try {
-            Statement statement = databaseConfig.getCon().createStatement();
-            String s = "update giocatore set numero_ammonizioni = numero_ammonizioni +1" +
-                    " where id = " + id;
-            statement.executeUpdate(s);
-
-           ResultSet rs = statement.executeQuery("select * from giocatore where id = " + id);
-           if(rs.next()) {
-               giocatoreModel.setIdGiocatore(rs.getInt("id"));
-               giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-               giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
-           }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
-    }
-
-    @Override
-    public GiocatoreDTOExtended delete(int id) {
-        return null;
     }
 }
