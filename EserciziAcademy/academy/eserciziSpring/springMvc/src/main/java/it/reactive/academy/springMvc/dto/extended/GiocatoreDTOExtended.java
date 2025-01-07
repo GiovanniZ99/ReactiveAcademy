@@ -1,7 +1,5 @@
 package it.reactive.academy.springMvc.dto.extended;
 
-import it.reactive.academy.springMvc.resource.Squadra;
-
 import java.util.Set;
 
 public class GiocatoreDTOExtended {
