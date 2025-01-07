@@ -10,7 +10,6 @@ import it.reactive.academy.springMvc.resource.Squadra;
 import it.reactive.academy.springMvc.resource.Tifoseria;
 import it.reactive.academy.springMvc.service.SquadraService;
 import it.reactive.academy.springMvc.service.TifoseriaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

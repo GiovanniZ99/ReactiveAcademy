@@ -1,38 +1,30 @@
 package it.reactive.academy.springMvc.configuration;
 
+import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-@Component
-@Scope(scopeName = "prototype")
+@Configuration
+@EnableTransactionManagement
 public class DatabaseConfig {
-    private final Connection con;
+    private PGSimpleDataSource dataSource;
 
-    public DatabaseConfig(@Value("${spring.datasource.url}") String url,
-                          @Value("${spring.datasource.username}") String username,
-                          @Value("${spring.datasource.password}") String password) {
-        try {
-            con = DriverManager.getConnection(url, username, password);
-            con.setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    @Bean
+    public DataSource createDataBaseConnection(@Value("${spring.datasource.url}") String url, @Value("${spring.datasource.username}") String username, @Value("${spring.datasource.password}") String password) {
+        dataSource = new PGSimpleDataSource();
+        dataSource.setURL(url);
+        dataSource.setUser(username);
+        dataSource.setPassword(password);
+        return dataSource;
     }
 
-    public Connection getCon() {
-        return con;
-    }
-
-    public void closeCon() {
-        try {
-            con.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public Connection getCon() throws SQLException {
+        return dataSource.getConnection();
     }
 }

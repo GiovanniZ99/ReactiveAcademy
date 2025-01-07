@@ -4,6 +4,7 @@ import it.reactive.academy.springMvc.mapper.GiocatoreMapper;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.resource.Giocatore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 
@@ -16,6 +17,7 @@ public class GiocatoreService {
         this.giocatoreDao = giocatoreDao;
     }
 
+    @Transactional
     public Giocatore updateAmmonizioni(Integer id){
         try {
             giocatoreDao.updateAmmonizioni(id);

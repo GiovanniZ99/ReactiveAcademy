@@ -15,6 +15,7 @@ import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.resource.Squadra;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ public class SquadraService {
         this.giocatoreDao = giocatoreDao;
     }
 
+    @Transactional
     public Squadra create(SquadraDTO input) {
         if (input == null) {
             throw new SquadraNonPresenteException("Squadra inserita assente");
@@ -56,6 +58,7 @@ public class SquadraService {
         return SquadraMapper.squadraDtoExtendedToResource(squadraDTOResult);
     }
 
+    @Transactional
     public Squadra addPlayer(Integer idSquadra, GiocatoreDTO giocatoreDTO) {
         GiocatoreDTOExtended giocatoreDTOExtended = GiocatoreMapper.giocatoreDTOToDtoExtended(giocatoreDTO);
         SquadraDTOExtended squadraDTOExtended;
@@ -68,7 +71,7 @@ public class SquadraService {
             throw new SquadraNonPresenteException("Squadra non presente");
         }
         try {
-            if (giocatoreDao.checkdByName(giocatoreDTO.getNomeCognome())) {
+            if (giocatoreDao.checkByName(giocatoreDTO.getNomeCognome())) {
                 throw new GiocatoreGiaCensitoException("Giocatore già censito");
             }
         } catch (SQLException e) {
@@ -96,6 +99,7 @@ public class SquadraService {
         return SquadraMapper.squadraDtoExtendedToResource(squadraDTOExtended);
     }
 
+    @Transactional
     public Squadra createWithPlayers(SquadraDiGiocatoriDTO squadraDiGiocatori) {
         if (squadraDiGiocatori == null) {
             throw new SquadraNonPresenteException("Squadra inserita assente");
@@ -124,6 +128,7 @@ public class SquadraService {
         return SquadraMapper.squadraDtoExtendedToResource(squadraDTOExtended);
     }
 
+    @Transactional
     public List<Squadra> read(Boolean completo) {
         if (completo) {
             try {
@@ -152,6 +157,7 @@ public class SquadraService {
             throw new RuntimeException(e);
         }
     }
+
     public void delete(Integer id){
         try {
             squadraDao.delete(id);

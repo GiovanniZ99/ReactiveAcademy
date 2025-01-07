@@ -1,19 +1,22 @@
-package it.reactive.academy.springMvc.repository.statement;
+package it.reactive.academy.springMvc.repository.preparedstatement;
 
+import it.reactive.academy.springMvc.configuration.Costanti;
 import it.reactive.academy.springMvc.configuration.DatabaseConfig;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Profile(Costanti.TORNEO_DAO_JDBC_PREPAREDSTATEMENT)
 public class SquadraDaoImpl implements SquadraDao {
 
     private final DatabaseConfig databaseConfig;
@@ -26,31 +29,21 @@ public class SquadraDaoImpl implements SquadraDao {
     public SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
 
-        try {
-            ResultSet rs;
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
+        try (PreparedStatement psInsert = databaseConfig.getCon().prepareStatement(
+                "insert into squadra (nome, colori_sociali) values (?, ?)")) {
+            psInsert.setString(1, squadraModel.getNome());
+            psInsert.setString(2, squadraModel.getColoriSociali());
+            psInsert.executeUpdate();
 
-                statement.executeUpdate("insert into squadra (nome, colori_sociali) values ('"
-                        + squadraModel.getNome() + "', '" + squadraModel.getColoriSociali() + "')");
-                databaseConfig.getCon().commit();
-
-                String s = "Select id, nome, colori_sociali " +
-                        "from squadra" +
-                        " where nome = '"
-                        + squadraModel.getNome()
-                        + "' and  colori_sociali =  '" + squadraModel.getColoriSociali() + "'";
-                rs = statement.executeQuery(s);
-
+            try (ResultSet rs = psInsert.getGeneratedKeys()) {
                 if (rs.next()) {
                     squadraModel.setIdSquadra(rs.getInt(1));
                     squadraModel.setNome(rs.getString(2));
                     squadraModel.setColoriSociali(rs.getString(3));
                 }
             }
-        } catch (SQLException e) {
-            databaseConfig.getCon().rollback();
-            throw new RuntimeException(e);
         }
+
         SquadraDTOExtended squadraResult = SquadraMapper.squadraModelToDtoExtendended(squadraModel);
         squadraResult.setGiocatori(squadraDTOExtended.getGiocatori());
         return squadraResult;
@@ -58,27 +51,18 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public List<SquadraDTOExtended> readAll() throws SQLException {
-        List<SquadraDTOExtended> listaSquadra = new LinkedList<>();
+        List<SquadraDTOExtended> listaSquadra = new ArrayList<>();
 
-        try {
-            ResultSet rs;
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
-                String s = "select * from squadra";
-                rs = statement.executeQuery(s);
+        try (PreparedStatement psSelect = databaseConfig.getCon().prepareStatement("select * from squadra")) {
+            ResultSet rs = psSelect.executeQuery();
 
-                while (rs.next()) {
-                    SquadraModel squadraModel = new SquadraModel();
-                    squadraModel.setIdSquadra(rs.getInt(1));
-                    squadraModel.setNome(rs.getString(2));
-                    squadraModel.setColoriSociali(rs.getString(3));
-                    listaSquadra.add(SquadraMapper.squadraModelToDtoExtendended(squadraModel));
-                }
+            while (rs.next()) {
+                SquadraModel squadraModel = new SquadraModel();
+                squadraModel.setIdSquadra(rs.getInt(1));
+                squadraModel.setNome(rs.getString(2));
+                squadraModel.setColoriSociali(rs.getString(3));
+                listaSquadra.add(SquadraMapper.squadraModelToDtoExtendended(squadraModel));
             }
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
         }
         return listaSquadra;
     }
@@ -86,63 +70,56 @@ public class SquadraDaoImpl implements SquadraDao {
     @Override
     public SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException {
         SquadraModel squadraModel = new SquadraModel();
-        try {
-            ResultSet rs;
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
-                String s = "select * from squadra where id = " + idSquadra;
-                rs = statement.executeQuery(s);
 
-                if (rs.next()) {
-                    squadraModel.setIdSquadra(rs.getInt("id"));
-                    squadraModel.setNome(rs.getString("nome"));
-                    squadraModel.setColoriSociali(rs.getString("colori_sociali"));
-                }
+        try (PreparedStatement psSelect = databaseConfig.getCon().prepareStatement(
+                "select id, nome, colori_sociali from squadra where id = ?")) {
+            psSelect.setInt(1, idSquadra);
+            ResultSet rs = psSelect.executeQuery();
+
+            if (rs.next()) {
+                squadraModel.setIdSquadra(rs.getInt("id"));
+                squadraModel.setNome(rs.getString("nome"));
+                squadraModel.setColoriSociali(rs.getString("colori_sociali"));
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
-        if (databaseConfig.getCon() != null) {
-            databaseConfig.getCon().rollback();
-        }
+
         return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
     }
 
     @Override
     public boolean checkSquadraByName(String nomeSquadra) throws SQLException {
-        try {
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
-                String s = "select * from squadra where nome = '" + nomeSquadra + "'";
-                ResultSet rs = statement.executeQuery(s);
+        try (PreparedStatement psSelect = databaseConfig.getCon().prepareStatement(
+                "select id from squadra where nome = ?")) {
+            psSelect.setString(1, nomeSquadra);
+            ResultSet rs = psSelect.executeQuery();
 
-                return rs.next();
-            }
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
+            return rs.next();
         }
     }
 
     @Override
     public void delete(Integer id) throws SQLException {
-        try {
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
-                String s = "delete from squadra_torneo where id_squadra =" + id;
-                statement.executeUpdate(s);
-                String s1 = "delete from tifoseria where id_squadra = " + id;
-                statement.executeUpdate(s1);
-                String s2 = "delete from giocatore where id_squadra = " + id;
-                statement.executeUpdate(s2);
-                String s3 = "delete from squadra where id = " + id;
-                statement.executeUpdate(s3);
-                databaseConfig.getCon().commit();
-            }
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
+        try (PreparedStatement psDeleteSquadraTorneo = databaseConfig.getCon().prepareStatement(
+                "delete from squadra_torneo where id_squadra = ?");
+             PreparedStatement psDeleteTifoseria = databaseConfig.getCon().prepareStatement(
+                     "delete from tifoseria where id_squadra = ?");
+             PreparedStatement psDeleteGiocatore = databaseConfig.getCon().prepareStatement(
+                     "delete from giocatore where id_squadra = ?");
+             PreparedStatement psDeleteSquadra = databaseConfig.getCon().prepareStatement(
+                     "delete from squadra where id = ?")) {
+
+            psDeleteSquadraTorneo.setInt(1, id);
+            psDeleteSquadraTorneo.executeUpdate();
+
+            psDeleteTifoseria.setInt(1, id);
+            psDeleteTifoseria.executeUpdate();
+
+            psDeleteGiocatore.setInt(1, id);
+            psDeleteGiocatore.executeUpdate();
+
+            psDeleteSquadra.setInt(1, id);
+            psDeleteSquadra.executeUpdate();
+
         }
     }
 }

@@ -16,7 +16,7 @@ public interface GiocatoreDao {
 
     GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException;
 
-    boolean checkdByName(String input) throws SQLException;
+    boolean checkByName(String input) throws SQLException;
 
     void updateAmmonizioni(Integer id) throws SQLException;
 

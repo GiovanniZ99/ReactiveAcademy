@@ -1,5 +1,6 @@
 package it.reactive.academy.springMvc.repository.statement;
 
+import it.reactive.academy.springMvc.configuration.Costanti;
 import it.reactive.academy.springMvc.configuration.DatabaseConfig;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
@@ -9,6 +10,7 @@ import it.reactive.academy.springMvc.mapper.SquadraTorneoMapper;
 import it.reactive.academy.springMvc.mapper.TifoseriaMapper;
 import it.reactive.academy.springMvc.model.*;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -18,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Repository
+@Profile(Costanti.TORNEO_DAO_JDBC_STATEMENT)
 public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
     private final DatabaseConfig databaseConfig;
@@ -29,12 +32,10 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     @Override
     public SquadraTorneoDTOExtended create(Integer idTorneo, Integer idSquadra) throws SQLException {
         SquadraTorneoModel squadraTorneoModel = new SquadraTorneoModel();
-        try {
             try (Statement statement = databaseConfig.getCon().createStatement()) {
                 String s = "insert into squadra_torneo (id_squadra, id_torneo) values(" +
                         idSquadra + "," + idTorneo + ")";
                 statement.executeUpdate(s);
-                databaseConfig.getCon().commit();
                 ResultSet rs = statement.executeQuery("select * from squadra_torneo where id_squadra = " +
                         idSquadra + " and id_torneo = " + idTorneo);
                 if (rs.next()) {
@@ -43,19 +44,12 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                 }
             }
 
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
-        }
         return SquadraTorneoMapper.squadraModelToDtoExtended(squadraTorneoModel);
     }
 
     @Override
     public Set<Integer> readAllTeams(Integer idTorneo) throws SQLException {
         Set<Integer> setIdSquadre = new HashSet<>();
-        try {
             try (Statement statement = databaseConfig.getCon().createStatement()) {
                 String s = "select id_squadra from squadra_torneo where id_torneo = " + idTorneo;
                 ResultSet rs = statement.executeQuery(s);
@@ -63,13 +57,6 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                     setIdSquadre.add(rs.getInt(1));
                 }
             }
-
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
-        }
         return setIdSquadre;
     }
 
@@ -83,7 +70,7 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         torneoDTOExtended.setSquadre(new HashSet<>());
         SquadraDTOExtended squadraDTOExtended = new SquadraDTOExtended();
         squadraDTOExtended.setGiocatori(new HashSet<>());
-        try {
+
             try (Statement statement = databaseConfig.getCon().createStatement()) {
                 String s = "select * from torneo t " +
                         "join squadra_torneo st on t.id = st.id_torneo " +
@@ -125,12 +112,6 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                 }
                 tornei.add(torneoDTOExtended);
             }
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
-        }
         return tornei;
     }
 }

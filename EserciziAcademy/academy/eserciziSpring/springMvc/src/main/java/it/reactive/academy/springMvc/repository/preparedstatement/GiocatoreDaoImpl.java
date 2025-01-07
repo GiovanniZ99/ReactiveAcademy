@@ -1,5 +1,6 @@
 package it.reactive.academy.springMvc.repository.preparedstatement;
 
+import it.reactive.academy.springMvc.configuration.Costanti;
 import it.reactive.academy.springMvc.configuration.DatabaseConfig;
 import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
@@ -8,6 +9,7 @@ import it.reactive.academy.springMvc.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.model.GiocatoreModel;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
@@ -19,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
+@Profile(Costanti.TORNEO_DAO_JDBC_PREPAREDSTATEMENT)
 public class GiocatoreDaoImpl implements GiocatoreDao {
 
     private final DatabaseConfig databaseConfig;
@@ -30,7 +33,6 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     @Override
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
         GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
-        try {
             try (PreparedStatement ps = databaseConfig.getCon().prepareStatement(
                     "insert into giocatore (nome_cognome, id_squadra) values (?, ?)",
                     Statement.RETURN_GENERATED_KEYS)) {
@@ -44,14 +46,8 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                         giocatoreModel.setIdGiocatore(rs.getInt(1));
                     }
                 }
-                databaseConfig.getCon().commit();
             }
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
-        }
+
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
 
@@ -71,7 +67,6 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             }
 
             psInsert.executeUpdate();
-            databaseConfig.getCon().commit();
 
             try (ResultSet rs = psInsert.getGeneratedKeys()) {
                 while (rs.next()) {
@@ -82,13 +77,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                     giocatoriResult.add(giocatoreModel);
                 }
             }
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
         }
-
         return giocatoriResult.stream()
                 .map(GiocatoreMapper::giocatoreModelToDTOExtended)
                 .collect(Collectors.toSet());
@@ -113,8 +102,6 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 giocatoreModel.setSquadra(squadraModel);
                 listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
 
         return listaGiocatori;
@@ -126,8 +113,6 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             ps.setString(1, nomeGiocatore);
             ResultSet rs = ps.executeQuery();
             return rs.next();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -144,8 +129,6 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
                 giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
@@ -157,12 +140,6 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 "update giocatore set numero_ammonizioni = numero_ammonizioni + 1 where id = ?")) {
             ps.setInt(1, id);
             ps.executeUpdate();
-            databaseConfig.getCon().commit();
-        } catch (SQLException e) {
-            if (databaseConfig.getCon() != null) {
-                databaseConfig.getCon().rollback();
-            }
-            throw new RuntimeException(e);
         }
     }
 }

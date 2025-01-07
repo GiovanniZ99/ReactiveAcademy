@@ -5,11 +5,11 @@ import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 import it.reactive.academy.springMvc.exception.SquadraNonPresenteException;
 import it.reactive.academy.springMvc.exception.TorneoNonTrovatoException;
-import it.reactive.academy.springMvc.mapper.SquadraTorneoMapper;
 import it.reactive.academy.springMvc.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.repository.dao.*;
 import it.reactive.academy.springMvc.resource.Torneo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -33,6 +33,7 @@ public class SquadraTorneoService {
         this.tifoseriaDao = tifoseriaDao;
     }
 
+    @Transactional
     public Torneo create(Integer idTorneo, Integer idSquadra) {
         try {
             TorneoDTOExtended torneoDTOExtended = torneoDao.findById(idTorneo);
@@ -59,7 +60,6 @@ public class SquadraTorneoService {
             torneoDTOExtended.getSquadre().forEach(elem -> {
                 try {
                     elem.setGiocatori(giocatoreDao.readAllByTeam(elem));
-                    // inutile perché nella resource non c'é la tifoseria
                     elem.setTifoseria(tifoseriaDao.readByTeam(squadraDTOExtended));
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -73,8 +73,7 @@ public class SquadraTorneoService {
 
     public List<Torneo> readAll(){
         try {
-         List<Torneo> torneo= squadraTorneoDao.readAllTorneo().stream().map(TorneoMapper::torneoDtoExtendedToResource).collect(Collectors.toList());
-         return torneo;
+            return squadraTorneoDao.readAllTorneo().stream().map(TorneoMapper::torneoDtoExtendedToResource).collect(Collectors.toList());
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }

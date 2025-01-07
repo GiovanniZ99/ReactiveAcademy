@@ -9,6 +9,7 @@ import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
 import it.reactive.academy.springMvc.resource.Tifoseria;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 
@@ -22,6 +23,7 @@ public class TifoseriaService {
         this.squadraDao = squadraDao;
     }
 
+    @Transactional
     public Tifoseria create(TifoseriaDTO tifoseriaDTO, Integer idSquadra) {
         TifoseriaDTOExtended tifoseriaDTOExtended = TifoseriaMapper.tifoseriaDTOToDTOExtended(tifoseriaDTO);
         try {

@@ -5,6 +5,7 @@ import it.reactive.academy.springMvc.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.resource.Torneo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 
@@ -17,6 +18,7 @@ public class TorneoService {
         this.torneoDao = torneoDao;
     }
 
+    @Transactional
     public Torneo create(TorneoDTO torneoDTO){
         try {
           return TorneoMapper.torneoDtoExtendedToResource(torneoDao.create(torneoDTO.getNomeTorneo()));
@@ -24,6 +26,7 @@ public class TorneoService {
             throw new RuntimeException(e);
         }
     }
+
     public void delete(Integer id){
         try {
             torneoDao.delete(id);
