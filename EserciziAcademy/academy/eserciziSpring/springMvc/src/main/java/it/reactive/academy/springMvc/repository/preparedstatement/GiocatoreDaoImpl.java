@@ -1,7 +1,6 @@
 package it.reactive.academy.springMvc.repository.preparedstatement;
 
-import it.reactive.academy.springMvc.configuration.Costanti;
-import it.reactive.academy.springMvc.configuration.DatabaseConfig;
+import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.mapper.GiocatoreMapper;
@@ -10,13 +9,14 @@ import it.reactive.academy.springMvc.model.GiocatoreModel;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,16 +24,18 @@ import java.util.stream.Collectors;
 @Profile(Costanti.TORNEO_DAO_JDBC_PREPAREDSTATEMENT)
 public class GiocatoreDaoImpl implements GiocatoreDao {
 
-    private final DatabaseConfig databaseConfig;
+    private final PlatformTransactionManager transactionManager;
 
-    public GiocatoreDaoImpl(DatabaseConfig databaseConfig) {
-        this.databaseConfig = databaseConfig;
+    public GiocatoreDaoImpl(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     @Override
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
         GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
-            try (PreparedStatement ps = databaseConfig.getCon().prepareStatement(
+
+        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+        try (PreparedStatement ps = con.prepareStatement(
                     "insert into giocatore (nome_cognome, id_squadra) values (?, ?)",
                     Statement.RETURN_GENERATED_KEYS)) {
 
@@ -58,23 +60,21 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 .collect(Collectors.toSet());
         Set<GiocatoreModel> giocatoriResult = new HashSet<>();
 
-        try (PreparedStatement psInsert = databaseConfig.getCon().prepareStatement(
+        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+
+        try (PreparedStatement psInsert = con.prepareStatement(
                 "insert into giocatore (nome_cognome, id_squadra) values (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
             for (GiocatoreModel giocatoreModel : giocatoriModel) {
                 psInsert.setString(1, giocatoreModel.getNomeCognome());
                 psInsert.setInt(2, giocatoreModel.getSquadra().getIdSquadra());
-            }
+                psInsert.executeUpdate();
 
-            psInsert.executeUpdate();
-
-            try (ResultSet rs = psInsert.getGeneratedKeys()) {
-                while (rs.next()) {
-                    GiocatoreModel giocatoreModel = new GiocatoreModel();
-                    giocatoreModel.setIdGiocatore(rs.getInt(1));
-                    giocatoreModel.setNomeCognome(rs.getString(2));
-                    giocatoreModel.setSquadra(giocatoriModel.iterator().next().getSquadra());
-                    giocatoriResult.add(giocatoreModel);
+                try (ResultSet rs = psInsert.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        giocatoreModel.setIdGiocatore(rs.getInt(1));
+                        giocatoriResult.add(giocatoreModel);
+                    }
                 }
             }
         }
@@ -89,7 +89,8 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         Set<GiocatoreDTOExtended> listaGiocatori = new HashSet<>();
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
 
-        try (PreparedStatement ps = databaseConfig.getCon().prepareStatement(
+        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+        try (PreparedStatement ps = con.prepareStatement(
                 "select * from giocatore where id_squadra = ?")) {
             ps.setInt(1, squadraModel.getIdSquadra());
             ResultSet resultGiocatori = ps.executeQuery();
@@ -108,7 +109,9 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     }
 
     public boolean checkByName(String nomeGiocatore) throws SQLException {
-        try (PreparedStatement ps = databaseConfig.getCon().prepareStatement(
+        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+
+        try (PreparedStatement ps = con.prepareStatement(
                 "select id from squadra where nome = ?")) {
             ps.setString(1, nomeGiocatore);
             ResultSet rs = ps.executeQuery();
@@ -120,7 +123,8 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
         GiocatoreModel giocatoreModel = new GiocatoreModel();
 
-        try (PreparedStatement ps = databaseConfig.getCon().prepareStatement(
+        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+        try (PreparedStatement ps = con.prepareStatement(
                 "select id, nome_cognome, numero_ammonizioni from giocatore where id = ?")) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -136,7 +140,8 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public void updateAmmonizioni(Integer id) throws SQLException {
-        try (PreparedStatement ps = databaseConfig.getCon().prepareStatement(
+        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+        try (PreparedStatement ps = con.prepareStatement(
                 "update giocatore set numero_ammonizioni = numero_ammonizioni + 1 where id = ?")) {
             ps.setInt(1, id);
             ps.executeUpdate();

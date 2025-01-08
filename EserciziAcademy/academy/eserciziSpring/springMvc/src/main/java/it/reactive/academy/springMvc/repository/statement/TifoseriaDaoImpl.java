@@ -1,7 +1,6 @@
 package it.reactive.academy.springMvc.repository.statement;
 
-import it.reactive.academy.springMvc.configuration.Costanti;
-import it.reactive.academy.springMvc.configuration.DatabaseConfig;
+import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
 import it.reactive.academy.springMvc.mapper.SquadraMapper;
@@ -10,39 +9,45 @@ import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.model.TifoseriaModel;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Objects;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_JDBC_STATEMENT)
 public class TifoseriaDaoImpl implements TifoseriaDao {
 
-    private final DatabaseConfig databaseConfig;
+    private final PlatformTransactionManager transactionManager;
 
-    public TifoseriaDaoImpl(DatabaseConfig databaseConfig) {
-        this.databaseConfig = databaseConfig;
+    public TifoseriaDaoImpl(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     @Override
     public TifoseriaDTOExtended createWithTeam(TifoseriaDTOExtended tifoseriaDTOExtended, Integer idSquadra) throws SQLException {
         TifoseriaModel tifoseriaModel = TifoseriaMapper.tifoseriaDtoExtendedToModel(tifoseriaDTOExtended);
 
-            ResultSet rs;
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
-                String s = "insert into tifoseria (nome_tifoseria, id_squadra) values('" +
-                        tifoseriaModel.getNomeTifoseria() + "', " +
-                        idSquadra + ")";
-                statement.executeUpdate(s);
-                rs = statement.executeQuery("Select * from tifoseria where id_squadra = "
-                        + idSquadra);
+        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+             Statement statement = con.createStatement()) {
 
+            String s = "insert into tifoseria (nome_tifoseria, id_squadra) values('" +
+                    tifoseriaModel.getNomeTifoseria() + "', " +
+                    idSquadra + ")";
+            statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
+
+            try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
                     tifoseriaModel.setIdTifoseria(rs.getInt(1));
                 }
             }
+        }
 
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
@@ -51,14 +56,18 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         TifoseriaModel tifoseriaModel = new TifoseriaModel();
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
 
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
-                String s = "select * from tifoseria where id_squadra = " + squadraModel.getIdSquadra();
-                ResultSet rs = statement.executeQuery(s);
+        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+             Statement statement = con.createStatement()) {
+
+            String s = "select * from tifoseria where id_squadra = " + squadraModel.getIdSquadra();
+            try (ResultSet rs = statement.executeQuery(s)) {
                 if (rs.next()) {
                     tifoseriaModel.setIdTifoseria(rs.getInt("id"));
                     tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
                 }
             }
+        }
+
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
 
@@ -66,18 +75,22 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
     public TifoseriaDTOExtended updateName(String name, Integer idSquadra) throws SQLException {
         TifoseriaModel tifoseriaModel = new TifoseriaModel();
 
-            try (Statement statement = databaseConfig.getCon().createStatement()) {
-                String s = "update tifoseria set nome_tifoseria '" +
-                        name + "' where id_squadra = " + idSquadra;
-                statement.executeUpdate(s);
+        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+             Statement statement = con.createStatement()) {
 
-                ResultSet rs = statement.executeQuery("select * from tifoseria where nome_tifoseria = '" +
-                        name + "'");
+            String s = "update tifoseria set nome_tifoseria = '" +
+                    name + "' where id_squadra = " + idSquadra;
+            statement.executeUpdate(s);
+
+            try (ResultSet rs = statement.executeQuery("select * from tifoseria where nome_tifoseria = '" +
+                    name + "'")) {
                 if (rs.next()) {
                     tifoseriaModel.setIdTifoseria(rs.getInt("id"));
                     tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
                 }
             }
+        }
+
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
 }
