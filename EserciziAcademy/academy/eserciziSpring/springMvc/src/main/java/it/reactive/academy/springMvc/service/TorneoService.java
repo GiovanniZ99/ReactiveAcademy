@@ -1,7 +1,7 @@
 package it.reactive.academy.springMvc.service;
 
 import it.reactive.academy.springMvc.dto.TorneoDTO;
-import it.reactive.academy.springMvc.mapper.TorneoMapper;
+import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.resource.Torneo;
 import org.springframework.stereotype.Service;

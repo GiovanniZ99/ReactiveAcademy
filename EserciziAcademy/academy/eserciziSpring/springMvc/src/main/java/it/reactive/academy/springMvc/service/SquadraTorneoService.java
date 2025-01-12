@@ -5,7 +5,7 @@ import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 import it.reactive.academy.springMvc.exception.SquadraNonPresenteException;
 import it.reactive.academy.springMvc.exception.TorneoNonTrovatoException;
-import it.reactive.academy.springMvc.mapper.TorneoMapper;
+import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.repository.dao.*;
 import it.reactive.academy.springMvc.resource.Torneo;
 import org.springframework.stereotype.Service;

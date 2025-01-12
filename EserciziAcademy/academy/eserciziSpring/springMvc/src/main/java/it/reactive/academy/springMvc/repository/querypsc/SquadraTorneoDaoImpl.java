@@ -1,6 +1,5 @@
-package it.reactive.academy.springMvc.repository.preparedstatement;
+package it.reactive.academy.springMvc.repository.querypsc;
 
-import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
@@ -9,48 +8,35 @@ import it.reactive.academy.springMvc.utility.mapper.SquadraTorneoMapper;
 import it.reactive.academy.springMvc.utility.mapper.TifoseriaMapper;
 import it.reactive.academy.springMvc.model.*;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
+import it.reactive.academy.springMvc.utility.Costanti;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.PlatformTransactionManager;
 
-import java.sql.*;
-
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Repository
-@Profile(Costanti.TORNEO_DAO_JDBC_PREPAREDSTATEMENT)
+@Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY_PSC)
 public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
-    private final PlatformTransactionManager transactionManager;
+    private final JdbcTemplate jdbcTemplate;
 
-    public SquadraTorneoDaoImpl(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+    public SquadraTorneoDaoImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public SquadraTorneoDTOExtended create(Integer idTorneo, Integer idSquadra) throws SQLException {
         SquadraTorneoModel squadraTorneoModel = new SquadraTorneoModel();
-
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-
-        try (PreparedStatement ps = con.prepareStatement(
-                "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)")){
-
-            ps.setInt(1, idSquadra);
-            ps.setInt(2, idTorneo);
-            ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    squadraTorneoModel.setIdSquadra(rs.getInt(1));
-                    squadraTorneoModel.setIdTorneo(rs.getInt(2));
-                }
-            }
-        }
+        String s = "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)";
+        jdbcTemplate.update(s, idSquadra, idTorneo);
+        squadraTorneoModel.setIdSquadra(idSquadra);
+        squadraTorneoModel.setIdTorneo(idTorneo);
         return SquadraTorneoMapper.squadraModelToDtoExtended(squadraTorneoModel);
     }
 
@@ -58,17 +44,17 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     public Set<Integer> readAllTeams(Integer idTorneo) throws SQLException {
         Set<Integer> setIdSquadre = new HashSet<>();
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select id_squadra from squadra_torneo where id_torneo = ?")) {
-
-            ps.setInt(1, idTorneo);
-            try (ResultSet rs = ps.executeQuery()) {
+        String s = "select id_squadra from squadra_torneo where id_torneo = ?";
+        ResultSetExtractor<Set<Integer>> rse = new ResultSetExtractor<Set<Integer>>() {
+            @Override
+            public Set<Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
                 while (rs.next()) {
                     setIdSquadre.add(rs.getInt(1));
                 }
+                return setIdSquadre;
             }
-        }
+        };
+        jdbcTemplate.query(s, rse, idTorneo);
         return setIdSquadre;
     }
 
@@ -76,15 +62,14 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     public Set<TorneoDTOExtended> readAllTorneo() throws SQLException {
         Set<TorneoDTOExtended> tornei = new HashSet<>();
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select * from torneo t " +
-                        "join squadra_torneo st on t.id = st.id_torneo " +
-                        "join squadra s on st.id_squadra = s.id " +
-                        "join giocatore g on s.id = g.id_squadra " +
-                        "join tifoseria ti on s.id = ti.id_squadra")) {
-
-            try (ResultSet rs = ps.executeQuery()) {
+        String s = "select * from torneo t " +
+                "join squadra_torneo st on t.id = st.id_torneo " +
+                "join squadra s on st.id_squadra = s.id " +
+                "join giocatore g on s.id = g.id_squadra " +
+                "join tifoseria ti on s.id = ti.id_squadra";
+        ResultSetExtractor <Set<TorneoDTOExtended>> rse = new ResultSetExtractor<Set<TorneoDTOExtended>>() {
+            @Override
+            public Set<TorneoDTOExtended> extractData(ResultSet rs) throws SQLException, DataAccessException {
                 TorneoDTOExtended torneoDTOExtended = null;
                 while (rs.next()) {
                     TorneoModel torneoModel = new TorneoModel();
@@ -120,10 +105,12 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                     torneoDTOExtended.setNomeTorneo(torneoModel.getNomeTorneo());
 
                     torneoDTOExtended.getSquadre().add(squadraDTOExtended);
+                    tornei.add(torneoDTOExtended);
                 }
-                tornei.add(torneoDTOExtended);
+                return tornei;
             }
-        }
+        };
+        jdbcTemplate.query(s, rse);
         return tornei;
     }
 }

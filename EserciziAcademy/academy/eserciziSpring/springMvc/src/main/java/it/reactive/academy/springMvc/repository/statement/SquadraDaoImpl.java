@@ -2,7 +2,7 @@ package it.reactive.academy.springMvc.repository.statement;
 
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
-import it.reactive.academy.springMvc.mapper.SquadraMapper;
+import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import org.springframework.context.annotation.Profile;

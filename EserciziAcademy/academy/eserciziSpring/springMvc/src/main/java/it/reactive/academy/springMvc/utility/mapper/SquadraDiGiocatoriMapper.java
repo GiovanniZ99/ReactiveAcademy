@@ -1,8 +1,7 @@
-package it.reactive.academy.springMvc.mapper;
+package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.SquadraDiGiocatoriDTO;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
-import it.reactive.academy.springMvc.dto.extended.SquadraDiGiocatoriDTOExtended;
 
 import java.util.stream.Collectors;
 

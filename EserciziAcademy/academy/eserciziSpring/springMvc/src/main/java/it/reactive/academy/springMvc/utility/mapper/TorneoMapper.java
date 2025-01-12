@@ -1,4 +1,4 @@
-package it.reactive.academy.springMvc.mapper;
+package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.TorneoDTO;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;

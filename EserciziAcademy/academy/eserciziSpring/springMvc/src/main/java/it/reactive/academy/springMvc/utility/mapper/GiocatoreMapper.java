@@ -1,4 +1,4 @@
-package it.reactive.academy.springMvc.mapper;
+package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.GiocatoreDTO;
 import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;

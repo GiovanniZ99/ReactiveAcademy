@@ -2,7 +2,7 @@ package it.reactive.academy.springMvc.repository.statement;
 
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.mapper.TorneoMapper;
+import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.model.TorneoModel;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import org.springframework.context.annotation.Profile;

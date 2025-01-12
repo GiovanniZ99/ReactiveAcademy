@@ -1,6 +1,6 @@
 package it.reactive.academy.springMvc.service;
 
-import it.reactive.academy.springMvc.mapper.GiocatoreMapper;
+import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.resource.Giocatore;
 import org.springframework.stereotype.Service;

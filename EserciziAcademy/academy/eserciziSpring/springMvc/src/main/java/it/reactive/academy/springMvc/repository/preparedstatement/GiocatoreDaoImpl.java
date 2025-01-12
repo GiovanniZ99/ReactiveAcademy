@@ -3,8 +3,8 @@ package it.reactive.academy.springMvc.repository.preparedstatement;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
-import it.reactive.academy.springMvc.mapper.GiocatoreMapper;
-import it.reactive.academy.springMvc.mapper.SquadraMapper;
+import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
+import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.model.GiocatoreModel;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
@@ -112,7 +112,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
 
         try (PreparedStatement ps = con.prepareStatement(
-                "select id from squadra where nome = ?")) {
+                "select id from giocatore where nome_cognome = ?")) {
             ps.setString(1, nomeGiocatore);
             ResultSet rs = ps.executeQuery();
             return rs.next();

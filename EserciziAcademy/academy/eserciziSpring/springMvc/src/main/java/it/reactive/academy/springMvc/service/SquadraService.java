@@ -8,9 +8,9 @@ import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.exception.GiocatoreGiaCensitoException;
 import it.reactive.academy.springMvc.exception.SquadraGiaCensitaException;
 import it.reactive.academy.springMvc.exception.SquadraNonPresenteException;
-import it.reactive.academy.springMvc.mapper.GiocatoreMapper;
-import it.reactive.academy.springMvc.mapper.SquadraDiGiocatoriMapper;
-import it.reactive.academy.springMvc.mapper.SquadraMapper;
+import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
+import it.reactive.academy.springMvc.utility.mapper.SquadraDiGiocatoriMapper;
+import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.resource.Squadra;
@@ -130,7 +130,7 @@ public class SquadraService {
 
     @Transactional
     public List<Squadra> read(Boolean completo) {
-        if (completo) {
+        if (Boolean.TRUE.equals(completo)) {
             try {
                 List<SquadraDTOExtended> listaSquadreDtoExt = squadraDao.readAll();
                 listaSquadreDtoExt.forEach(elem-> {

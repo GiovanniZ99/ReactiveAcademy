@@ -4,7 +4,7 @@ import it.reactive.academy.springMvc.dto.TifoseriaDTO;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
 import it.reactive.academy.springMvc.exception.SquadraNonPresenteException;
-import it.reactive.academy.springMvc.mapper.TifoseriaMapper;
+import it.reactive.academy.springMvc.utility.mapper.TifoseriaMapper;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
 import it.reactive.academy.springMvc.resource.Tifoseria;

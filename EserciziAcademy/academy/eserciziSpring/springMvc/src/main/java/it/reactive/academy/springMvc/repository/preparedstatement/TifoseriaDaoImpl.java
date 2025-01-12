@@ -3,8 +3,8 @@ package it.reactive.academy.springMvc.repository.preparedstatement;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
-import it.reactive.academy.springMvc.mapper.SquadraMapper;
-import it.reactive.academy.springMvc.mapper.TifoseriaMapper;
+import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
+import it.reactive.academy.springMvc.utility.mapper.TifoseriaMapper;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.model.TifoseriaModel;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
@@ -73,24 +73,17 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
     @Override
     public TifoseriaDTOExtended updateName(String nomeTifoseria, Integer idSquadra) throws SQLException {
         TifoseriaModel tifoseriaModel = new TifoseriaModel();
+        tifoseriaModel.setSquadra(new SquadraModel());
+        tifoseriaModel.getSquadra().setIdSquadra(idSquadra);
         tifoseriaModel.setNomeTifoseria(nomeTifoseria);
 
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
         try (PreparedStatement ps = con.prepareStatement(
-                "update tifoseria set nome_tifoseria = ? where id_squadra = ?",
-                Statement.RETURN_GENERATED_KEYS)) {
-
+                "update tifoseria set nome_tifoseria = ? where id_squadra = ?")){
             ps.setString(1, nomeTifoseria);
             ps.setInt(2, idSquadra);
             ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    tifoseriaModel.setIdTifoseria(rs.getInt(1));
-                }
-            }
         }
-
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
 
