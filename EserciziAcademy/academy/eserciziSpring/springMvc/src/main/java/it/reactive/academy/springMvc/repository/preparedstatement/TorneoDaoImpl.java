@@ -44,6 +44,8 @@ public class TorneoDaoImpl implements TorneoDao {
                 }
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }
 
@@ -63,6 +65,9 @@ public class TorneoDaoImpl implements TorneoDao {
                 }
             }
         }
+
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }
 
@@ -83,5 +88,6 @@ public class TorneoDaoImpl implements TorneoDao {
                 ps2.executeUpdate();
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
     }
 }

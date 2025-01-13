@@ -20,7 +20,9 @@ public class TifoseriaMapper {
     }
     public static TifoseriaDTOExtended tifoseriaModelToDtoExtended(TifoseriaModel tifoseriaModel){
         TifoseriaDTOExtended tifoseriaDTOExtended = new TifoseriaDTOExtended();
-        tifoseriaDTOExtended.setIdTifoseria(tifoseriaModel.getIdTifoseria());
+        if(tifoseriaModel.getIdTifoseria() != null) {
+            tifoseriaDTOExtended.setIdTifoseria(tifoseriaModel.getIdTifoseria());
+        }
         tifoseriaDTOExtended.setNomeTifoseria(tifoseriaModel.getNomeTifoseria());
         if(tifoseriaModel.getSquadra()!=null) {
             tifoseriaDTOExtended.setSquadra(SquadraMapper.squadraModelToDtoExtendended(tifoseriaModel.getSquadra()));

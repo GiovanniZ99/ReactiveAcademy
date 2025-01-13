@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Repository
-@Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY)
+@Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY_FOR_X)
 public class TifoseriaDaoImpl implements TifoseriaDao {
 
     private final JdbcTemplate jdbcTemplate;

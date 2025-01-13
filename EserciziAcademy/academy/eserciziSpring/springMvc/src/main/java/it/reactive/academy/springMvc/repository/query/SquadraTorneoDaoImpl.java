@@ -69,7 +69,8 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                 "join squadra_torneo st on t.id = st.id_torneo " +
                 "join squadra s on st.id_squadra = s.id " +
                 "join giocatore g on s.id = g.id_squadra " +
-                "join tifoseria ti on s.id = ti.id_squadra";
+                "join tifoseria ti on s.id = ti.id_squadra "+
+                "order by t.id, s.id";
         MapSqlParameterSource emptyParams = new MapSqlParameterSource();
        List<TorneoModel> sqlListaResult = namedParameterJdbcTemplate.query(s, emptyParams, new BeanPropertyRowMapper<>(TorneoModel.class));
 

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.SQLException;
 
 @Repository
-@Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY)
+@Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY_FOR_X)
 public class TorneoDaoImpl implements TorneoDao {
 
     private final JdbcTemplate jdbcTemplate;

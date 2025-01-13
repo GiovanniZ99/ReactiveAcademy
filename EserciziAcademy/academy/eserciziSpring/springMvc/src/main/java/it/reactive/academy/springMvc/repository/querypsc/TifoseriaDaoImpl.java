@@ -38,9 +38,8 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
 
         PreparedStatementCreator psc = new PreparedStatementCreator() {
             @Override
-            @NonNull
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                PreparedStatement ps = con.prepareStatement("insert into tifoseria (nome_tifoseria, id_squadra) values (?, ?)");
+                PreparedStatement ps = con.prepareStatement("insert into tifoseria (nome_tifoseria, id_squadra) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, tifoseriaModel.getNomeTifoseria());
                 ps.setInt(2, idSquadra);
                 return ps;
@@ -49,7 +48,7 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
 
-        tifoseriaModel.setIdTifoseria(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        tifoseriaModel.setIdTifoseria((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
 

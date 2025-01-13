@@ -11,10 +11,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +32,7 @@ public class SquadraDaoImpl implements SquadraDao {
 
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
         try (PreparedStatement psInsert = con.prepareStatement(
-                "insert into squadra (nome, colori_sociali) values (?, ?)")) {
+                "insert into squadra (nome, colori_sociali) values (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             psInsert.setString(1, squadraModel.getNome());
             psInsert.setString(2, squadraModel.getColoriSociali());
             psInsert.executeUpdate();
@@ -49,6 +46,9 @@ public class SquadraDaoImpl implements SquadraDao {
 
         SquadraDTOExtended squadraResult = SquadraMapper.squadraModelToDtoExtendended(squadraModel);
         squadraResult.setGiocatori(squadraDTOExtended.getGiocatori());
+
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+
         return squadraResult;
     }
 
@@ -68,6 +68,7 @@ public class SquadraDaoImpl implements SquadraDao {
                 listaSquadra.add(SquadraMapper.squadraModelToDtoExtendended(squadraModel));
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return listaSquadra;
     }
 
@@ -87,6 +88,7 @@ public class SquadraDaoImpl implements SquadraDao {
                 squadraModel.setColoriSociali(rs.getString("colori_sociali"));
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
     }
@@ -98,6 +100,8 @@ public class SquadraDaoImpl implements SquadraDao {
                 "select id from squadra where nome = ?")) {
             psSelect.setString(1, nomeSquadra);
             ResultSet rs = psSelect.executeQuery();
+
+            DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
             return rs.next();
         }
@@ -128,5 +132,6 @@ public class SquadraDaoImpl implements SquadraDao {
             psDeleteSquadra.executeUpdate();
 
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
     }
 }

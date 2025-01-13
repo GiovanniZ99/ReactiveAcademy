@@ -51,7 +51,7 @@ public class SquadraDaoImpl implements SquadraDao {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
-        squadraModel.setIdSquadra(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        squadraModel.setIdSquadra((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
 
         SquadraDTOExtended squadraResult = SquadraMapper.squadraModelToDtoExtendended(squadraModel);
         squadraResult.setGiocatori(squadraDTOExtended.getGiocatori());
@@ -98,7 +98,7 @@ public class SquadraDaoImpl implements SquadraDao {
             }
         };
 
-       jdbcTemplate.query("select * from squadra where id = "+ idSquadra, rse, idSquadra);
+       jdbcTemplate.query("select * from squadra where id = "+ idSquadra, rse);
         return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
     }
 

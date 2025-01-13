@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.util.Objects;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY)
@@ -35,7 +36,7 @@ public class TorneoDaoImpl implements TorneoDao {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(s, params, keyHolder);
-        torneoModel.setIdTorneo((Integer) keyHolder.getKey());
+        torneoModel.setIdTorneo((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
 
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }

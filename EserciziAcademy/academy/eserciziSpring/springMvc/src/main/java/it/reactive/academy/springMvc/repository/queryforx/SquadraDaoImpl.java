@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-@Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY)
+@Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY_FOR_X)
 public class SquadraDaoImpl implements SquadraDao {
 
     private final JdbcTemplate jdbcTemplate;

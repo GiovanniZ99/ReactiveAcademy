@@ -48,8 +48,11 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 if (rs.next()) {
                     giocatoreModel.setIdGiocatore(rs.getInt(1));
                 }
+            } finally {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
+
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
@@ -70,13 +73,14 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                         giocatoreModel.getSquadra().getIdSquadra() + ")";
                 statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
-
                 try (ResultSet rs = statement.getGeneratedKeys()) {
                     if (rs.next()) {
                         giocatoreModel.setIdGiocatore(rs.getInt(1));
 
                         giocatoriResult.add(giocatoreModel);
                     }
+                }finally {
+                    DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
                 }
             }
         }

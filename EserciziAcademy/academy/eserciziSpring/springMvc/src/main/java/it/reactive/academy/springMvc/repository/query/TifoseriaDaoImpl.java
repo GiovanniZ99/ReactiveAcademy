@@ -40,7 +40,7 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(s, params, keyHolder);
-        tifoseriaModel.setIdTifoseria((Objects.requireNonNull(keyHolder.getKey()).intValue()));
+        tifoseriaModel.setIdTifoseria(((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id"))));
 
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }

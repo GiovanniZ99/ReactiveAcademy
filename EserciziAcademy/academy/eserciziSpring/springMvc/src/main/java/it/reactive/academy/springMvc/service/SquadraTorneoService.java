@@ -2,6 +2,7 @@ package it.reactive.academy.springMvc.service;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
+import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 import it.reactive.academy.springMvc.exception.SquadraNonPresenteException;
 import it.reactive.academy.springMvc.exception.TorneoNonTrovatoException;
@@ -24,7 +25,7 @@ public class SquadraTorneoService {
     private final TorneoDao torneoDao;
     private final GiocatoreDao giocatoreDao;
     private final TifoseriaDao tifoseriaDao;
-    
+
     public SquadraTorneoService(SquadraTorneoDao squadraTorneoDao, SquadraDao squadraDao, TorneoDao torneoDao, GiocatoreDao giocatoreDao, TifoseriaDao tifoseriaDao) {
         this.squadraTorneoDao = squadraTorneoDao;
         this.squadraDao = squadraDao;
@@ -60,7 +61,10 @@ public class SquadraTorneoService {
             torneoDTOExtended.getSquadre().forEach(elem -> {
                 try {
                     elem.setGiocatori(giocatoreDao.readAllByTeam(elem));
-                    elem.setTifoseria(tifoseriaDao.readByTeam(squadraDTOExtended));
+
+                    TifoseriaDTOExtended tifoseria = tifoseriaDao.readByTeam(elem);
+                    tifoseria.setSquadra(elem);
+                    elem.setTifoseria(tifoseria);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -71,10 +75,10 @@ public class SquadraTorneoService {
         }
     }
 
-    public List<Torneo> readAll(){
+    public List<Torneo> readAll() {
         try {
             return squadraTorneoDao.readAllTorneo().stream().map(TorneoMapper::torneoDtoExtendedToResource).collect(Collectors.toList());
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

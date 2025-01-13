@@ -42,7 +42,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
        namedParameterJdbcTemplate.update(s, params, keyHolder);
-        giocatoreModel.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        giocatoreModel.setIdGiocatore((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }

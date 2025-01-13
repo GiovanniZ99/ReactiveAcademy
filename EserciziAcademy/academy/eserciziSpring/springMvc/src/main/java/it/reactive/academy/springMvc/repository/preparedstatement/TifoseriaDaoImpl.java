@@ -67,6 +67,9 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
                 }
             }
         }
+
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
 
@@ -84,6 +87,8 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
             ps.setInt(2, idSquadra);
             ps.executeUpdate();
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
 

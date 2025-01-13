@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 @Repository
@@ -35,13 +36,13 @@ public class TorneoDaoImpl implements TorneoDao {
 
         String s = "insert into torneo (nome_torneo) values (?)";
         PreparedStatementCreator psc = con -> {
-            PreparedStatement ps = con.prepareStatement(s);
+            PreparedStatement ps = con.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, nomeTorneo);
             return ps;
         };
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
-        torneoModel.setIdTorneo(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        torneoModel.setIdTorneo((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
 
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }

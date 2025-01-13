@@ -34,23 +34,19 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     @Override
     public SquadraTorneoDTOExtended create(Integer idTorneo, Integer idSquadra) throws SQLException {
         SquadraTorneoModel squadraTorneoModel = new SquadraTorneoModel();
+        squadraTorneoModel.setIdTorneo(idTorneo);
+        squadraTorneoModel.setIdSquadra(idSquadra);
 
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-
         try (PreparedStatement ps = con.prepareStatement(
-                "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)")){
+                "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)")) {
 
             ps.setInt(1, idSquadra);
             ps.setInt(2, idTorneo);
             ps.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    squadraTorneoModel.setIdSquadra(rs.getInt(1));
-                    squadraTorneoModel.setIdTorneo(rs.getInt(2));
-                }
-            }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return SquadraTorneoMapper.squadraModelToDtoExtended(squadraTorneoModel);
     }
 
@@ -69,6 +65,7 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                 }
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return setIdSquadre;
     }
 
@@ -76,16 +73,22 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     public Set<TorneoDTOExtended> readAllTorneo() throws SQLException {
         Set<TorneoDTOExtended> tornei = new HashSet<>();
 
+        SquadraDTOExtended squadraDTOExtended = new SquadraDTOExtended();
+        squadraDTOExtended.setGiocatori(new HashSet<>());
+        Set<Integer> idSquadre = new HashSet<>();
+        TorneoDTOExtended torneoDTOExtended = new TorneoDTOExtended();
+        torneoDTOExtended.setSquadre(new HashSet<>());
+
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
         try (PreparedStatement ps = con.prepareStatement(
                 "select * from torneo t " +
                         "join squadra_torneo st on t.id = st.id_torneo " +
                         "join squadra s on st.id_squadra = s.id " +
                         "join giocatore g on s.id = g.id_squadra " +
-                        "join tifoseria ti on s.id = ti.id_squadra")) {
+                        "join tifoseria ti on s.id = ti.id_squadra "+
+                        "order by t.id, s.id")) {
 
             try (ResultSet rs = ps.executeQuery()) {
-                TorneoDTOExtended torneoDTOExtended = null;
                 while (rs.next()) {
                     TorneoModel torneoModel = new TorneoModel();
                     SquadraModel squadraModel = new SquadraModel();
@@ -106,24 +109,29 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                     giocatoreModel.setNomeCognome(rs.getString(9));
                     giocatoreModel.setNumeroAmmonizioni(rs.getInt(10));
 
-                    SquadraDTOExtended squadraDTOExtended = new SquadraDTOExtended();
+                    if(!idSquadre.contains(squadraModel.getIdSquadra())){
+                        squadraDTOExtended = new SquadraDTOExtended();
+                        squadraDTOExtended.setGiocatori(new HashSet<>());
+                    }
+                    idSquadre.add(squadraModel.getIdSquadra());
                     squadraDTOExtended.setIdSquadra(squadraModel.getIdSquadra());
                     squadraDTOExtended.setNome(squadraModel.getNome());
                     squadraDTOExtended.setColoriSociali(squadraModel.getColoriSociali());
                     squadraDTOExtended.getGiocatori().add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
                     squadraDTOExtended.setTifoseria(TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel));
-                    if (torneoDTOExtended == null) {
+
+                    if (!Objects.equals(torneoDTOExtended.getIdTorneo(), torneoModel.getIdTorneo())) {
                         torneoDTOExtended = new TorneoDTOExtended();
                         torneoDTOExtended.setSquadre(new HashSet<>());
                     }
                     torneoDTOExtended.setIdTorneo(torneoModel.getIdTorneo());
-                    torneoDTOExtended.setNomeTorneo(torneoModel.getNomeTorneo());
-
                     torneoDTOExtended.getSquadre().add(squadraDTOExtended);
+                    torneoDTOExtended.setNomeTorneo(torneoModel.getNomeTorneo());
+                    tornei.add(torneoDTOExtended);
                 }
-                tornei.add(torneoDTOExtended);
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return tornei;
     }
 }

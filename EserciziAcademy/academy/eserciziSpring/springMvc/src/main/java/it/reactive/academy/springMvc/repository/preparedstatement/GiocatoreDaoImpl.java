@@ -49,6 +49,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                     }
                 }
             }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
@@ -78,6 +79,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 }
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return giocatoriResult.stream()
                 .map(GiocatoreMapper::giocatoreModelToDTOExtended)
                 .collect(Collectors.toSet());
@@ -104,7 +106,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
             }
         }
-
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return listaGiocatori;
     }
 
@@ -115,8 +117,10 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 "select id from giocatore where nome_cognome = ?")) {
             ps.setString(1, nomeGiocatore);
             ResultSet rs = ps.executeQuery();
+            DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             return rs.next();
         }
+
     }
 
     @Override
@@ -134,6 +138,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
             }
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
@@ -146,6 +151,8 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
+        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
     }
+
 }
 
