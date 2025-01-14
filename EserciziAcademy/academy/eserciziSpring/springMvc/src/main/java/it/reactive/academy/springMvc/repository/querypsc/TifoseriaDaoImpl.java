@@ -57,7 +57,6 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         TifoseriaModel tifoseriaResult;
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
 
-
         ResultSetExtractor<TifoseriaModel> rse = new ResultSetExtractor<TifoseriaModel>() {
             @Override
             public TifoseriaModel extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -72,7 +71,9 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         };
         String s = "select id, nome_tifoseria from tifoseria where id_squadra = ?";
         tifoseriaResult = jdbcTemplate.query(s, rse, squadraModel.getIdSquadra());
-
+        if (tifoseriaResult == null) {
+            return new TifoseriaDTOExtended();
+        }
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaResult);
     }
 

@@ -27,26 +27,48 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         this.transactionManager = transactionManager;
     }
 
-
     @Override
     public TifoseriaDTOExtended createWithTeam(TifoseriaDTOExtended tifoseriaDTOExtended, Integer idSquadra) throws SQLException {
         TifoseriaModel tifoseriaModel = TifoseriaMapper.tifoseriaDtoExtendedToModel(tifoseriaDTOExtended);
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "insert into tifoseria (nome_tifoseria, id_squadra) values (?, ?)",
-                Statement.RETURN_GENERATED_KEYS)) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "insert into tifoseria (nome_tifoseria, id_squadra) values (?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, tifoseriaModel.getNomeTifoseria());
             ps.setInt(2, idSquadra);
             ps.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    tifoseriaModel.setIdTifoseria(rs.getInt(1));
+            rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                tifoseriaModel.setIdTifoseria(rs.getInt(1));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
+
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
 
@@ -55,20 +77,40 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         TifoseriaModel tifoseriaModel = new TifoseriaModel();
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select id, nome_tifoseria from tifoseria where id_squadra = ?")) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "select id, nome_tifoseria from tifoseria where id_squadra = ?");
             ps.setInt(1, squadraModel.getIdSquadra());
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    tifoseriaModel.setIdTifoseria(rs.getInt("id"));
-                    tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                tifoseriaModel.setIdTifoseria(rs.getInt("id"));
+                tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }
@@ -80,14 +122,28 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         tifoseriaModel.getSquadra().setIdSquadra(idSquadra);
         tifoseriaModel.setNomeTifoseria(nomeTifoseria);
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "update tifoseria set nome_tifoseria = ? where id_squadra = ?")){
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "update tifoseria set nome_tifoseria = ? where id_squadra = ?");
             ps.setString(1, nomeTifoseria);
             ps.setInt(2, idSquadra);
             ps.executeUpdate();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
     }

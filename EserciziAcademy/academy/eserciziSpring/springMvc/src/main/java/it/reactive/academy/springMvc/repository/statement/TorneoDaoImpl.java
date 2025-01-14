@@ -32,9 +32,13 @@ public class TorneoDaoImpl implements TorneoDao {
         TorneoModel torneoModel = new TorneoModel();
         torneoModel.setNomeTorneo(nomeTorneo);
 
-        ResultSet rs;
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement statement = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "insert into torneo (nome_torneo) values('" + nomeTorneo + "')";
             statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
             rs = statement.getGeneratedKeys();
@@ -42,16 +46,39 @@ public class TorneoDaoImpl implements TorneoDao {
             if (rs.next()) {
                 torneoModel.setIdTorneo(rs.getInt(1));
             }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
+
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }
 
     @Override
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
         TorneoModel torneoModel = new TorneoModel();
-        ResultSet rs;
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement statement = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "select * from torneo where id = " + idTorneo;
             rs = statement.executeQuery(s);
 
@@ -59,18 +86,52 @@ public class TorneoDaoImpl implements TorneoDao {
                 torneoModel.setIdTorneo(rs.getInt(1));
                 torneoModel.setNomeTorneo(rs.getString(2));
             }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
+
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }
 
     @Override
     public void delete(Integer id) throws SQLException {
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        Connection con = null;
+        Statement statement = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "delete from squadra_torneo where id_torneo =" + id;
             statement.executeUpdate(s);
             String s1 = "delete from torneo where id = " + id;
             statement.executeUpdate(s1);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
     }
 }

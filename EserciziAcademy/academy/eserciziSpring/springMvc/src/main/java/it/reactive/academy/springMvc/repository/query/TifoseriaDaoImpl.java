@@ -8,6 +8,7 @@ import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.model.TifoseriaModel;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.rowmapper.TifoseriaRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -50,10 +51,11 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         TifoseriaModel tifoseriaResult;
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
 
-        String s = "select id, nome_tifoseria from tifoseria where id_squadra = :idSquadra";
+        String s = "select id, nome_tifoseria, id_squadra from tifoseria where id_squadra = :idSquadra";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idSquadra", squadraModel.getIdSquadra());
-        tifoseriaResult = namedParameterJdbcTemplate.query(s, params, new BeanPropertyRowMapper<>(TifoseriaModel.class)).get(0);
+
+        tifoseriaResult = namedParameterJdbcTemplate.query(s, params, new TifoseriaRowMapper()).get(0);
 
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaResult);
     }

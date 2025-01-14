@@ -26,25 +26,44 @@ public class SquadraDaoImpl implements SquadraDao {
     private final PlatformTransactionManager transactionManager;
 
     public SquadraDaoImpl(PlatformTransactionManager transactionManager) {
-
         this.transactionManager = transactionManager;
     }
 
     @Override
     public SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "insert into squadra (nome, colori_sociali) values ('"
                     + squadraModel.getNome() + "', '" + squadraModel.getColoriSociali() + "')";
-
             statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
-            try (ResultSet rs = statement.getGeneratedKeys()) {
-                if (rs.next()) {
-                    squadraModel.setIdSquadra(rs.getInt(1));
+            rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                squadraModel.setIdSquadra(rs.getInt(1));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 
@@ -56,19 +75,40 @@ public class SquadraDaoImpl implements SquadraDao {
     @Override
     public List<SquadraDTOExtended> readAll() throws SQLException {
         List<SquadraDTOExtended> listaSquadra = new LinkedList<>();
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
-
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "select * from squadra";
-            try (ResultSet rs = statement.executeQuery(s)) {
-                while (rs.next()) {
-                    SquadraModel squadraModel = new SquadraModel();
-                    squadraModel.setIdSquadra(rs.getInt(1));
-                    squadraModel.setNome(rs.getString(2));
-                    squadraModel.setColoriSociali(rs.getString(3));
-                    listaSquadra.add(SquadraMapper.squadraModelToDtoExtendended(squadraModel));
+            rs = statement.executeQuery(s);
+
+            while (rs.next()) {
+                SquadraModel squadraModel = new SquadraModel();
+                squadraModel.setIdSquadra(rs.getInt(1));
+                squadraModel.setNome(rs.getString(2));
+                squadraModel.setColoriSociali(rs.getString(3));
+                listaSquadra.add(SquadraMapper.squadraModelToDtoExtendended(squadraModel));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 
@@ -76,19 +116,40 @@ public class SquadraDaoImpl implements SquadraDao {
     }
 
     @Override
-    public SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException {
+    public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
         SquadraModel squadraModel = new SquadraModel();
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
-
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "select * from squadra where id = " + idSquadra;
-            try (ResultSet rs = statement.executeQuery(s)) {
-                if (rs.next()) {
-                    squadraModel.setIdSquadra(rs.getInt("id"));
-                    squadraModel.setNome(rs.getString("nome"));
-                    squadraModel.setColoriSociali(rs.getString("colori_sociali"));
+            rs = statement.executeQuery(s);
+
+            if (rs.next()) {
+                squadraModel.setIdSquadra(rs.getInt("id"));
+                squadraModel.setNome(rs.getString("nome"));
+                squadraModel.setColoriSociali(rs.getString("colori_sociali"));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 
@@ -97,20 +158,46 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public boolean checkSquadraByName(String nomeSquadra) throws SQLException {
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "select * from squadra where nome = '" + nomeSquadra + "'";
-            try (ResultSet rs = statement.executeQuery(s)) {
-                return rs.next();
+            rs = statement.executeQuery(s);
+
+            return rs.next();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
     }
 
     @Override
     public void delete(Integer id) throws SQLException {
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        Connection con = null;
+        Statement statement = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
 
             String s = "delete from squadra_torneo where id_squadra =" + id;
             statement.executeUpdate(s);
@@ -120,6 +207,17 @@ public class SquadraDaoImpl implements SquadraDao {
             statement.executeUpdate(s2);
             String s3 = "delete from squadra where id = " + id;
             statement.executeUpdate(s3);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
     }
 }

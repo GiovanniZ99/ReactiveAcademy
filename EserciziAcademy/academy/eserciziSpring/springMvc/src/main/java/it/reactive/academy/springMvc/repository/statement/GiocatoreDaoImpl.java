@@ -35,24 +35,41 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     @Override
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
         GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
-
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "insert into giocatore (nome_cognome,id_squadra) values ('" +
                     giocatoreModel.getNomeCognome() + "', " +
                     giocatoreModel.getSquadra().getIdSquadra() + ")";
             statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
-            try (ResultSet rs = statement.getGeneratedKeys()) {
-                if (rs.next()) {
-                    giocatoreModel.setIdGiocatore(rs.getInt(1));
+            rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                giocatoreModel.setIdGiocatore(rs.getInt(1));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-            } finally {
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
                 DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
-
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
@@ -63,9 +80,13 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 .map(GiocatoreMapper::giocatoreDtoExtendedToModel)
                 .collect(Collectors.toSet());
         Set<GiocatoreModel> giocatoriResult = new HashSet<>();
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
 
             for (GiocatoreModel giocatoreModel : giocatoriModel) {
                 String s = "insert into giocatore (nome_cognome, id_squadra) values ('" +
@@ -73,17 +94,32 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                         giocatoreModel.getSquadra().getIdSquadra() + ")";
                 statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
-                try (ResultSet rs = statement.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        giocatoreModel.setIdGiocatore(rs.getInt(1));
-
-                        giocatoriResult.add(giocatoreModel);
-                    }
-                }finally {
-                    DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+                rs = statement.getGeneratedKeys();
+                if (rs.next()) {
+                    giocatoreModel.setIdGiocatore(rs.getInt(1));
+                    giocatoriResult.add(giocatoreModel);
                 }
             }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
+
         return giocatoriResult.stream()
                 .map(GiocatoreMapper::giocatoreModelToDTOExtended)
                 .collect(Collectors.toSet());
@@ -93,21 +129,42 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     public Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         Set<GiocatoreDTOExtended> listaGiocatori = new HashSet<>();
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultGiocatori = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
-
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "select * from giocatore where id_squadra = "
                     + squadraModel.getIdSquadra();
-            try (ResultSet resultGiocatori = statement.executeQuery(s)) {
-                while (resultGiocatori.next()) {
-                    GiocatoreModel giocatoreModel = new GiocatoreModel();
-                    giocatoreModel.setIdGiocatore(resultGiocatori.getInt("id"));
-                    giocatoreModel.setNomeCognome(resultGiocatori.getString("nome_cognome"));
-                    giocatoreModel.setNumeroAmmonizioni(resultGiocatori.getInt("numero_ammonizioni"));
-                    giocatoreModel.setSquadra(squadraModel);
-                    listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
+            resultGiocatori = statement.executeQuery(s);
+
+            while (resultGiocatori.next()) {
+                GiocatoreModel giocatoreModel = new GiocatoreModel();
+                giocatoreModel.setIdGiocatore(resultGiocatori.getInt("id"));
+                giocatoreModel.setNomeCognome(resultGiocatori.getString("nome_cognome"));
+                giocatoreModel.setNumeroAmmonizioni(resultGiocatori.getInt("numero_ammonizioni"));
+                giocatoreModel.setSquadra(squadraModel);
+                listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
+            }
+        } finally {
+            if (resultGiocatori != null) {
+                try {
+                    resultGiocatori.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 
@@ -115,12 +172,34 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     }
 
     public boolean checkByName(String nomeGiocatore) throws SQLException {
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "select * from giocatore where nome_cognome = '" + nomeGiocatore + "'";
-            try (ResultSet rs = statement.executeQuery(s)) {
-                return rs.next();
+            rs = statement.executeQuery(s);
+
+            return rs.next();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
     }
@@ -128,17 +207,38 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     @Override
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
         GiocatoreModel giocatoreModel = new GiocatoreModel();
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
-
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "select * from giocatore where id = " + id;
-            try (ResultSet rs = statement.executeQuery(s)) {
-                if (rs.next()) {
-                    giocatoreModel.setIdGiocatore(rs.getInt("id"));
-                    giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-                    giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+            rs = statement.executeQuery(s);
+
+            if (rs.next()) {
+                giocatoreModel.setIdGiocatore(rs.getInt("id"));
+                giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
+                giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e)                    {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 
@@ -147,12 +247,26 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public void updateAmmonizioni(Integer id) throws SQLException {
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        Connection con = null;
+        Statement statement = null;
 
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
             String s = "update giocatore set numero_ammonizioni = numero_ammonizioni +1" +
                     " where id = " + id;
             statement.executeUpdate(s);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
     }
 }

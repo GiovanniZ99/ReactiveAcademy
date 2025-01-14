@@ -27,7 +27,7 @@ public class TifoseriaService {
     public Tifoseria create(TifoseriaDTO tifoseriaDTO, Integer idSquadra) {
         TifoseriaDTOExtended tifoseriaDTOExtended = TifoseriaMapper.tifoseriaDTOToDTOExtended(tifoseriaDTO);
         try {
-            SquadraDTOExtended squadraDTOExtended = squadraDao.findSquadraByOd(idSquadra);
+            SquadraDTOExtended squadraDTOExtended = squadraDao.findSquadraById(idSquadra);
             if(squadraDTOExtended.getIdSquadra() == null){
                 throw new SquadraNonPresenteException("Squadra non presente");
             }

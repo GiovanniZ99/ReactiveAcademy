@@ -2,22 +2,21 @@ package it.reactive.academy.springMvc.repository.queryforx;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.utility.mapper.SquadraTorneoMapper;
-import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
-import it.reactive.academy.springMvc.model.SquadraTorneoModel;
-import it.reactive.academy.springMvc.model.TorneoModel;
+import it.reactive.academy.springMvc.model.*;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.mapper.SquadraTorneoMapper;
+import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -46,13 +45,44 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     }
 
     @Override
-    public Set<Integer> readAllTeams(Integer idTorneo) throws SQLException {
+    public Set<Integer> readAllTeamsById(Integer idTorneo) throws SQLException {
         String s = "select id_squadra from squadra_torneo where id_torneo = ?";
 
         List<Integer> mapSquadre = jdbcTemplate.queryForList(s, Integer.class, idTorneo);
         return new HashSet<>(mapSquadre);
     }
 
+    @Override
+    public LinkedHashMap<Integer, Set<Integer>> readAllTornei() throws SQLException {
+        String s = "select id_squadra, id_torneo from squadra_torneo order by id_torneo";
+
+        LinkedHashMap<Integer, Set<Integer>> mappaId = new LinkedHashMap<>();
+
+        jdbcTemplate.query(s, new RowMapper<Void>() {
+            @Override
+            public Void mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Integer idTorneo = rs.getInt("id_torneo");
+                Integer idSquadra = rs.getInt("id_squadra");
+
+                mappaId.computeIfAbsent(idTorneo, k -> new HashSet<>()).add(idSquadra);
+
+                return null;
+            }
+        });
+
+        return mappaId;
+    }
+
+    @Override
+    public Set<Integer> readAllTorneoByIdSquadra(Integer idSquadra) throws SQLException {
+        String s = "select id_squadra, id_torneo from squadra_torneo where id_squadra = ?";
+
+        List<Integer> listaIdTornei = jdbcTemplate.queryForList(s, Integer.class, idSquadra);
+
+        return new HashSet<>(listaIdTornei);
+    }
+
+    @Deprecated
     @Override
     public Set<TorneoDTOExtended> readAllTorneo() throws SQLException {
         String s = "select * from torneo t " +

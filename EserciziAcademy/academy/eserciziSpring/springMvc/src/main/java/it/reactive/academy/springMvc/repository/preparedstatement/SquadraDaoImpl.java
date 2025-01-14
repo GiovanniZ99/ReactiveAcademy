@@ -73,7 +73,7 @@ public class SquadraDaoImpl implements SquadraDao {
     }
 
     @Override
-    public SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException {
+    public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
         SquadraModel squadraModel = new SquadraModel();
 
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));

@@ -33,19 +33,40 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
     @Override
     public TifoseriaDTOExtended createWithTeam(TifoseriaDTOExtended tifoseriaDTOExtended, Integer idSquadra) throws SQLException {
         TifoseriaModel tifoseriaModel = TifoseriaMapper.tifoseriaDtoExtendedToModel(tifoseriaDTOExtended);
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
 
             String s = "insert into tifoseria (nome_tifoseria, id_squadra) values('" +
                     tifoseriaModel.getNomeTifoseria() + "', " +
                     idSquadra + ")";
             statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
-            try (ResultSet rs = statement.getGeneratedKeys()) {
-                if (rs.next()) {
-                    tifoseriaModel.setIdTifoseria(rs.getInt(1));
+            rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                tifoseriaModel.setIdTifoseria(rs.getInt(1));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 
@@ -55,16 +76,37 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
     public TifoseriaDTOExtended readByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         TifoseriaModel tifoseriaModel = new TifoseriaModel();
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
 
             String s = "select * from tifoseria where id_squadra = " + squadraModel.getIdSquadra();
-            try (ResultSet rs = statement.executeQuery(s)) {
-                if (rs.next()) {
-                    tifoseriaModel.setIdTifoseria(rs.getInt("id"));
-                    tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
+            rs = statement.executeQuery(s);
+            if (rs.next()) {
+                tifoseriaModel.setIdTifoseria(rs.getInt("id"));
+                tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 
@@ -74,20 +116,41 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
     @Override
     public TifoseriaDTOExtended updateName(String name, Integer idSquadra) throws SQLException {
         TifoseriaModel tifoseriaModel = new TifoseriaModel();
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
 
-        try (Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-             Statement statement = con.createStatement()) {
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            statement = con.createStatement();
 
             String s = "update tifoseria set nome_tifoseria = '" +
                     name + "' where id_squadra = " + idSquadra;
             statement.executeUpdate(s);
 
-            try (ResultSet rs = statement.executeQuery("select * from tifoseria where nome_tifoseria = '" +
-                    name + "'")) {
-                if (rs.next()) {
-                    tifoseriaModel.setIdTifoseria(rs.getInt("id"));
-                    tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
+            rs = statement.executeQuery("select * from tifoseria where nome_tifoseria = '" +
+                    name + "'");
+            if (rs.next()) {
+                tifoseriaModel.setIdTifoseria(rs.getInt("id"));
+                tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
 

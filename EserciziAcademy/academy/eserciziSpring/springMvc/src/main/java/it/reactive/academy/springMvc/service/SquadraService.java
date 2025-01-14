@@ -63,7 +63,7 @@ public class SquadraService {
         GiocatoreDTOExtended giocatoreDTOExtended = GiocatoreMapper.giocatoreDTOToDtoExtended(giocatoreDTO);
         SquadraDTOExtended squadraDTOExtended;
         try {
-            squadraDTOExtended = squadraDao.findSquadraByOd(idSquadra);
+            squadraDTOExtended = squadraDao.findSquadraById(idSquadra);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

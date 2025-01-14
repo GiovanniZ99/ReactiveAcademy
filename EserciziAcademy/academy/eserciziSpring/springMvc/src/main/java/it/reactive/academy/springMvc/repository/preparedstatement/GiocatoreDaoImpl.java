@@ -34,22 +34,43 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
         GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
                     "insert into giocatore (nome_cognome, id_squadra) values (?, ?)",
-                    Statement.RETURN_GENERATED_KEYS)) {
+                    Statement.RETURN_GENERATED_KEYS);
 
-                ps.setString(1, giocatoreModel.getNomeCognome());
-                ps.setInt(2, giocatoreModel.getSquadra().getIdSquadra());
-                ps.executeUpdate();
+            ps.setString(1, giocatoreModel.getNomeCognome());
+            ps.setInt(2, giocatoreModel.getSquadra().getIdSquadra());
+            ps.executeUpdate();
 
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        giocatoreModel.setIdGiocatore(rs.getInt(1));
-                    }
+            rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                giocatoreModel.setIdGiocatore(rs.getInt(1));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
+        }
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
@@ -61,41 +82,65 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 .collect(Collectors.toSet());
         Set<GiocatoreModel> giocatoriResult = new HashSet<>();
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+        Connection con = null;
+        PreparedStatement psInsert = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement psInsert = con.prepareStatement(
-                "insert into giocatore (nome_cognome, id_squadra) values (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            psInsert = con.prepareStatement(
+                    "insert into giocatore (nome_cognome, id_squadra) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
 
             for (GiocatoreModel giocatoreModel : giocatoriModel) {
                 psInsert.setString(1, giocatoreModel.getNomeCognome());
                 psInsert.setInt(2, giocatoreModel.getSquadra().getIdSquadra());
                 psInsert.executeUpdate();
 
-                try (ResultSet rs = psInsert.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        giocatoreModel.setIdGiocatore(rs.getInt(1));
-                        giocatoriResult.add(giocatoreModel);
-                    }
+                rs = psInsert.getGeneratedKeys();
+                if (rs.next()) {
+                    giocatoreModel.setIdGiocatore(rs.getInt(1));
+                    giocatoriResult.add(giocatoreModel);
                 }
             }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (psInsert != null) {
+                try {
+                    psInsert.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return giocatoriResult.stream()
                 .map(GiocatoreMapper::giocatoreModelToDTOExtended)
                 .collect(Collectors.toSet());
     }
-
 
     @Override
     public Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         Set<GiocatoreDTOExtended> listaGiocatori = new HashSet<>();
         SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select * from giocatore where id_squadra = ?")) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet resultGiocatori = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "select * from giocatore where id_squadra = ?");
             ps.setInt(1, squadraModel.getIdSquadra());
-            ResultSet resultGiocatori = ps.executeQuery();
+            resultGiocatori = ps.executeQuery();
 
             while (resultGiocatori.next()) {
                 GiocatoreModel giocatoreModel = new GiocatoreModel();
@@ -105,54 +150,125 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 giocatoreModel.setSquadra(squadraModel);
                 listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
             }
+        } finally {
+            if (resultGiocatori != null) {
+                try {
+                    resultGiocatori.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return listaGiocatori;
     }
 
     public boolean checkByName(String nomeGiocatore) throws SQLException {
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement ps = con.prepareStatement(
-                "select id from giocatore where nome_cognome = ?")) {
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "select id from giocatore where nome_cognome = ?");
             ps.setString(1, nomeGiocatore);
-            ResultSet rs = ps.executeQuery();
-            DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            rs = ps.executeQuery();
             return rs.next();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-
     }
 
     @Override
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
         GiocatoreModel giocatoreModel = new GiocatoreModel();
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select id, nome_cognome, numero_ammonizioni from giocatore where id = ?")) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "select id, nome_cognome, numero_ammonizioni from giocatore where id = ?");
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs.next()) {
                 giocatoreModel.setIdGiocatore(rs.getInt("id"));
                 giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
                 giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
             }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
 
     @Override
     public void updateAmmonizioni(Integer id) throws SQLException {
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "update giocatore set numero_ammonizioni = numero_ammonizioni + 1 where id = ?")) {
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "update giocatore set numero_ammonizioni = numero_ammonizioni + 1 where id = ?");
             ps.setInt(1, id);
             ps.executeUpdate();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
     }
-
 }
-

@@ -24,27 +24,47 @@ public class TorneoDaoImpl implements TorneoDao {
         this.transactionManager = transactionManager;
     }
 
-
     @Override
     public TorneoDTOExtended create(String nomeTorneo) throws SQLException {
         TorneoModel torneoModel = new TorneoModel();
         torneoModel.setNomeTorneo(nomeTorneo);
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "insert into torneo (nome_torneo) values (?)",
-                Statement.RETURN_GENERATED_KEYS)) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "insert into torneo (nome_torneo) values (?)",
+                    Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, nomeTorneo);
             ps.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    torneoModel.setIdTorneo(rs.getInt(1));
+            rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                torneoModel.setIdTorneo(rs.getInt(1));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }
@@ -53,20 +73,41 @@ public class TorneoDaoImpl implements TorneoDao {
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
         TorneoModel torneoModel = new TorneoModel();
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select id, nome_torneo from torneo where id = ?")) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "select id, nome_torneo from torneo where id = ?");
 
             ps.setInt(1, idTorneo);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    torneoModel.setIdTorneo(rs.getInt(1));
-                    torneoModel.setNomeTorneo(rs.getString(2));
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                torneoModel.setIdTorneo(rs.getInt(1));
+                torneoModel.setNomeTorneo(rs.getString(2));
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
 
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }
@@ -74,20 +115,39 @@ public class TorneoDaoImpl implements TorneoDao {
     @Override
     public void delete(Integer id) throws SQLException {
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps1 = con.prepareStatement(
-                "delete from squadra_torneo where id_torneo = ?")) {
+        Connection con = null;
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
 
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps1 = con.prepareStatement(
+                    "delete from squadra_torneo where id_torneo = ?");
             ps1.setInt(1, id);
             ps1.executeUpdate();
 
-            try (PreparedStatement ps2 = con.prepareStatement(
-                    "delete from torneo where id = ?")) {
-
-                ps2.setInt(1, id);
-                ps2.executeUpdate();
+            ps2 = con.prepareStatement(
+                    "delete from torneo where id = ?");
+            ps2.setInt(1, id);
+            ps2.executeUpdate();
+        } finally {
+            if (ps1 != null) {
+                try {
+                    ps1.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (ps2 != null) {
+                try {
+                    ps2.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
             }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
     }
 }

@@ -50,13 +50,20 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public Set<GiocatoreDTOExtended> createAll(Set<GiocatoreDTOExtended> giocatoriDTOExtended) throws SQLException {
-        Set<GiocatoreDTOExtended> giocatoriResult = new HashSet<>();
 
-        for (GiocatoreDTOExtended giocatoreDTOExtended : giocatoriDTOExtended) {
-            GiocatoreDTOExtended giocatoreDTO = create(giocatoreDTOExtended);
-            giocatoriResult.add(giocatoreDTO);
+        Set<GiocatoreModel> giocatoriModel = giocatoriDTOExtended.stream().map(GiocatoreMapper::giocatoreDtoExtendedToModel).collect(Collectors.toSet());
+
+        String s = "insert into giocatore (nome_cognome, id_squadra) values (?,?)";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        for (GiocatoreModel giocatoreModel : giocatoriModel) {
+            params.addValue("nomeCognome", giocatoreModel.getNomeCognome());
+            params.addValue("idSquadra", giocatoreModel.getSquadra().getIdSquadra());
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(s, keyHolder);
+            giocatoreModel.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
         }
-        return giocatoriResult;
+        return giocatoriModel.stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
     }
 
     @Override

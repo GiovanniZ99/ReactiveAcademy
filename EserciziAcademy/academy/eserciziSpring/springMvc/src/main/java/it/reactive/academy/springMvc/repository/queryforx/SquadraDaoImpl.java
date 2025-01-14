@@ -64,7 +64,7 @@ public class SquadraDaoImpl implements SquadraDao {
     }
 
     @Override
-    public SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException {
+    public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
         String s = "select * from squadra where id = ?";
 
         SquadraModel squadraModel = jdbcTemplate.queryForObject(s, new BeanPropertyRowMapper<>(SquadraModel.class), idSquadra);

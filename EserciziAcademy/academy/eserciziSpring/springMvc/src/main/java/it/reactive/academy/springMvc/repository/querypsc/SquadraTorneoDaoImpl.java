@@ -12,14 +12,13 @@ import it.reactive.academy.springMvc.utility.Costanti;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY_PSC)
@@ -42,7 +41,7 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     }
 
     @Override
-    public Set<Integer> readAllTeams(Integer idTorneo) throws SQLException {
+    public Set<Integer> readAllTeamsById(Integer idTorneo) throws SQLException {
         Set<Integer> setIdSquadre = new HashSet<>();
 
         String s = "select id_squadra from squadra_torneo where id_torneo = ?";
@@ -60,11 +59,45 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     }
 
     @Override
+    public LinkedHashMap<Integer, Set<Integer>> readAllTornei() throws SQLException {
+        String sql = "select id_squadra, id_torneo from squadra_torneo order by id_torneo";
+
+        PreparedStatementCreator psc = connection -> connection.prepareStatement(sql);
+        ResultSetExtractor<LinkedHashMap<Integer, Set<Integer>>> rse = rs -> {
+            LinkedHashMap<Integer, Set<Integer>> mappaId = new LinkedHashMap<>();
+            while (rs.next()) {
+                Integer idTorneo = rs.getInt("id_torneo");
+                Integer idSquadra = rs.getInt("id_squadra");
+                mappaId.computeIfAbsent(idTorneo, k -> new HashSet<>()).add(idSquadra);
+            }
+            return mappaId;
+        };
+
+        return jdbcTemplate.query(psc, rse);
+    }
+
+    @Override
+    public Set<Integer> readAllTorneoByIdSquadra(Integer idSquadra) throws SQLException {
+        String sql = "select id_squadra, id_torneo from squadra_torneo where id_squadra = ?";
+        Object[] params = new Object[]{idSquadra};
+        return jdbcTemplate.query(sql, params, new ResultSetExtractor<Set<Integer>>() {
+            public Set<Integer> extractData(ResultSet rs) throws SQLException {
+                Set<Integer> listaIdTornei = new HashSet<>();
+                while (rs.next()) {
+                    listaIdTornei.add(rs.getInt(1));
+                }
+                return listaIdTornei;
+            }
+        });
+    }
+
+
+    @Deprecated
+    @Override
     public Set<TorneoDTOExtended> readAllTorneo() throws SQLException {
         Set<TorneoDTOExtended> tornei = new HashSet<>();
         final SquadraDTOExtended[] squadraDTOExtended = {new SquadraDTOExtended()};
         squadraDTOExtended[0].setGiocatori(new HashSet<>());
-        Set<Integer> idSquadre = new HashSet<>();
         final TorneoDTOExtended[] torneoDTOExtended = {new TorneoDTOExtended()};
         torneoDTOExtended[0].setSquadre(new HashSet<>());
         String s = "select * from torneo t " +
@@ -96,11 +129,10 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                     giocatoreModel.setNomeCognome(rs.getString(9));
                     giocatoreModel.setNumeroAmmonizioni(rs.getInt(10));
 
-                    if(!idSquadre.contains(squadraModel.getIdSquadra())){
+                    if(!Objects.equals(squadraDTOExtended[0].getIdSquadra(), squadraModel.getIdSquadra())){
                         squadraDTOExtended[0] = new SquadraDTOExtended();
                         squadraDTOExtended[0].setGiocatori(new HashSet<>());
                     }
-                    idSquadre.add(squadraModel.getIdSquadra());
                     squadraDTOExtended[0].setIdSquadra(squadraModel.getIdSquadra());
                     squadraDTOExtended[0].setNome(squadraModel.getNome());
                     squadraDTOExtended[0].setColoriSociali(squadraModel.getColoriSociali());

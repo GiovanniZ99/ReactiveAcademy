@@ -14,10 +14,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +39,7 @@ public class SquadraDaoImpl implements SquadraDao {
         PreparedStatementCreator psc = new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                PreparedStatement ps = con.prepareStatement(s);
+                PreparedStatement ps = con.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, squadraModel.getNome());
                 ps.setString(2, squadraModel.getColoriSociali());
                 return ps;
@@ -83,7 +80,7 @@ public class SquadraDaoImpl implements SquadraDao {
     }
 
     @Override
-    public SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException {
+    public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
         SquadraModel squadraModel = new SquadraModel();
         ResultSetExtractor<SquadraModel> rse = new ResultSetExtractor<SquadraModel>() {
             @Override

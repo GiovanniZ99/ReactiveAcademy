@@ -11,7 +11,7 @@ public interface SquadraDao {
 
     List<SquadraDTOExtended> readAll() throws SQLException;
 
-    SquadraDTOExtended findSquadraByOd(Integer idSquadra) throws SQLException;
+    SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException;
 
     boolean checkSquadraByName(String nomeSquadra) throws SQLException;
 

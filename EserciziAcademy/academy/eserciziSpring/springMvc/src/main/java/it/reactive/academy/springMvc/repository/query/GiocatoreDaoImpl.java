@@ -8,8 +8,8 @@ import it.reactive.academy.springMvc.model.GiocatoreModel;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.rowmapper.GiocatoreRowMapper;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -49,13 +49,20 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public Set<GiocatoreDTOExtended> createAll(Set<GiocatoreDTOExtended> giocatoriDTOExtended) throws SQLException {
-        Set<GiocatoreDTOExtended> giocatoriResult = new HashSet<>();
+        Set<GiocatoreModel> giocatoriModel = giocatoriDTOExtended.stream().map(GiocatoreMapper::giocatoreDtoExtendedToModel).collect(Collectors.toSet());
 
-        for (GiocatoreDTOExtended giocatoreDTOExtended : giocatoriDTOExtended) {
-            GiocatoreDTOExtended giocatoreDTO = create(giocatoreDTOExtended);
-            giocatoriResult.add(giocatoreDTO);
+        String s = "insert into giocatore (nome_cognome, id_squadra) values (:nomeCognome, :idSquadra)";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        for (GiocatoreModel giocatoreModel : giocatoriModel) {
+            params.addValue("nomeCognome", giocatoreModel.getNomeCognome());
+            params.addValue("idSquadra", giocatoreModel.getSquadra().getIdSquadra());
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            namedParameterJdbcTemplate.update(s, params, keyHolder);
+            giocatoreModel.setIdGiocatore((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
         }
-        return giocatoriResult;
+        return giocatoriModel.stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
     }
 
     @Override
@@ -67,17 +74,8 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idSquadra", squadraModel.getIdSquadra());
 
-     return  namedParameterJdbcTemplate.query(s, params, new RowMapper<GiocatoreModel>() {
-           @Override
-           public GiocatoreModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-               GiocatoreModel giocatoreModel = new GiocatoreModel();
-               giocatoreModel.setIdGiocatore(rs.getInt("id"));
-               giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-               giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
-               giocatoreModel.setSquadra(squadraModel);
-               return giocatoreModel;
-           }
-       }).stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
+        List<GiocatoreModel> giocatori = namedParameterJdbcTemplate.query(s, params, new GiocatoreRowMapper());
+        return giocatori.stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
     }
 
     public boolean checkByName(String nomeGiocatore) throws SQLException {
@@ -100,16 +98,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
 
-        List<GiocatoreModel> giocatori =  namedParameterJdbcTemplate.query(s, params, new RowMapper<GiocatoreModel>() {
-            @Override
-            public GiocatoreModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-                GiocatoreModel giocatoreModel = new GiocatoreModel();
-                giocatoreModel.setIdGiocatore(rs.getInt("id"));
-                giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-                giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
-                return giocatoreModel;
-            }
-        });
+        List<GiocatoreModel> giocatori =  namedParameterJdbcTemplate.query(s, params, new GiocatoreRowMapper());
 
         giocatoreModel = giocatori.get(0);
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);

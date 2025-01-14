@@ -5,6 +5,7 @@ import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.model.TorneoModel;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.rowmapper.TorneoRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 
 @Repository
@@ -43,17 +45,17 @@ public class TorneoDaoImpl implements TorneoDao {
 
     @Override
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
-        TorneoModel torneoModel = new TorneoModel();
-
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idTorneo", idTorneo);
-        namedParameterJdbcTemplate.query("select id, nome_torneo from torneo where id = :idTorneo",
-                params, (rs, rowNum) -> {
-                    torneoModel.setIdTorneo(rs.getInt(1));
-                    torneoModel.setNomeTorneo(rs.getString(2));
-                    return torneoModel;
-                });
-        return TorneoMapper.torneoModelToDtoExtended(torneoModel);
+        List<TorneoModel> torneo = namedParameterJdbcTemplate.query(
+                "select id, nome_torneo from torneo where id = :idTorneo",
+                params,
+               new TorneoRowMapper());
+
+        if(torneo.get(0) == null){
+            torneo.add(new TorneoModel());
+        }
+        return TorneoMapper.torneoModelToDtoExtended(torneo.get(0));
     }
 
     @Override

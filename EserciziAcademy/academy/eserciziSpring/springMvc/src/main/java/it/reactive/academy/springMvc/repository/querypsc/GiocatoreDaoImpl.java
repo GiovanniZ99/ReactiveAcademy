@@ -57,15 +57,26 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public Set<GiocatoreDTOExtended> createAll(Set<GiocatoreDTOExtended> giocatoriDTOExtended) throws SQLException {
+        Set<GiocatoreModel> giocatoriModel = giocatoriDTOExtended.stream().map(GiocatoreMapper::giocatoreDtoExtendedToModel).collect(Collectors.toSet());
+        String s = "insert into giocatore (nome_cognome, id_squadra) values (?, ?)";
 
-        Set<GiocatoreDTOExtended> giocatoriResult = new HashSet<>();
-
-        for (GiocatoreDTOExtended giocatoreDTOExtended : giocatoriDTOExtended) {
-            GiocatoreDTOExtended giocatoreDTO = create(giocatoreDTOExtended);
-            giocatoriResult.add(giocatoreDTO);
+        for (GiocatoreModel giocatoreModel : giocatoriModel) {
+            PreparedStatementCreator psc = new PreparedStatementCreator() {
+                @Override
+                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                    PreparedStatement ps = con.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
+                    ps.setString(1, giocatoreModel.getNomeCognome());
+                    ps.setInt(2, giocatoreModel.getSquadra().getIdSquadra());
+                    return ps;
+                }
+            };
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(psc, keyHolder);
+            giocatoreModel.setIdGiocatore((Integer) keyHolder.getKeys().get("id"));
         }
-        return giocatoriResult;
+        return giocatoriModel.stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
     }
+
 
     @Override
     public Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {

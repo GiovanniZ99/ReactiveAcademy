@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,17 +39,17 @@ public class SquadraTorneoService {
             if (torneoDTOExtended.getIdTorneo() == null) {
                 throw new TorneoNonTrovatoException("Torneo non trovato");
             }
-            SquadraDTOExtended squadraDTOExtended = squadraDao.findSquadraByOd(idSquadra);
+            SquadraDTOExtended squadraDTOExtended = squadraDao.findSquadraById(idSquadra);
             if (squadraDTOExtended.getIdSquadra() == null) {
                 throw new SquadraNonPresenteException("Squadra non presente");
             }
             SquadraTorneoDTOExtended squadraTorneoDTOExtended = squadraTorneoDao.create(idTorneo, idSquadra);
-            Set<Integer> setIdSquadre = squadraTorneoDao.readAllTeams(torneoDTOExtended.getIdTorneo());
+            Set<Integer> setIdSquadre = squadraTorneoDao.readAllTeamsById(torneoDTOExtended.getIdTorneo());
             Set<SquadraDTOExtended> setSquadre = new HashSet<>();
 
             setIdSquadre.forEach(elem -> {
                 try {
-                    setSquadre.add(squadraDao.findSquadraByOd(elem));
+                    setSquadre.add(squadraDao.findSquadraById(elem));
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -77,9 +75,77 @@ public class SquadraTorneoService {
 
     public List<Torneo> readAll() {
         try {
-            return squadraTorneoDao.readAllTorneo().stream().map(TorneoMapper::torneoDtoExtendedToResource).collect(Collectors.toList());
+            List<TorneoDTOExtended> tornei = new ArrayList<>();
+            LinkedHashMap<Integer, Set<Integer>> id = squadraTorneoDao.readAllTornei();
+
+            TorneoDTOExtended torneoDTOExtended = null;
+
+            int idTorneoCorrente = -1;
+            for (Map.Entry<Integer, Set<Integer>> entry : id.entrySet()) {
+                Integer idTorneo = entry.getKey();
+
+                torneoDTOExtended = getTorneoDTOExtended(idTorneo, idTorneoCorrente, torneoDTOExtended, tornei);
+
+                idTorneoCorrente = getIdTorneoCorrente(entry, torneoDTOExtended, idTorneoCorrente, idTorneo);
+
+                torneoDTOExtended = getNuovoTorneo(entry, idTorneo, idTorneoCorrente, tornei, torneoDTOExtended);
+            }
+
+            tornei.add(torneoDTOExtended);
+
+            if(torneoDTOExtended == null){
+                throw new TorneoNonTrovatoException("Tornei non trovati");
+            }
+            return tornei.stream().map(TorneoMapper::torneoDtoExtendedToResource).collect(Collectors.toList());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private TorneoDTOExtended getNuovoTorneo(Map.Entry<Integer, Set<Integer>> entry, Integer idTorneo, int idTorneoCorrente, List<TorneoDTOExtended> tornei, TorneoDTOExtended torneoDTOExtended) throws SQLException {
+        if (idTorneo != idTorneoCorrente) {
+            tornei.add(torneoDTOExtended);
+            torneoDTOExtended = torneoDao.findById(entry.getKey());
+            torneoDTOExtended.setSquadre(new HashSet<>());
+        }
+        return torneoDTOExtended;
+    }
+
+    private int getIdTorneoCorrente(Map.Entry<Integer, Set<Integer>> entry, TorneoDTOExtended torneoDTOExtended, int idTorneoCorrente, Integer idTorneo) throws SQLException {
+        if (entry.getValue() != null) {
+            for (Integer idSquadra : entry.getValue()) {
+                torneoDTOExtended.getSquadre().add(squadraDao.findSquadraById(idSquadra));
+                torneoDTOExtended.getSquadre().forEach(elem -> {
+
+                    try {
+                        elem.setGiocatori(giocatoreDao.readAllByTeam(elem));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    TifoseriaDTOExtended tifoseria;
+                    try {
+                        tifoseria = tifoseriaDao.readByTeam(elem);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    tifoseria.setSquadra(elem);
+                        elem.setTifoseria(tifoseria);
+                    });
+            }
+            idTorneoCorrente = idTorneo;
+        }
+        return idTorneoCorrente;
+    }
+
+    private TorneoDTOExtended getTorneoDTOExtended(Integer idTorneo, int idTorneoCorrente, TorneoDTOExtended torneoDTOExtended, List<TorneoDTOExtended> tornei) throws SQLException {
+        if (idTorneo != idTorneoCorrente) {
+            if (torneoDTOExtended != null) {
+                tornei.add(torneoDTOExtended);
+            }
+            torneoDTOExtended = torneoDao.findById(idTorneo);
+            torneoDTOExtended.setSquadre(new HashSet<>());
+        }
+        return torneoDTOExtended;
     }
 }
