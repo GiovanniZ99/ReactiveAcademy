@@ -5,6 +5,7 @@ import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.rowmapper.SquadraRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -67,7 +68,7 @@ public class SquadraDaoImpl implements SquadraDao {
     public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
         String s = "select * from squadra where id = ?";
 
-        SquadraModel squadraModel = jdbcTemplate.queryForObject(s, new BeanPropertyRowMapper<>(SquadraModel.class), idSquadra);
+        SquadraModel squadraModel = jdbcTemplate.queryForObject(s, new SquadraRowMapper(), idSquadra);
 
         return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
     }

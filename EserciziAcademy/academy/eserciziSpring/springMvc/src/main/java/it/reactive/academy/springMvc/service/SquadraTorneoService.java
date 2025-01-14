@@ -84,11 +84,11 @@ public class SquadraTorneoService {
             for (Map.Entry<Integer, Set<Integer>> entry : id.entrySet()) {
                 Integer idTorneo = entry.getKey();
 
-                torneoDTOExtended = getTorneoDTOExtended(idTorneo, idTorneoCorrente, torneoDTOExtended, tornei);
+                torneoDTOExtended = addTorneoATornei(idTorneo, idTorneoCorrente, tornei, torneoDTOExtended);
 
-                idTorneoCorrente = getIdTorneoCorrente(entry, torneoDTOExtended, idTorneoCorrente, idTorneo);
+                idTorneoCorrente = addSquadraTifoseriaGiocatori(entry, torneoDTOExtended, idTorneoCorrente, idTorneo);
 
-                torneoDTOExtended = getNuovoTorneo(entry, idTorneo, idTorneoCorrente, tornei, torneoDTOExtended);
+                torneoDTOExtended = addTorneoATornei(idTorneo, idTorneoCorrente, tornei, torneoDTOExtended);
             }
 
             tornei.add(torneoDTOExtended);
@@ -102,16 +102,18 @@ public class SquadraTorneoService {
         }
     }
 
-    private TorneoDTOExtended getNuovoTorneo(Map.Entry<Integer, Set<Integer>> entry, Integer idTorneo, int idTorneoCorrente, List<TorneoDTOExtended> tornei, TorneoDTOExtended torneoDTOExtended) throws SQLException {
+    private TorneoDTOExtended addTorneoATornei(Integer idTorneo, int idTorneoCorrente, List<TorneoDTOExtended> tornei, TorneoDTOExtended torneoDTOExtended) throws SQLException {
         if (idTorneo != idTorneoCorrente) {
-            tornei.add(torneoDTOExtended);
-            torneoDTOExtended = torneoDao.findById(entry.getKey());
+            if (torneoDTOExtended != null) {
+                tornei.add(torneoDTOExtended);
+            }
+            torneoDTOExtended = torneoDao.findById(idTorneo);
             torneoDTOExtended.setSquadre(new HashSet<>());
         }
         return torneoDTOExtended;
     }
 
-    private int getIdTorneoCorrente(Map.Entry<Integer, Set<Integer>> entry, TorneoDTOExtended torneoDTOExtended, int idTorneoCorrente, Integer idTorneo) throws SQLException {
+    private int addSquadraTifoseriaGiocatori(Map.Entry<Integer, Set<Integer>> entry, TorneoDTOExtended torneoDTOExtended, int idTorneoCorrente, Integer idTorneo) throws SQLException {
         if (entry.getValue() != null) {
             for (Integer idSquadra : entry.getValue()) {
                 torneoDTOExtended.getSquadre().add(squadraDao.findSquadraById(idSquadra));
@@ -136,16 +138,5 @@ public class SquadraTorneoService {
             idTorneoCorrente = idTorneo;
         }
         return idTorneoCorrente;
-    }
-
-    private TorneoDTOExtended getTorneoDTOExtended(Integer idTorneo, int idTorneoCorrente, TorneoDTOExtended torneoDTOExtended, List<TorneoDTOExtended> tornei) throws SQLException {
-        if (idTorneo != idTorneoCorrente) {
-            if (torneoDTOExtended != null) {
-                tornei.add(torneoDTOExtended);
-            }
-            torneoDTOExtended = torneoDao.findById(idTorneo);
-            torneoDTOExtended.setSquadre(new HashSet<>());
-        }
-        return torneoDTOExtended;
     }
 }

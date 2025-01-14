@@ -1,12 +1,12 @@
 package it.reactive.academy.springMvc.repository.queryforx;
 
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.model.TorneoModel;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
+import it.reactive.academy.springMvc.utility.rowmapper.TorneoRowMapper;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -42,7 +42,7 @@ public class TorneoDaoImpl implements TorneoDao {
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
         TorneoModel torneoModel = jdbcTemplate.queryForObject(
                 "select id, nome_torneo from torneo where id = ?",
-                new BeanPropertyRowMapper<>(TorneoModel.class), idTorneo);
+                new TorneoRowMapper(), idTorneo);
 
         return TorneoMapper.torneoModelToDtoExtended(torneoModel);
     }

@@ -1,7 +1,6 @@
 package it.reactive.academy.springMvc.service;
 
 import it.reactive.academy.springMvc.dto.TorneoDTO;
-import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
@@ -37,8 +36,6 @@ public class TorneoService {
         try {
             Set<Integer> idSquadre = squadraTorneoDao.readAllTeamsById(id);
             torneoDao.delete(id);
-
-            // se una di queste squadre ha ancora dei tornei non eliminarle, altrimenti eliminarle
             idSquadre.forEach(squadra -> {
                 try {
                  Set<Integer> idTornei = squadraTorneoDao.readAllTorneoByIdSquadra(squadra);

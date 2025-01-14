@@ -36,7 +36,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleRuntimeaException(SquadraNonTrovataException ex) {
-        return metodoResponse("KO", ex.getMessage());
+        return metodoResponse("C6", ex.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

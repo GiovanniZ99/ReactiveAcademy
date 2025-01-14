@@ -8,6 +8,7 @@ import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.model.TifoseriaModel;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.rowmapper.TifoseriaRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,7 +49,7 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
 
         String s = "select id, nome_tifoseria from tifoseria where id_squadra = ?";
 
-        tifoseriaResult = jdbcTemplate.queryForObject(s, new BeanPropertyRowMapper<>(TifoseriaModel.class), squadraModel.getIdSquadra());
+        tifoseriaResult = jdbcTemplate.queryForObject(s, new TifoseriaRowMapper(), squadraModel.getIdSquadra());
 
         return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaResult);
     }

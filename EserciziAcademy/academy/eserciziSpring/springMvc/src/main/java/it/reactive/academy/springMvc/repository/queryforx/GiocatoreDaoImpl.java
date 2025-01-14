@@ -8,6 +8,7 @@ import it.reactive.academy.springMvc.model.GiocatoreModel;
 import it.reactive.academy.springMvc.model.SquadraModel;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.rowmapper.GiocatoreRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -100,7 +101,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         GiocatoreModel giocatoreModel;
         String s = "select id, nome_cognome, numero_ammonizioni from giocatore where id = ?";
 
-        giocatoreModel = jdbcTemplate.queryForObject(s, new BeanPropertyRowMapper<>(GiocatoreModel.class),id);
+        giocatoreModel = jdbcTemplate.queryForObject(s, new GiocatoreRowMapper(),id);
 
         return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
     }
