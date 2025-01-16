@@ -1,9 +1,11 @@
 package it.reactive.academy.springMvc.repository.queryforx;
 
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.entity.TorneoEntity;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.utility.rowmapper.TorneoRowMapper;
 import org.springframework.context.annotation.Profile;
@@ -13,6 +15,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY_FOR_X)
@@ -45,6 +49,20 @@ public class TorneoDaoImpl implements TorneoDao {
                 new TorneoRowMapper(), idTorneo);
 
         return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
+    }
+
+    @Override
+    public Set<TorneoDTOExtended> findAll() throws SQLException {
+        List<Map<String, Object>> mapSquadra = jdbcTemplate.queryForList("select * from torneo");
+
+        List<TorneoEntity> tornei = new ArrayList<>();
+        for (Map<String, Object> map : mapSquadra) {
+            TorneoEntity torneo = new TorneoEntity();
+            torneo.setIdTorneo((Integer) map.get("id"));
+            torneo.setNomeTorneo((String) map.get("nome_torneo"));
+            tornei.add(torneo);
+        }
+        return tornei.stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
     @Override

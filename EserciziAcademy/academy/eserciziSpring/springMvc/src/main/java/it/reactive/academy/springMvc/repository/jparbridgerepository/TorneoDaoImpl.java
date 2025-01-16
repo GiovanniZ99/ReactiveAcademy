@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_SPRING_JPA_JPAREPOSITORY)
@@ -32,6 +34,11 @@ public class TorneoDaoImpl implements TorneoDao {
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
         Optional<TorneoEntity> torneo = torneoRepository.findById(idTorneo);
         return TorneoMapper.torneoEntityToDtoExtended(torneo.orElse(new TorneoEntity()));
+    }
+
+    @Override
+    public Set<TorneoDTOExtended> findAll() throws SQLException {
+        return Collections.emptySet();
     }
 
     @Override

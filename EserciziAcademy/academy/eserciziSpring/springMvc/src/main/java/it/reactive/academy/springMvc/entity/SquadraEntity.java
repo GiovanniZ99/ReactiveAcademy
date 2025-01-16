@@ -1,15 +1,17 @@
 package it.reactive.academy.springMvc.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "squadra")
-public class SquadraEntity {
+public class SquadraEntity implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idSquadra;
 
+    @Column
     private String nome;
 
     @Column(name = "colori_sociali")

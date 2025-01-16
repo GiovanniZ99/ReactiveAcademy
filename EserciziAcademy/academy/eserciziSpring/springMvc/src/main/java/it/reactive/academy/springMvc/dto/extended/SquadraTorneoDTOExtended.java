@@ -1,30 +1,30 @@
 package it.reactive.academy.springMvc.dto.extended;
 
 public class SquadraTorneoDTOExtended {
-    private Integer idSquadra;
-    private Integer idTorneo;
+    private SquadraDTOExtended squadraDTOExtended;
+    private TorneoDTOExtended torneoDTOExtended;
 
-    public SquadraTorneoDTOExtended(Integer idSquadra, Integer idTorneo) {
-        this.idSquadra = idSquadra;
-        this.idTorneo = idTorneo;
+    public SquadraTorneoDTOExtended(SquadraDTOExtended squadraDTOExtended, TorneoDTOExtended torneoDTOExtended) {
+        this.squadraDTOExtended = squadraDTOExtended;
+        this.torneoDTOExtended = torneoDTOExtended;
     }
 
     public SquadraTorneoDTOExtended() {
     }
 
-    public Integer getIdSquadra() {
-        return idSquadra;
+    public SquadraDTOExtended getSquadraDTOExtended() {
+        return squadraDTOExtended;
     }
 
-    public void setIdSquadra(Integer idSquadra) {
-        this.idSquadra = idSquadra;
+    public void setSquadraDTOExtended(SquadraDTOExtended squadraDTOExtended) {
+        this.squadraDTOExtended = squadraDTOExtended;
     }
 
-    public Integer getIdTorneo() {
-        return idTorneo;
+    public TorneoDTOExtended getTorneoDTOExtended() {
+        return torneoDTOExtended;
     }
 
-    public void setIdTorneo(Integer idTorneo) {
-        this.idTorneo = idTorneo;
+    public void setTorneoDTOExtended(TorneoDTOExtended torneoDTOExtended) {
+        this.torneoDTOExtended = torneoDTOExtended;
     }
 }

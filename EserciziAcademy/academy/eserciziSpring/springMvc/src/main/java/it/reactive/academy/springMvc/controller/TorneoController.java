@@ -48,7 +48,7 @@ public class TorneoController {
     @ApiOperation(value = "restituisci tutti i tornei", response = Torneo.class)
     @GetMapping
     public ResponseEntity<List<Torneo>> find() {
-        return ResponseEntity.ok(squadraTorneoService.readAll());
+        return ResponseEntity.ok(squadraTorneoService.readAllTornei());
     }
 
     @ApiOperation(value = "rimuovi un torneo")

@@ -16,7 +16,11 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY_PSC)
@@ -62,6 +66,21 @@ public class TorneoDaoImpl implements TorneoDao {
         jdbcTemplate.query("select id, nome_torneo from torneo where id = ?", rse, idTorneo);
 
         return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
+    }
+
+    @Override
+    public Set<TorneoDTOExtended> findAll() throws SQLException {
+        Set<TorneoEntity> tornei = new HashSet<>();
+        ResultSetExtractor<Set<TorneoEntity>> rse = rs ->{
+            while(rs.next()){
+                TorneoEntity torneo = new TorneoEntity();
+                torneo.setIdTorneo(rs.getInt("id"));
+                torneo.setNomeTorneo(rs.getString("nome_torneo"));
+                tornei.add(torneo);
+            }
+            return tornei;
+        };
+        return jdbcTemplate.query("select * from torneo", rse).stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
     @Override

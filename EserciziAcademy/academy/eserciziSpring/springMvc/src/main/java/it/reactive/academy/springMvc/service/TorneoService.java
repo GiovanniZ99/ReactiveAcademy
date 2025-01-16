@@ -1,6 +1,8 @@
 package it.reactive.academy.springMvc.service;
 
 import it.reactive.academy.springMvc.dto.TorneoDTO;
+import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
+import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
@@ -34,13 +36,14 @@ public class TorneoService {
 
     public void delete(Integer id){
         try {
-            Set<Integer> idSquadre = squadraTorneoDao.readAllTeamsById(id);
+            TorneoDTOExtended torneoDTOExtended = torneoDao.findById(id);
+            Set<SquadraDTOExtended> squadre = squadraTorneoDao.readAllTeamsById(torneoDTOExtended);
             torneoDao.delete(id);
-            idSquadre.forEach(squadra -> {
+            squadre.forEach(squadra -> {
                 try {
-                 Set<Integer> idTornei = squadraTorneoDao.readAllTorneoByIdSquadra(squadra);
-                 if(idTornei.isEmpty()){
-                     squadraDao.delete(squadra);
+                Set<TorneoDTOExtended> tornei = squadraTorneoDao.readAllTorneoByIdSquadra(squadra);
+                 if(tornei.isEmpty()){
+                     squadraDao.delete(squadra.getIdSquadra());
                  }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);

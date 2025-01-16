@@ -14,8 +14,11 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY)
@@ -56,6 +59,13 @@ public class TorneoDaoImpl implements TorneoDao {
             torneo.add(new TorneoEntity());
         }
         return TorneoMapper.torneoEntityToDtoExtended(torneo.get(0));
+    }
+
+    @Override
+    public Set<TorneoDTOExtended> findAll() throws SQLException {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        List<TorneoEntity> tornei = namedParameterJdbcTemplate.query("select * from torneo", params,new TorneoRowMapper());
+        return tornei.stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
     @Override

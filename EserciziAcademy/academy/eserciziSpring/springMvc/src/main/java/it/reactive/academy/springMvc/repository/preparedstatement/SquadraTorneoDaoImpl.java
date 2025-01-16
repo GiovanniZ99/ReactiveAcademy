@@ -16,6 +16,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.sql.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_JDBC_PREPAREDSTATEMENT)
@@ -29,11 +30,11 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
     @Override
     public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
-        squadraTorneoEntity.setTorneoEntity(torneo);
-        squadraTorneoEntity.setSquadraEntity(squadra);
+        squadraTorneoId.setTorneoEntity(torneo);
+        squadraTorneoId.setSquadraEntity(squadra);
 
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
         try (PreparedStatement ps = con.prepareStatement(
@@ -45,62 +46,72 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
         }
         DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
-        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoEntity);
+        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoId);
     }
 
     @Override
-    public Set<Integer> readAllTeamsById(Integer idTorneo) throws SQLException {
-        Set<Integer> setIdSquadre = new HashSet<>();
+    public Set<SquadraDTOExtended> readAllTeamsById(TorneoDTOExtended torneoDTOExtended) throws SQLException {
+        TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
+        Set<SquadraEntity> listaSquadre = new HashSet<>();
 
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
         try (PreparedStatement ps = con.prepareStatement(
                 "select id_squadra from squadra_torneo where id_torneo = ?")) {
 
-            ps.setInt(1, idTorneo);
+            ps.setInt(1, torneo.getIdTorneo());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    setIdSquadre.add(rs.getInt(1));
+                    SquadraEntity squadra = new SquadraEntity();
+                    squadra.setIdSquadra(rs.getInt(1));
+                    listaSquadre.add(squadra);
                 }
             }
         }
         DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
-        return setIdSquadre;
+        return listaSquadre.stream().map(SquadraMapper::squadraEntityToDtoExtendended).collect(Collectors.toSet());
     }
 
-    public LinkedHashMap<Integer, Set<Integer>> readAllTornei() throws SQLException {
-        LinkedHashMap<Integer, Set<Integer>> mappaId = new LinkedHashMap<>();
+    public LinkedHashMap<TorneoDTOExtended, Set<SquadraDTOExtended>> readAllTornei() throws SQLException {
+        LinkedHashMap<TorneoDTOExtended, Set<SquadraDTOExtended>> mappaSquadraTorneo = new LinkedHashMap<>();
         String s = "select id_squadra, id_torneo from squadra_torneo order by id_torneo";
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
         try (PreparedStatement ps = con.prepareStatement(s)){
             try (ResultSet rs = ps.executeQuery()) {
                 while(rs.next()){
-                    Integer idTorneo = rs.getInt("id_torneo");
-                    Integer idSquadra = rs.getInt("id_squadra");
-                    mappaId.computeIfAbsent(idTorneo, k -> new HashSet<>()).add(idSquadra);
+
+                    TorneoEntity torneo = new TorneoEntity();
+                    SquadraEntity squadra = new SquadraEntity();
+                    torneo.setIdTorneo(rs.getInt("id_torneo"));
+                    squadra.setIdSquadra(rs.getInt("id_squadra"));
+                    TorneoDTOExtended torneoDTOExtended = TorneoMapper.torneoEntityToDtoExtended(torneo);
+                    SquadraDTOExtended squadraDTOExtended = SquadraMapper.squadraEntityToDtoExtendended(squadra);
+                    mappaSquadraTorneo.computeIfAbsent(torneoDTOExtended, k -> new HashSet<>()).add(squadraDTOExtended);
                 }
             }
         }finally {
             DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         }
-        return mappaId;
+        return mappaSquadraTorneo;
     }
 
     @Override
-    public Set<Integer> readAllTorneoByIdSquadra(Integer idSquadra) throws SQLException {
-        Set<Integer> listaIdTornei = new HashSet<>();
-
+    public Set<TorneoDTOExtended> readAllTorneoByIdSquadra(SquadraDTOExtended squadraDTOExtended) throws SQLException {
+        SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
+        Set<TorneoEntity> listaTornei = new HashSet<>();
         String s = "select id_squadra, id_torneo from squadra_torneo where id_squadra = ?";
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
 
             try (PreparedStatement ps = con.prepareStatement(s)) {
-                ps.setInt(1, idSquadra);
+                ps.setInt(1, squadra.getIdSquadra());
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        listaIdTornei.add(rs.getInt(1));
+                        TorneoEntity torneo = new TorneoEntity();
+                        torneo.setIdTorneo(rs.getInt("id_torneo"));
+                        listaTornei.add(torneo);
                     }
                 }
             }
-        return listaIdTornei;
+        return listaTornei.stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
     @Deprecated

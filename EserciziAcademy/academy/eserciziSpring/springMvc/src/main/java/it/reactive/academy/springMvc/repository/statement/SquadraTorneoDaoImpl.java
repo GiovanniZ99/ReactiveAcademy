@@ -15,6 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_JDBC_STATEMENT)
@@ -28,11 +29,11 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
     @Override
     public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
-        squadraTorneoEntity.setTorneoEntity(torneo);
-        squadraTorneoEntity.setSquadraEntity(squadra);
+        squadraTorneoId.setTorneoEntity(torneo);
+        squadraTorneoId.setSquadraEntity(squadra);
 
         Connection con = null;
         Statement statement = null;
@@ -57,12 +58,14 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
             }
         }
 
-        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoEntity);
+        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoId);
     }
 
     @Override
-    public Set<Integer> readAllTeamsById(Integer idTorneo) throws SQLException {
-        Set<Integer> setIdSquadre = new HashSet<>();
+    public Set<SquadraDTOExtended> readAllTeamsById(TorneoDTOExtended torneoDTOExtended) throws SQLException {
+        TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
+        Set<SquadraEntity> listaSquadre = new HashSet<>();
+
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -71,11 +74,13 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
             con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
             statement = con.createStatement();
 
-            String s = "select id_squadra from squadra_torneo where id_torneo = " + idTorneo;
+            String s = "select id_squadra from squadra_torneo where id_torneo = " + torneo.getIdTorneo();
             rs = statement.executeQuery(s);
 
             while (rs.next()) {
-                setIdSquadre.add(rs.getInt(1));
+                SquadraEntity squadra = new SquadraEntity();
+                squadra.setIdSquadra(rs.getInt(1));
+                listaSquadre.add(squadra);
             }
         } finally {
             if (rs != null) {
@@ -97,13 +102,14 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
             }
         }
 
-        return setIdSquadre;
+        return listaSquadre.stream().map(SquadraMapper::squadraEntityToDtoExtendended).collect(Collectors.toSet());
+
     }
 
     @Override
-    public LinkedHashMap<Integer, Set<Integer>> readAllTornei() throws SQLException {
-        LinkedHashMap<Integer, Set<Integer>> mappaId = new LinkedHashMap<>();
-        String s = "SELECT id_squadra, id_torneo FROM squadra_torneo ORDER BY id_torneo";
+    public Set<TorneoDTOExtended> readAllTorneoByIdSquadra(SquadraDTOExtended squadraDTOExtended) throws SQLException {
+        Set<TorneoEntity> listaTornei = new HashSet<>();
+        String s = "select id_squadra, id_torneo from squadra_torneo where id_squadra = " + squadraDTOExtended.getIdSquadra();
         Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
         Statement stmt = null;
         ResultSet rs = null;
@@ -113,45 +119,9 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
             rs = stmt.executeQuery(s);
 
             while (rs.next()) {
-                Integer idTorneo = rs.getInt("id_torneo");
-                Integer idSquadra = rs.getInt("id_squadra");
-                mappaId.computeIfAbsent(idTorneo, k -> new HashSet<>()).add(idSquadra);
-            }
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
-        }
-
-        return mappaId;
-    }
-
-    @Override
-    public Set<Integer> readAllTorneoByIdSquadra(Integer idSquadra) throws SQLException {
-        Set<Integer> listaIdTornei = new HashSet<>();
-        String s = "SELECT id_squadra, id_torneo FROM squadra_torneo WHERE id_squadra = " + idSquadra;
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        Statement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(s);
-
-            while (rs.next()) {
-                listaIdTornei.add(rs.getInt(1));
+                TorneoEntity torneo = new TorneoEntity();
+                torneo.setIdTorneo(rs.getInt("id_squadra"));
+                listaTornei.add(torneo);
             }
         } finally {
             if (rs != null) {
@@ -173,7 +143,7 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
         }
 
-        return listaIdTornei;
+        return listaTornei.stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
     @Deprecated

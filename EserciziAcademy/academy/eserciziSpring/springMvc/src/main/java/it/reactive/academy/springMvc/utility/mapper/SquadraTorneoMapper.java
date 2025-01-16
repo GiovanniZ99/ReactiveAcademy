@@ -1,24 +1,24 @@
 package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
-import it.reactive.academy.springMvc.entity.SquadraTorneoEntity;
+import it.reactive.academy.springMvc.entity.SquadraTorneoId;
 
 public class SquadraTorneoMapper {
 
     private SquadraTorneoMapper() {
     }
 
-    public static SquadraTorneoEntity squadraTorneoDtoExtendedToModel(SquadraTorneoDTOExtended squadraTorneoDTOExtended) {
-        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
-        squadraTorneoEntity.setIdSquadra(squadraTorneoDTOExtended.getIdSquadra());
-        squadraTorneoEntity.setIdTorneo(squadraTorneoDTOExtended.getIdTorneo());
-        return squadraTorneoEntity;
+    public static SquadraTorneoId squadraTorneoDtoExtendedToModel(SquadraTorneoDTOExtended squadraTorneoDTOExtended) {
+        SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
+        squadraTorneoId.setSquadraEntity(SquadraMapper.squadraDtoExtendedToEntity(squadraTorneoDTOExtended.getSquadraDTOExtended()));
+        squadraTorneoId.setTorneoEntity(TorneoMapper.torneoDTOExtendedToEntity(squadraTorneoDTOExtended.getTorneoDTOExtended()));
+        return squadraTorneoId;
     }
 
-    public static SquadraTorneoDTOExtended squadraEntityToDtoExtended(SquadraTorneoEntity squadraTorneoEntity) {
+    public static SquadraTorneoDTOExtended squadraEntityToDtoExtended(SquadraTorneoId squadraTorneoId) {
         SquadraTorneoDTOExtended squadraTorneoDTOExtended = new SquadraTorneoDTOExtended();
-        squadraTorneoDTOExtended.setIdSquadra(squadraTorneoEntity.getIdSquadra());
-        squadraTorneoDTOExtended.setIdTorneo(squadraTorneoEntity.getIdTorneo());
+        squadraTorneoDTOExtended.setSquadraDTOExtended(SquadraMapper.squadraEntityToDtoExtendended(squadraTorneoId.getSquadraEntity()));
+        squadraTorneoDTOExtended.setTorneoDTOExtended(TorneoMapper.torneoEntityToDtoExtended(squadraTorneoId.getTorneoEntity()));
         return squadraTorneoDTOExtended;
     }
 }

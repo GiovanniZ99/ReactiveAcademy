@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_SPRING_JDBC_QUERY)
@@ -29,11 +30,11 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
     @Override
     public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
-        squadraTorneoEntity.setTorneoEntity(torneo);
-        squadraTorneoEntity.setSquadraEntity(squadra);
+        squadraTorneoId.setTorneoEntity(torneo);
+        squadraTorneoId.setSquadraEntity(squadra);
 
         String s = "insert into squadra_torneo (id_squadra, id_torneo) values (:idSquadra, :idTorneo)";
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -41,63 +42,42 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         params.addValue("idTorneo", torneo.getIdTorneo());
         namedParameterJdbcTemplate.update(s, params);
 
-        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoEntity);
+        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoId);
     }
 
     @Override
-    public Set<Integer> readAllTeamsById(Integer idTorneo) throws SQLException {
-        Set<Integer> setIdSquadre = new HashSet<>();
+    public Set<SquadraDTOExtended> readAllTeamsById(TorneoDTOExtended torneoDTOExtended) throws SQLException {
+
         String s = "select id_squadra from squadra_torneo where id_torneo = :idTorneo";
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("idTorneo", idTorneo);
+        params.addValue("idTorneo", torneoDTOExtended.getIdTorneo());
 
-        namedParameterJdbcTemplate.query(s, params, new RowMapper<TorneoEntity>() {
+        List<SquadraEntity> listaSquadre = namedParameterJdbcTemplate.query(s, params, new RowMapper<SquadraEntity>() {
             @Override
-            public TorneoEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-                setIdSquadre.add(rs.getInt("id_squadra"));
-                return null;
+            public SquadraEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+                SquadraEntity squadra = new SquadraEntity();
+                squadra.setIdSquadra(rs.getInt(1));
+                return squadra;
             }
         });
-        return setIdSquadre;
+        return listaSquadre.stream().map(SquadraMapper::squadraEntityToDtoExtendended).collect(Collectors.toSet());
+
     }
 
-    public LinkedHashMap<Integer, Set<Integer>> readAllTornei() {
-        String sql = "SELECT id_squadra, id_torneo FROM squadra_torneo ORDER BY id_torneo";
-
-        LinkedHashMap<Integer, Set<Integer>> mappaId = new LinkedHashMap<>();
-
-        namedParameterJdbcTemplate.query(sql, new RowMapper<Void>() {
-            @Override
-            public Void mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Integer idTorneo = rs.getInt("id_torneo");
-                Integer idSquadra = rs.getInt("id_squadra");
-
-                mappaId.computeIfAbsent(idTorneo, k -> new HashSet<>()).add(idSquadra);
-
-                return null;
-            }
-        });
-
-        return mappaId;
-    }
-
-    public Set<Integer> readAllTorneoByIdSquadra(Integer idSquadra) {
-        String sql = "SELECT id_squadra, id_torneo FROM squadra_torneo WHERE id_squadra = :idSquadra";
+    public Set<TorneoDTOExtended> readAllTorneoByIdSquadra(SquadraDTOExtended squadraDTOExtended) {
+        String sql = "select id_squadra, id_torneo from squadra_torneo where id_squadra = :idSquadra";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("idSquadra", idSquadra);
+        params.addValue("idSquadra", squadraDTOExtended.getIdSquadra());
 
-        Set<Integer> listaIdTornei = new HashSet<>();
-
-        namedParameterJdbcTemplate.query(sql, params, new RowMapper<Void>() {
+      return  namedParameterJdbcTemplate.query(sql, params, new RowMapper<TorneoEntity>() {
             @Override
-            public Void mapRow(ResultSet rs, int rowNum) throws SQLException {
-                listaIdTornei.add(rs.getInt("id_torneo"));
-                return null;
+            public TorneoEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TorneoEntity torneo = new TorneoEntity();
+                torneo.setIdTorneo(rs.getInt("id_torneo"));
+                return torneo;
             }
-        });
-
-        return listaIdTornei;
+        }).stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
     @Deprecated

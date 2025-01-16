@@ -12,7 +12,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.sql.*;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile(Costanti.TORNEO_DAO_JDBC_PREPAREDSTATEMENT)
@@ -110,6 +114,37 @@ public class TorneoDaoImpl implements TorneoDao {
         }
 
         return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
+    }
+
+    @Override
+    public Set<TorneoDTOExtended> findAll() throws SQLException {
+        Set<TorneoEntity> tornei =  new HashSet<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try{
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps =  con.prepareStatement("select * from torneo");
+            rs = ps.executeQuery();
+            while (rs.next()){
+                TorneoEntity torneo = new TorneoEntity();
+                torneo.setIdTorneo(rs.getInt("id"));
+                torneo.setNomeTorneo(rs.getString("nome_torneo"));
+                tornei.add(torneo);
+            }
+        }finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
+        }
+        return tornei.stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
     @Override

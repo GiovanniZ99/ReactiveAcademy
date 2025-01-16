@@ -1,32 +1,26 @@
 package it.reactive.academy.springMvc.entity;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "squadra_torneo")
 public class SquadraTorneoEntity {
 
-    private SquadraEntity squadraEntity;
+    @EmbeddedId
+    private SquadraTorneoId id;
 
-    private TorneoEntity torneoEntity;
-
-    public SquadraTorneoEntity(SquadraEntity squadraEntity, TorneoEntity torneoEntity) {
-        this.squadraEntity = squadraEntity;
-        this.torneoEntity = torneoEntity;
+    public SquadraTorneoEntity(SquadraTorneoId id) {
+        this.id = id;
     }
 
     public SquadraTorneoEntity() {
     }
 
-    public SquadraEntity getSquadraEntity() {
-        return squadraEntity;
+    public SquadraTorneoId getId() {
+        return id;
     }
 
-    public void setSquadraEntity(SquadraEntity squadraEntity) {
-        this.squadraEntity = squadraEntity;
-    }
-
-    public TorneoEntity getTorneoEntity() {
-        return torneoEntity;
-    }
-
-    public void setTorneoEntity(TorneoEntity torneoEntity) {
-        this.torneoEntity = torneoEntity;
+    public void setId(SquadraTorneoId id) {
+        this.id = id;
     }
 }
