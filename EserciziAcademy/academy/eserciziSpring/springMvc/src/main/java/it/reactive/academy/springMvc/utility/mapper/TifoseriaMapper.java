@@ -2,10 +2,14 @@ package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.TifoseriaDTO;
 import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
-import it.reactive.academy.springMvc.model.TifoseriaModel;
+import it.reactive.academy.springMvc.entity.TifoseriaEntity;
 import it.reactive.academy.springMvc.resource.Tifoseria;
 
 public class TifoseriaMapper {
+
+    private TifoseriaMapper() {
+    }
+
     public static Tifoseria tifoseriaDtoExtendedToResource(TifoseriaDTOExtended tifoseriaDTOExtended){
         Tifoseria tifoseria = new Tifoseria();
         tifoseria.setIdTifoseria(tifoseriaDTOExtended.getIdTifoseria());
@@ -18,24 +22,24 @@ public class TifoseriaMapper {
         tifoseriaDTOExtended.setNomeTifoseria(tifoseriaDTO.getNomeTifoseria());
         return tifoseriaDTOExtended;
     }
-    public static TifoseriaDTOExtended tifoseriaModelToDtoExtended(TifoseriaModel tifoseriaModel){
+    public static TifoseriaDTOExtended tifoseriaEntityToDtoExtended(TifoseriaEntity tifoseriaEntity){
         TifoseriaDTOExtended tifoseriaDTOExtended = new TifoseriaDTOExtended();
-        if(tifoseriaModel.getIdTifoseria() != null) {
-            tifoseriaDTOExtended.setIdTifoseria(tifoseriaModel.getIdTifoseria());
+        if(tifoseriaEntity.getIdTifoseria() != null) {
+            tifoseriaDTOExtended.setIdTifoseria(tifoseriaEntity.getIdTifoseria());
         }
-        tifoseriaDTOExtended.setNomeTifoseria(tifoseriaModel.getNomeTifoseria());
-        if(tifoseriaModel.getSquadra()!=null) {
-            tifoseriaDTOExtended.setSquadra(SquadraMapper.squadraModelToDtoExtendended(tifoseriaModel.getSquadra()));
+        tifoseriaDTOExtended.setNomeTifoseria(tifoseriaEntity.getNomeTifoseria());
+        if(tifoseriaEntity.getSquadra()!=null) {
+            tifoseriaDTOExtended.setSquadra(SquadraMapper.squadraEntityToDtoExtendended(tifoseriaEntity.getSquadra()));
         }
         return tifoseriaDTOExtended;
     }
-    public static TifoseriaModel tifoseriaDtoExtendedToModel(TifoseriaDTOExtended tifoseriaDTOExtended){
-        TifoseriaModel tifoseriaModel = new TifoseriaModel();
-        tifoseriaModel.setIdTifoseria(tifoseriaDTOExtended.getIdTifoseria());
-        tifoseriaModel.setNomeTifoseria(tifoseriaDTOExtended.getNomeTifoseria());
+    public static TifoseriaEntity tifoseriaDtoExtendedToEntity(TifoseriaDTOExtended tifoseriaDTOExtended){
+        TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
+        tifoseriaEntity.setIdTifoseria(tifoseriaDTOExtended.getIdTifoseria());
+        tifoseriaEntity.setNomeTifoseria(tifoseriaDTOExtended.getNomeTifoseria());
         if(tifoseriaDTOExtended.getSquadra()!= null) {
-            tifoseriaModel.setSquadra(SquadraMapper.squadraDtoExtendedToModel(tifoseriaDTOExtended.getSquadra()));
+            tifoseriaEntity.setSquadra(SquadraMapper.squadraDtoExtendedToEntity(tifoseriaDTOExtended.getSquadra()));
         }
-        return tifoseriaModel;
+        return tifoseriaEntity;
     }
 }

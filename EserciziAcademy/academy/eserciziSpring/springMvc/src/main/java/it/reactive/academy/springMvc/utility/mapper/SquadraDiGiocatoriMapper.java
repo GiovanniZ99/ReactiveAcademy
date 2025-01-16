@@ -6,6 +6,9 @@ import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import java.util.stream.Collectors;
 
 public class SquadraDiGiocatoriMapper {
+    private SquadraDiGiocatoriMapper() {
+    }
+
     public static SquadraDTOExtended squadraDiGiocatoriToDTOExtended(SquadraDiGiocatoriDTO squadraDiGiocatoriDTO){
         SquadraDTOExtended squadraDTOExtended = new SquadraDTOExtended();
         squadraDTOExtended.setNome(squadraDiGiocatoriDTO.getNome());

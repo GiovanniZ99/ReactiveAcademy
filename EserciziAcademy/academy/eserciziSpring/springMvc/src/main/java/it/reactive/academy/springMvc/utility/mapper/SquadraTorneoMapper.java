@@ -1,20 +1,24 @@
 package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
-import it.reactive.academy.springMvc.model.SquadraTorneoModel;
+import it.reactive.academy.springMvc.entity.SquadraTorneoEntity;
 
 public class SquadraTorneoMapper {
-    public static SquadraTorneoModel squadraTorneoDtoExtendedToModel(SquadraTorneoDTOExtended squadraTorneoDTOExtended) {
-        SquadraTorneoModel squadraTorneoModel = new SquadraTorneoModel();
-        squadraTorneoModel.setIdSquadra(squadraTorneoDTOExtended.getIdSquadra());
-        squadraTorneoModel.setIdTorneo(squadraTorneoDTOExtended.getIdTorneo());
-        return squadraTorneoModel;
+
+    private SquadraTorneoMapper() {
     }
 
-    public static SquadraTorneoDTOExtended squadraModelToDtoExtended(SquadraTorneoModel squadraTorneoModel) {
+    public static SquadraTorneoEntity squadraTorneoDtoExtendedToModel(SquadraTorneoDTOExtended squadraTorneoDTOExtended) {
+        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        squadraTorneoEntity.setIdSquadra(squadraTorneoDTOExtended.getIdSquadra());
+        squadraTorneoEntity.setIdTorneo(squadraTorneoDTOExtended.getIdTorneo());
+        return squadraTorneoEntity;
+    }
+
+    public static SquadraTorneoDTOExtended squadraEntityToDtoExtended(SquadraTorneoEntity squadraTorneoEntity) {
         SquadraTorneoDTOExtended squadraTorneoDTOExtended = new SquadraTorneoDTOExtended();
-        squadraTorneoDTOExtended.setIdSquadra(squadraTorneoModel.getIdSquadra());
-        squadraTorneoDTOExtended.setIdTorneo(squadraTorneoModel.getIdTorneo());
+        squadraTorneoDTOExtended.setIdSquadra(squadraTorneoEntity.getIdSquadra());
+        squadraTorneoDTOExtended.setIdTorneo(squadraTorneoEntity.getIdTorneo());
         return squadraTorneoDTOExtended;
     }
 }

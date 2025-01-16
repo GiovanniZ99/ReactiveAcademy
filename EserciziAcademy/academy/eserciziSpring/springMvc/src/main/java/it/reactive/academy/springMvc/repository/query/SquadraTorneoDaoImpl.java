@@ -3,12 +3,10 @@ package it.reactive.academy.springMvc.repository.query;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.model.*;
+import it.reactive.academy.springMvc.entity.*;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
-import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
-import it.reactive.academy.springMvc.utility.mapper.SquadraTorneoMapper;
-import it.reactive.academy.springMvc.utility.mapper.TifoseriaMapper;
+import it.reactive.academy.springMvc.utility.mapper.*;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,18 +28,20 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     }
 
     @Override
-    public SquadraTorneoDTOExtended create(Integer idTorneo, Integer idSquadra) throws SQLException {
-        SquadraTorneoModel squadraTorneoModel = new SquadraTorneoModel();
+    public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
+        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
+        SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
+        squadraTorneoEntity.setTorneoEntity(torneo);
+        squadraTorneoEntity.setSquadraEntity(squadra);
 
         String s = "insert into squadra_torneo (id_squadra, id_torneo) values (:idSquadra, :idTorneo)";
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("idSquadra", idSquadra);
-        params.addValue("idTorneo", idTorneo);
+        params.addValue("idSquadra", squadra.getIdSquadra());
+        params.addValue("idTorneo", torneo.getIdTorneo());
         namedParameterJdbcTemplate.update(s, params);
 
-        squadraTorneoModel.setIdTorneo(idTorneo);
-        squadraTorneoModel.setIdSquadra(idSquadra);
-        return SquadraTorneoMapper.squadraModelToDtoExtended(squadraTorneoModel);
+        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoEntity);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idTorneo", idTorneo);
 
-        namedParameterJdbcTemplate.query(s, params, new RowMapper<TorneoModel>() {
+        namedParameterJdbcTemplate.query(s, params, new RowMapper<TorneoEntity>() {
             @Override
-            public TorneoModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+            public TorneoEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
                 setIdSquadre.add(rs.getInt("id_squadra"));
                 return null;
             }
@@ -118,42 +118,42 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                     private SquadraDTOExtended squadraDTOExtended;
                     @Override
                     public TorneoDTOExtended mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        TorneoModel torneoModel = new TorneoModel();
-                        SquadraModel squadraModel = new SquadraModel();
-                        GiocatoreModel giocatoreModel = new GiocatoreModel();
-                        TifoseriaModel tifoseriaModel = new TifoseriaModel();
+                        TorneoEntity torneoEntity = new TorneoEntity();
+                        SquadraEntity squadraEntity = new SquadraEntity();
+                        GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
+                        TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
 
-                        torneoModel.setIdTorneo(rs.getInt(1));
-                        torneoModel.setNomeTorneo(rs.getString(2));
+                        torneoEntity.setIdTorneo(rs.getInt(1));
+                        torneoEntity.setNomeTorneo(rs.getString(2));
 
-                        squadraModel.setIdSquadra(rs.getInt(3));
-                        squadraModel.setNome(rs.getString(6));
-                        squadraModel.setColoriSociali(rs.getString(7));
+                        squadraEntity.setIdSquadra(rs.getInt(3));
+                        squadraEntity.setNome(rs.getString(6));
+                        squadraEntity.setColoriSociali(rs.getString(7));
 
-                        tifoseriaModel.setIdTifoseria(rs.getInt(12));
-                        tifoseriaModel.setNomeTifoseria(rs.getString(13));
+                        tifoseriaEntity.setIdTifoseria(rs.getInt(12));
+                        tifoseriaEntity.setNomeTifoseria(rs.getString(13));
 
-                        giocatoreModel.setIdGiocatore(rs.getInt(8));
-                        giocatoreModel.setNomeCognome(rs.getString(9));
-                        giocatoreModel.setNumeroAmmonizioni(rs.getInt(10));
+                        giocatoreEntity.setIdGiocatore(rs.getInt(8));
+                        giocatoreEntity.setNomeCognome(rs.getString(9));
+                        giocatoreEntity.setNumeroAmmonizioni(rs.getInt(10));
 
-                        if (squadraDTOExtended == null || !squadraDTOExtended.getIdSquadra().equals(squadraModel.getIdSquadra())) {
+                        if (squadraDTOExtended == null || !squadraDTOExtended.getIdSquadra().equals(squadraEntity.getIdSquadra())) {
                             squadraDTOExtended = new SquadraDTOExtended();
                             squadraDTOExtended.setGiocatori(new HashSet<>());
                         }
-                        squadraDTOExtended.setIdSquadra(squadraModel.getIdSquadra());
-                        squadraDTOExtended.setNome(squadraModel.getNome());
-                        squadraDTOExtended.setColoriSociali(squadraModel.getColoriSociali());
-                        squadraDTOExtended.getGiocatori().add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
-                        squadraDTOExtended.setTifoseria(TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel));
+                        squadraDTOExtended.setIdSquadra(squadraEntity.getIdSquadra());
+                        squadraDTOExtended.setNome(squadraEntity.getNome());
+                        squadraDTOExtended.setColoriSociali(squadraEntity.getColoriSociali());
+                        squadraDTOExtended.getGiocatori().add(GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity));
+                        squadraDTOExtended.setTifoseria(TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity));
 
-                        if (torneoDTOExtended == null || !torneoDTOExtended.getIdTorneo().equals(torneoModel.getIdTorneo())) {
+                        if (torneoDTOExtended == null || !torneoDTOExtended.getIdTorneo().equals(torneoEntity.getIdTorneo())) {
                             torneoDTOExtended = new TorneoDTOExtended();
                             torneoDTOExtended.setSquadre(new HashSet<>());
                         }
 
-                        torneoDTOExtended.setIdTorneo(torneoModel.getIdTorneo());
-                        torneoDTOExtended.setNomeTorneo(torneoModel.getNomeTorneo());
+                        torneoDTOExtended.setIdTorneo(torneoEntity.getIdTorneo());
+                        torneoDTOExtended.setNomeTorneo(torneoEntity.getNomeTorneo());
                         torneoDTOExtended.getSquadre().add(squadraDTOExtended);
 
                         tornei.add(torneoDTOExtended);

@@ -5,6 +5,10 @@ import it.reactive.academy.springMvc.model.TrasferimentiModel;
 import it.reactive.academy.springMvc.resource.Trasferimenti;
 
 public class TrasferimentiMapper {
+
+    private TrasferimentiMapper() {
+    }
+
     public static Trasferimenti trasferimentiDTOExtendedToResource(TrasferimentiDTOExtended trasferimentiDTOExtended) {
         Trasferimenti trasferimenti = new Trasferimenti();
         trasferimenti.setAnno(trasferimenti.getAnno());

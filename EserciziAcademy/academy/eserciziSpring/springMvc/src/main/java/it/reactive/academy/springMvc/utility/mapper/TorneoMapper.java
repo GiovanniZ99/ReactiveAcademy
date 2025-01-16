@@ -2,25 +2,29 @@ package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.TorneoDTO;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.model.TorneoModel;
+import it.reactive.academy.springMvc.entity.TorneoEntity;
 import it.reactive.academy.springMvc.resource.Torneo;
 
 import java.util.stream.Collectors;
 
 public class TorneoMapper {
-    public static TorneoDTOExtended torneoModelToDtoExtended(TorneoModel torneoModel) {
+
+    private TorneoMapper() {
+    }
+
+    public static TorneoDTOExtended torneoEntityToDtoExtended(TorneoEntity torneoEntity) {
         TorneoDTOExtended torneoDTOExtended = new TorneoDTOExtended();
-        if(torneoModel.getIdTorneo() != null) {
-            torneoDTOExtended.setIdTorneo(torneoModel.getIdTorneo());
+        if(torneoEntity.getIdTorneo() != null) {
+            torneoDTOExtended.setIdTorneo(torneoEntity.getIdTorneo());
         }
-        torneoDTOExtended.setNomeTorneo(torneoModel.getNomeTorneo());
+        torneoDTOExtended.setNomeTorneo(torneoEntity.getNomeTorneo());
         return torneoDTOExtended;
     }
-    public static TorneoModel torneoDTOExtendedToModel(TorneoDTOExtended torneoDTOExtended){
-        TorneoModel torneoModel = new TorneoModel();
-        torneoModel.setIdTorneo(torneoDTOExtended.getIdTorneo());
-        torneoModel.setNomeTorneo(torneoDTOExtended.getNomeTorneo());
-        return torneoModel;
+    public static TorneoEntity torneoDTOExtendedToEntity(TorneoDTOExtended torneoDTOExtended){
+        TorneoEntity torneoEntity = new TorneoEntity();
+        torneoEntity.setIdTorneo(torneoDTOExtended.getIdTorneo());
+        torneoEntity.setNomeTorneo(torneoDTOExtended.getNomeTorneo());
+        return torneoEntity;
     }
     public static Torneo torneoDtoExtendedToResource(TorneoDTOExtended torneoDTOExtended){
         Torneo torneo = new Torneo();

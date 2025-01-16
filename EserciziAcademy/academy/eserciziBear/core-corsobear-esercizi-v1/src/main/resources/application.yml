@@ -1,0 +1,30 @@
+spring:
+  profile: development
+  application:
+    name: "@project.artifactId@"
+    version: "@project.version@ (@env.GIT_COMMIT@)"
+
+error-manager:
+  enabled: true
+
+#### Security configuration
+keycloak:
+  enabled: false
+  auth-server-url:
+  resource:
+  realm:
+  public-client: true
+  ssl-required: external
+  confidential-port: 0
+  use-resource-role-mappings: false
+  principal-attribute: preferred_username
+  bearer-only: true
+  autodetect-bearer-only: true
+  token-store: cookie
+  security-constraints:
+    - auth-roles:
+        - openid
+      security-collections:
+        - name: reserved
+          patterns:
+            - /*

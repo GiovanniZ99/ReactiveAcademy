@@ -3,7 +3,7 @@ package it.reactive.academy.springMvc.repository.statement;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
-import it.reactive.academy.springMvc.model.TorneoModel;
+import it.reactive.academy.springMvc.entity.TorneoEntity;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -29,8 +29,8 @@ public class TorneoDaoImpl implements TorneoDao {
 
     @Override
     public TorneoDTOExtended create(String nomeTorneo) throws SQLException {
-        TorneoModel torneoModel = new TorneoModel();
-        torneoModel.setNomeTorneo(nomeTorneo);
+        TorneoEntity torneoEntity = new TorneoEntity();
+        torneoEntity.setNomeTorneo(nomeTorneo);
 
         ResultSet rs = null;
         Connection con = null;
@@ -44,7 +44,7 @@ public class TorneoDaoImpl implements TorneoDao {
             rs = statement.getGeneratedKeys();
 
             if (rs.next()) {
-                torneoModel.setIdTorneo(rs.getInt(1));
+                torneoEntity.setIdTorneo(rs.getInt(1));
             }
         } finally {
             if (rs != null) {
@@ -66,12 +66,12 @@ public class TorneoDaoImpl implements TorneoDao {
             }
         }
 
-        return TorneoMapper.torneoModelToDtoExtended(torneoModel);
+        return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
     }
 
     @Override
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
-        TorneoModel torneoModel = new TorneoModel();
+        TorneoEntity torneoEntity = new TorneoEntity();
         ResultSet rs = null;
         Connection con = null;
         Statement statement = null;
@@ -83,8 +83,8 @@ public class TorneoDaoImpl implements TorneoDao {
             rs = statement.executeQuery(s);
 
             if (rs.next()) {
-                torneoModel.setIdTorneo(rs.getInt(1));
-                torneoModel.setNomeTorneo(rs.getString(2));
+                torneoEntity.setIdTorneo(rs.getInt(1));
+                torneoEntity.setNomeTorneo(rs.getString(2));
             }
         } finally {
             if (rs != null) {
@@ -106,7 +106,7 @@ public class TorneoDaoImpl implements TorneoDao {
             }
         }
 
-        return TorneoMapper.torneoModelToDtoExtended(torneoModel);
+        return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
     }
 
     @Override

@@ -3,10 +3,8 @@ package it.reactive.academy.springMvc.repository.querypsc;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
-import it.reactive.academy.springMvc.utility.mapper.SquadraTorneoMapper;
-import it.reactive.academy.springMvc.utility.mapper.TifoseriaMapper;
-import it.reactive.academy.springMvc.model.*;
+import it.reactive.academy.springMvc.utility.mapper.*;
+import it.reactive.academy.springMvc.entity.*;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import org.springframework.context.annotation.Profile;
@@ -31,13 +29,15 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     }
 
     @Override
-    public SquadraTorneoDTOExtended create(Integer idTorneo, Integer idSquadra) throws SQLException {
-        SquadraTorneoModel squadraTorneoModel = new SquadraTorneoModel();
-        squadraTorneoModel.setIdSquadra(idSquadra);
-        squadraTorneoModel.setIdTorneo(idTorneo);
+    public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
+        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
+        SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
+        squadraTorneoEntity.setTorneoEntity(torneo);
+        squadraTorneoEntity.setSquadraEntity(squadra);
         String s = "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)";
-        jdbcTemplate.update(s, idSquadra, idTorneo);
-        return SquadraTorneoMapper.squadraModelToDtoExtended(squadraTorneoModel);
+        jdbcTemplate.update(s, squadra.getIdSquadra(), torneo.getIdTorneo());
+        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoEntity);
     }
 
     @Override
@@ -60,9 +60,9 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
     @Override
     public LinkedHashMap<Integer, Set<Integer>> readAllTornei() throws SQLException {
-        String sql = "select id_squadra, id_torneo from squadra_torneo order by id_torneo";
+        String s = "select id_squadra, id_torneo from squadra_torneo order by id_torneo";
 
-        PreparedStatementCreator psc = connection -> connection.prepareStatement(sql);
+        PreparedStatementCreator psc = connection -> connection.prepareStatement(s);
         ResultSetExtractor<LinkedHashMap<Integer, Set<Integer>>> rse = rs -> {
             LinkedHashMap<Integer, Set<Integer>> mappaId = new LinkedHashMap<>();
             while (rs.next()) {
@@ -78,9 +78,9 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
     @Override
     public Set<Integer> readAllTorneoByIdSquadra(Integer idSquadra) throws SQLException {
-        String sql = "select id_squadra, id_torneo from squadra_torneo where id_squadra = ?";
-        Object[] params = new Object[]{idSquadra};
-        return jdbcTemplate.query(sql, params, new ResultSetExtractor<Set<Integer>>() {
+        String s = "select id_squadra, id_torneo from squadra_torneo where id_squadra = ?";
+
+        return jdbcTemplate.query(s, new Object[]{idSquadra}, new ResultSetExtractor<Set<Integer>>() {
             public Set<Integer> extractData(ResultSet rs) throws SQLException {
                 Set<Integer> listaIdTornei = new HashSet<>();
                 while (rs.next()) {
@@ -110,42 +110,42 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
             @Override
             public Set<TorneoDTOExtended> extractData(ResultSet rs) throws SQLException, DataAccessException {
                 while (rs.next()) {
-                    TorneoModel torneoModel = new TorneoModel();
-                    SquadraModel squadraModel = new SquadraModel();
-                    GiocatoreModel giocatoreModel = new GiocatoreModel();
-                    TifoseriaModel tifoseriaModel = new TifoseriaModel();
+                    TorneoEntity torneoEntity = new TorneoEntity();
+                    SquadraEntity squadraEntity = new SquadraEntity();
+                    GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
+                    TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
 
-                    torneoModel.setIdTorneo(rs.getInt(1));
-                    torneoModel.setNomeTorneo(rs.getString(2));
+                    torneoEntity.setIdTorneo(rs.getInt(1));
+                    torneoEntity.setNomeTorneo(rs.getString(2));
 
-                    squadraModel.setIdSquadra(rs.getInt(3));
-                    squadraModel.setNome(rs.getString(6));
-                    squadraModel.setColoriSociali(rs.getString(7));
+                    squadraEntity.setIdSquadra(rs.getInt(3));
+                    squadraEntity.setNome(rs.getString(6));
+                    squadraEntity.setColoriSociali(rs.getString(7));
 
-                    tifoseriaModel.setIdTifoseria(rs.getInt(12));
-                    tifoseriaModel.setNomeTifoseria(rs.getString(13));
+                    tifoseriaEntity.setIdTifoseria(rs.getInt(12));
+                    tifoseriaEntity.setNomeTifoseria(rs.getString(13));
 
-                    giocatoreModel.setIdGiocatore(rs.getInt(8));
-                    giocatoreModel.setNomeCognome(rs.getString(9));
-                    giocatoreModel.setNumeroAmmonizioni(rs.getInt(10));
+                    giocatoreEntity.setIdGiocatore(rs.getInt(8));
+                    giocatoreEntity.setNomeCognome(rs.getString(9));
+                    giocatoreEntity.setNumeroAmmonizioni(rs.getInt(10));
 
-                    if(!Objects.equals(squadraDTOExtended[0].getIdSquadra(), squadraModel.getIdSquadra())){
+                    if(!Objects.equals(squadraDTOExtended[0].getIdSquadra(), squadraEntity.getIdSquadra())){
                         squadraDTOExtended[0] = new SquadraDTOExtended();
                         squadraDTOExtended[0].setGiocatori(new HashSet<>());
                     }
-                    squadraDTOExtended[0].setIdSquadra(squadraModel.getIdSquadra());
-                    squadraDTOExtended[0].setNome(squadraModel.getNome());
-                    squadraDTOExtended[0].setColoriSociali(squadraModel.getColoriSociali());
-                    squadraDTOExtended[0].getGiocatori().add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
-                    squadraDTOExtended[0].setTifoseria(TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel));
+                    squadraDTOExtended[0].setIdSquadra(squadraEntity.getIdSquadra());
+                    squadraDTOExtended[0].setNome(squadraEntity.getNome());
+                    squadraDTOExtended[0].setColoriSociali(squadraEntity.getColoriSociali());
+                    squadraDTOExtended[0].getGiocatori().add(GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity));
+                    squadraDTOExtended[0].setTifoseria(TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity));
 
-                    if (!Objects.equals(torneoDTOExtended[0].getIdTorneo(), torneoModel.getIdTorneo())) {
+                    if (!Objects.equals(torneoDTOExtended[0].getIdTorneo(), torneoEntity.getIdTorneo())) {
                         torneoDTOExtended[0] = new TorneoDTOExtended();
                         torneoDTOExtended[0].setSquadre(new HashSet<>());
                     }
-                    torneoDTOExtended[0].setIdTorneo(torneoModel.getIdTorneo());
+                    torneoDTOExtended[0].setIdTorneo(torneoEntity.getIdTorneo());
                     torneoDTOExtended[0].getSquadre().add(squadraDTOExtended[0]);
-                    torneoDTOExtended[0].setNomeTorneo(torneoModel.getNomeTorneo());
+                    torneoDTOExtended[0].setNomeTorneo(torneoEntity.getNomeTorneo());
                     tornei.add(torneoDTOExtended[0]);
                 }
                 return tornei;

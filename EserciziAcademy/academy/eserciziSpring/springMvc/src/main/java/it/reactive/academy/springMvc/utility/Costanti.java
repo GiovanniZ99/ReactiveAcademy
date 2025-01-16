@@ -6,7 +6,7 @@ public class Costanti {
     public static final String TORNEO_DAO_SPRING_JDBC_QUERY_PSC = "TORNEO_DAO_SPRING_JDBC_QUERY_PSC";
     public static final String TORNEO_DAO_SPRING_JDBC_QUERY = "TORNEO_DAO_SPRING_JDBC_QUERY";
     public static final String TORNEO_DAO_SPRING_JDBC_QUERY_FOR_X = "TORNEO_DAO_SPRING_JDBC_QUERY_FOR_X";
-
+    public static final String TORNEO_DAO_SPRING_JPA_JPAREPOSITORY = "TORNEO_DAO_SPRING_JPA_JPAREPOSITORY";
     private Costanti() {
     }
 }

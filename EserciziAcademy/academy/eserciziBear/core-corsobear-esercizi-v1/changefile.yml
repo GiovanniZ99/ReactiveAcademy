@@ -1,0 +1,29 @@
+---
+config:
+  node: "linux && prod"
+
+build:
+  type: "maven_bear" #available: maven, npm, mobile_android, mobile_ios, no_build
+  jdk_version: "8"
+  mvn_version: "3.3.9"
+  skiptest: true
+  loglevel: "info" # available: info, debug, error
+  pre_action:
+    type: sh # available: bat, powershell, sh
+    command: "ls -la"
+  post_action:
+    type: sh # available: bat, powershell, sh
+    command: "ls -la"
+
+quality:
+  sonar:
+    active: true
+
+deployment:
+  openshift:
+    active: true
+
+notification:
+    email: "bear-noreply@intesasanpaolo.com" # available: indirizzo email
+    when : always # available: always
+

@@ -5,8 +5,8 @@ import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
-import it.reactive.academy.springMvc.model.GiocatoreModel;
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.GiocatoreEntity;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -34,7 +34,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
-        GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
+        GiocatoreEntity giocatoreEntity = GiocatoreMapper.giocatoreDtoExtendedToEntity(giocatoreDTOExtended);
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -43,13 +43,13 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
             statement = con.createStatement();
             String s = "insert into giocatore (nome_cognome,id_squadra) values ('" +
-                    giocatoreModel.getNomeCognome() + "', " +
-                    giocatoreModel.getSquadra().getIdSquadra() + ")";
+                    giocatoreEntity.getNomeCognome() + "', " +
+                    giocatoreEntity.getSquadra().getIdSquadra() + ")";
             statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
             rs = statement.getGeneratedKeys();
             if (rs.next()) {
-                giocatoreModel.setIdGiocatore(rs.getInt(1));
+                giocatoreEntity.setIdGiocatore(rs.getInt(1));
             }
         } finally {
             if (rs != null) {
@@ -71,15 +71,15 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             }
         }
 
-        return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
+        return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
 
     @Override
     public Set<GiocatoreDTOExtended> createAll(Set<GiocatoreDTOExtended> giocatoriDTOExtended) throws SQLException {
-        Set<GiocatoreModel> giocatoriModel = giocatoriDTOExtended.stream()
-                .map(GiocatoreMapper::giocatoreDtoExtendedToModel)
+        Set<GiocatoreEntity> giocatoriModel = giocatoriDTOExtended.stream()
+                .map(GiocatoreMapper::giocatoreDtoExtendedToEntity)
                 .collect(Collectors.toSet());
-        Set<GiocatoreModel> giocatoriResult = new HashSet<>();
+        Set<GiocatoreEntity> giocatoriResult = new HashSet<>();
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -88,16 +88,16 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
             statement = con.createStatement();
 
-            for (GiocatoreModel giocatoreModel : giocatoriModel) {
+            for (GiocatoreEntity giocatoreEntity : giocatoriModel) {
                 String s = "insert into giocatore (nome_cognome, id_squadra) values ('" +
-                        giocatoreModel.getNomeCognome() + "', " +
-                        giocatoreModel.getSquadra().getIdSquadra() + ")";
+                        giocatoreEntity.getNomeCognome() + "', " +
+                        giocatoreEntity.getSquadra().getIdSquadra() + ")";
                 statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
                 rs = statement.getGeneratedKeys();
                 if (rs.next()) {
-                    giocatoreModel.setIdGiocatore(rs.getInt(1));
-                    giocatoriResult.add(giocatoreModel);
+                    giocatoreEntity.setIdGiocatore(rs.getInt(1));
+                    giocatoriResult.add(giocatoreEntity);
                 }
             }
         } finally {
@@ -121,14 +121,14 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         }
 
         return giocatoriResult.stream()
-                .map(GiocatoreMapper::giocatoreModelToDTOExtended)
+                .map(GiocatoreMapper::giocatoreEntityToDTOExtended)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         Set<GiocatoreDTOExtended> listaGiocatori = new HashSet<>();
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
         Connection con = null;
         Statement statement = null;
         ResultSet resultGiocatori = null;
@@ -137,16 +137,16 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
             statement = con.createStatement();
             String s = "select * from giocatore where id_squadra = "
-                    + squadraModel.getIdSquadra();
+                    + squadraEntity.getIdSquadra();
             resultGiocatori = statement.executeQuery(s);
 
             while (resultGiocatori.next()) {
-                GiocatoreModel giocatoreModel = new GiocatoreModel();
-                giocatoreModel.setIdGiocatore(resultGiocatori.getInt("id"));
-                giocatoreModel.setNomeCognome(resultGiocatori.getString("nome_cognome"));
-                giocatoreModel.setNumeroAmmonizioni(resultGiocatori.getInt("numero_ammonizioni"));
-                giocatoreModel.setSquadra(squadraModel);
-                listaGiocatori.add(GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel));
+                GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
+                giocatoreEntity.setIdGiocatore(resultGiocatori.getInt("id"));
+                giocatoreEntity.setNomeCognome(resultGiocatori.getString("nome_cognome"));
+                giocatoreEntity.setNumeroAmmonizioni(resultGiocatori.getInt("numero_ammonizioni"));
+                giocatoreEntity.setSquadra(squadraEntity);
+                listaGiocatori.add(GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity));
             }
         } finally {
             if (resultGiocatori != null) {
@@ -206,7 +206,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
-        GiocatoreModel giocatoreModel = new GiocatoreModel();
+        GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -218,9 +218,9 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             rs = statement.executeQuery(s);
 
             if (rs.next()) {
-                giocatoreModel.setIdGiocatore(rs.getInt("id"));
-                giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-                giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+                giocatoreEntity.setIdGiocatore(rs.getInt("id"));
+                giocatoreEntity.setNomeCognome(rs.getString("nome_cognome"));
+                giocatoreEntity.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
             }
         } finally {
             if (rs != null) {
@@ -242,7 +242,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
             }
         }
 
-        return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
+        return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
 
     @Override

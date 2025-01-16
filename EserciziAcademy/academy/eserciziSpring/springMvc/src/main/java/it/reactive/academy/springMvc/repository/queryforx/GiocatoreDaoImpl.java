@@ -4,14 +4,13 @@ import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
-import it.reactive.academy.springMvc.model.GiocatoreModel;
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.GiocatoreEntity;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.rowmapper.GiocatoreRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -34,56 +33,56 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
-        GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
+        GiocatoreEntity giocatoreEntity = GiocatoreMapper.giocatoreDtoExtendedToEntity(giocatoreDTOExtended);
 
         String s = "insert into giocatore (nome_cognome, id_squadra) values (?,?)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("nomeCognome", giocatoreModel.getNomeCognome());
-        params.addValue("idSquadra", giocatoreModel.getSquadra().getIdSquadra());
+        params.addValue("nomeCognome", giocatoreEntity.getNomeCognome());
+        params.addValue("idSquadra", giocatoreEntity.getSquadra().getIdSquadra());
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(s, keyHolder);
-        giocatoreModel.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        giocatoreEntity.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
 
-        return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
+        return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
 
     @Override
     public Set<GiocatoreDTOExtended> createAll(Set<GiocatoreDTOExtended> giocatoriDTOExtended) throws SQLException {
 
-        Set<GiocatoreModel> giocatoriModel = giocatoriDTOExtended.stream().map(GiocatoreMapper::giocatoreDtoExtendedToModel).collect(Collectors.toSet());
+        Set<GiocatoreEntity> giocatoriModel = giocatoriDTOExtended.stream().map(GiocatoreMapper::giocatoreDtoExtendedToEntity).collect(Collectors.toSet());
 
         String s = "insert into giocatore (nome_cognome, id_squadra) values (?,?)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        for (GiocatoreModel giocatoreModel : giocatoriModel) {
-            params.addValue("nomeCognome", giocatoreModel.getNomeCognome());
-            params.addValue("idSquadra", giocatoreModel.getSquadra().getIdSquadra());
+        for (GiocatoreEntity giocatoreEntity : giocatoriModel) {
+            params.addValue("nomeCognome", giocatoreEntity.getNomeCognome());
+            params.addValue("idSquadra", giocatoreEntity.getSquadra().getIdSquadra());
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(s, keyHolder);
-            giocatoreModel.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
+            giocatoreEntity.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
         }
-        return giocatoriModel.stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
+        return giocatoriModel.stream().map(GiocatoreMapper::giocatoreEntityToDTOExtended).collect(Collectors.toSet());
     }
 
     @Override
     public Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
 
         String s = "select * from giocatore where id_squadra = ?";
-        List<Map<String, Object>> mapGiocatori = jdbcTemplate.queryForList(s, squadraModel.getIdSquadra());
-        Set<GiocatoreModel> giocatori = new HashSet<>();
+        List<Map<String, Object>> mapGiocatori = jdbcTemplate.queryForList(s, squadraEntity.getIdSquadra());
+        Set<GiocatoreEntity> giocatori = new HashSet<>();
 
         for (Map<String, Object> map : mapGiocatori) {
-            GiocatoreModel giocatoreModel = new GiocatoreModel();
-            giocatoreModel.setIdGiocatore((Integer) map.get("id"));
-            giocatoreModel.setNomeCognome((String) map.get("nome_cognome"));
-            giocatoreModel.setNumeroAmmonizioni((Integer) map.get("numero_ammonizioni"));
-            giocatoreModel.setSquadra(squadraModel);
-            giocatori.add(giocatoreModel);
+            GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
+            giocatoreEntity.setIdGiocatore((Integer) map.get("id"));
+            giocatoreEntity.setNomeCognome((String) map.get("nome_cognome"));
+            giocatoreEntity.setNumeroAmmonizioni((Integer) map.get("numero_ammonizioni"));
+            giocatoreEntity.setSquadra(squadraEntity);
+            giocatori.add(giocatoreEntity);
         }
-        return giocatori.stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
+        return giocatori.stream().map(GiocatoreMapper::giocatoreEntityToDTOExtended).collect(Collectors.toSet());
     }
 
     public boolean checkByName(String nomeGiocatore) throws SQLException {
@@ -98,12 +97,12 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
-        GiocatoreModel giocatoreModel;
+        GiocatoreEntity giocatoreEntity;
         String s = "select id, nome_cognome, numero_ammonizioni from giocatore where id = ?";
 
-        giocatoreModel = jdbcTemplate.queryForObject(s, new GiocatoreRowMapper(),id);
+        giocatoreEntity = jdbcTemplate.queryForObject(s, new GiocatoreRowMapper(),id);
 
-        return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
+        return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
 
     @Override

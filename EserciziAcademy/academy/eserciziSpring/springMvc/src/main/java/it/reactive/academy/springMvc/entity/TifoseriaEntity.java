@@ -5,6 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tifoseria")
 public class TifoseriaEntity {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,13 +18,14 @@ public class TifoseriaEntity {
     @JoinColumn(name = "id_squadra")
     private SquadraEntity squadra;
 
-    public TifoseriaEntity() {
-    }
 
     public TifoseriaEntity(Integer idTifoseria, String nomeTifoseria, SquadraEntity squadra) {
         this.idTifoseria = idTifoseria;
         this.nomeTifoseria = nomeTifoseria;
         this.squadra = squadra;
+    }
+
+    public TifoseriaEntity() {
     }
 
     public Integer getIdTifoseria() {

@@ -1,0 +1,41 @@
+package it.reactive.academy.springMvc.repository.jparbridgerepository;
+
+
+import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
+import it.reactive.academy.springMvc.entity.TorneoEntity;
+import it.reactive.academy.springMvc.repository.dao.TorneoDao;
+import it.reactive.academy.springMvc.repository.jparepository.TorneoRepository;
+import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
+
+import java.sql.SQLException;
+import java.util.Optional;
+
+@Repository
+@Profile(Costanti.TORNEO_DAO_SPRING_JPA_JPAREPOSITORY)
+public class TorneoDaoImpl implements TorneoDao {
+
+    private final TorneoRepository torneoRepository;
+
+    public TorneoDaoImpl(TorneoRepository torneoRepository) {
+        this.torneoRepository = torneoRepository;
+    }
+
+    @Override
+    public TorneoDTOExtended create(String nomeTorneo) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
+        Optional<TorneoEntity> torneo = torneoRepository.findById(idTorneo);
+        return TorneoMapper.torneoEntityToDtoExtended(torneo.orElse(new TorneoEntity()));
+    }
+
+    @Override
+    public void delete(Integer id) throws SQLException {
+
+    }
+}

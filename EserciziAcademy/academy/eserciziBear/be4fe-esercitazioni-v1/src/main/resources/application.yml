@@ -1,0 +1,57 @@
+spring:
+  profile: development
+  application:
+    name: "@project.artifactId@"
+    version: "@project.version@ (@env.GIT_COMMIT@)"
+
+error-manager:
+  enabled: true
+
+error-handling:
+  #enable exception logging
+  enableExceptionLogging: true
+  #if error logging enabled this enable stacktrace logging
+  enableStacktraceLogging: true
+  #enable event raising on exception
+  enableExceptionEvent: false
+  #enable exception message decoding
+  enableExceptionDecoding: true
+  #if exception decoding is enabled this enable the tracking of unknown error message
+  enableUnknowExceptionMapping: true
+  #this in a tag for unknown error message log
+  unknowExceptionTag: UNKNOWN_ERROR_CODE
+
+session-manager:
+  mocked: false
+  allow-guest-session: false
+  endpoint: your session manager endpoint
+
+################################################################################################################
+# TRACING NOTES
+
+tracing:
+  enabled: false
+  mocked: false
+
+
+#### Security configuration
+keycloak:
+  enabled: false
+  auth-server-url:
+  resource:
+  realm:
+  public-client: true
+  ssl-required: external
+  confidential-port: 0
+  use-resource-role-mappings: false
+  principal-attribute: preferred_username
+  bearer-only: true
+  autodetect-bearer-only: true
+  token-store: cookie
+  security-constraints:
+    - auth-roles:
+        - openid
+      security-collections:
+        - name: reserved
+          patterns:
+            - /*

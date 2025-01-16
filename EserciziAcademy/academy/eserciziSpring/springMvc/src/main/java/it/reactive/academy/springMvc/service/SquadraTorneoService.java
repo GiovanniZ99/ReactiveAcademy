@@ -9,6 +9,7 @@ import it.reactive.academy.springMvc.exception.TorneoNonTrovatoException;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.repository.dao.*;
 import it.reactive.academy.springMvc.resource.Torneo;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,7 @@ public class SquadraTorneoService {
             if (squadraDTOExtended.getIdSquadra() == null) {
                 throw new SquadraNonPresenteException("Squadra non presente");
             }
-            SquadraTorneoDTOExtended squadraTorneoDTOExtended = squadraTorneoDao.create(idTorneo, idSquadra);
+            SquadraTorneoDTOExtended squadraTorneoDTOExtended = squadraTorneoDao.create(torneoDTOExtended, squadraDTOExtended);
             Set<Integer> setIdSquadre = squadraTorneoDao.readAllTeamsById(torneoDTOExtended.getIdTorneo());
             Set<SquadraDTOExtended> setSquadre = new HashSet<>();
 
@@ -130,6 +131,8 @@ public class SquadraTorneoService {
                         tifoseria = tifoseriaDao.readByTeam(elem);
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
+                    }catch (EmptyResultDataAccessException e){
+                        tifoseria = new TifoseriaDTOExtended();
                     }
                     tifoseria.setSquadra(elem);
                         elem.setTifoseria(tifoseria);

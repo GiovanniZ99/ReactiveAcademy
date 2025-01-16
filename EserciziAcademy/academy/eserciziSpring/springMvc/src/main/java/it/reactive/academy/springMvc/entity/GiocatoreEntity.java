@@ -1,10 +1,14 @@
 package it.reactive.academy.springMvc.entity;
 
-import javax.persistence.*;
+import it.reactive.academy.springMvc.model.TrasferimentiModel;
+import org.hibernate.annotations.ColumnDefault;
 
+import javax.persistence.*;
+import java.util.Set;
 @Entity
 @Table(name = "giocatore")
 public class GiocatoreEntity {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,27 +18,34 @@ public class GiocatoreEntity {
     private String nomeCognome;
 
     @Column(name = "numero_ammonizioni")
-    private Integer numeroAmmonizioni;
+    @ColumnDefault("0")
+    private Integer numeroAmmonizioni = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_squadra")
     private SquadraEntity squadra;
 
-    public GiocatoreEntity(){}
+    @Transient
+    private Set<TrasferimentiModel> trasferimenti;
 
-    public GiocatoreEntity(Integer idGiocatore, String nomeCognome, Integer numeroAmmonizioni, SquadraEntity squadra) {
+    public GiocatoreEntity(Integer idGiocatore, String nomeCognome, Integer numeroAmmonizioni,
+                           SquadraEntity squadra, Set<TrasferimentiModel> trasferimenti) {
         this.idGiocatore = idGiocatore;
         this.nomeCognome = nomeCognome;
         this.numeroAmmonizioni = numeroAmmonizioni;
         this.squadra = squadra;
+        this.trasferimenti = trasferimenti;
     }
 
-    public Integer getIdGiocatore() {
-        return idGiocatore;
+    public GiocatoreEntity() {
     }
 
     public void setIdGiocatore(Integer idGiocatore) {
         this.idGiocatore = idGiocatore;
+    }
+
+    public Integer getIdGiocatore() {
+        return idGiocatore;
     }
 
     public String getNomeCognome() {
@@ -59,5 +70,13 @@ public class GiocatoreEntity {
 
     public void setSquadra(SquadraEntity squadra) {
         this.squadra = squadra;
+    }
+
+    public Set<TrasferimentiModel> getTrasferimenti() {
+        return trasferimenti;
+    }
+
+    public void setTrasferimenti(Set<TrasferimentiModel> trasferimenti) {
+        this.trasferimenti = trasferimenti;
     }
 }

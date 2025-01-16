@@ -3,7 +3,7 @@ package it.reactive.academy.springMvc.repository.statement;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -31,7 +31,7 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -40,12 +40,12 @@ public class SquadraDaoImpl implements SquadraDao {
             con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
             statement = con.createStatement();
             String s = "insert into squadra (nome, colori_sociali) values ('"
-                    + squadraModel.getNome() + "', '" + squadraModel.getColoriSociali() + "')";
+                    + squadraEntity.getNome() + "', '" + squadraEntity.getColoriSociali() + "')";
             statement.executeUpdate(s, Statement.RETURN_GENERATED_KEYS);
 
             rs = statement.getGeneratedKeys();
             if (rs.next()) {
-                squadraModel.setIdSquadra(rs.getInt(1));
+                squadraEntity.setIdSquadra(rs.getInt(1));
             }
         } finally {
             if (rs != null) {
@@ -67,7 +67,7 @@ public class SquadraDaoImpl implements SquadraDao {
             }
         }
 
-        SquadraDTOExtended squadraResult = SquadraMapper.squadraModelToDtoExtendended(squadraModel);
+        SquadraDTOExtended squadraResult = SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
         squadraResult.setGiocatori(squadraDTOExtended.getGiocatori());
         return squadraResult;
     }
@@ -86,11 +86,11 @@ public class SquadraDaoImpl implements SquadraDao {
             rs = statement.executeQuery(s);
 
             while (rs.next()) {
-                SquadraModel squadraModel = new SquadraModel();
-                squadraModel.setIdSquadra(rs.getInt(1));
-                squadraModel.setNome(rs.getString(2));
-                squadraModel.setColoriSociali(rs.getString(3));
-                listaSquadra.add(SquadraMapper.squadraModelToDtoExtendended(squadraModel));
+                SquadraEntity squadraEntity = new SquadraEntity();
+                squadraEntity.setIdSquadra(rs.getInt(1));
+                squadraEntity.setNome(rs.getString(2));
+                squadraEntity.setColoriSociali(rs.getString(3));
+                listaSquadra.add(SquadraMapper.squadraEntityToDtoExtendended(squadraEntity));
             }
         } finally {
             if (rs != null) {
@@ -117,7 +117,7 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
-        SquadraModel squadraModel = new SquadraModel();
+        SquadraEntity squadraEntity = new SquadraEntity();
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -129,9 +129,9 @@ public class SquadraDaoImpl implements SquadraDao {
             rs = statement.executeQuery(s);
 
             if (rs.next()) {
-                squadraModel.setIdSquadra(rs.getInt("id"));
-                squadraModel.setNome(rs.getString("nome"));
-                squadraModel.setColoriSociali(rs.getString("colori_sociali"));
+                squadraEntity.setIdSquadra(rs.getInt("id"));
+                squadraEntity.setNome(rs.getString("nome"));
+                squadraEntity.setColoriSociali(rs.getString("colori_sociali"));
             }
         } finally {
             if (rs != null) {
@@ -153,7 +153,7 @@ public class SquadraDaoImpl implements SquadraDao {
             }
         }
 
-        return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
+        return SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
     }
 
     @Override

@@ -1,20 +1,20 @@
 package it.reactive.academy.springMvc.repository.queryforx;
 
+import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.model.*;
+import it.reactive.academy.springMvc.entity.*;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.utility.mapper.SquadraTorneoMapper;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,18 +30,18 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     }
 
     @Override
-    public SquadraTorneoDTOExtended create(Integer idTorneo, Integer idSquadra) throws SQLException {
-        SquadraTorneoModel squadraTorneoModel = new SquadraTorneoModel();
+    public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
+        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
+        SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
+        squadraTorneoEntity.setTorneoEntity(torneo);
+        squadraTorneoEntity.setSquadraEntity(squadra);
 
         String s = "insert into squadra_torneo (id_squadra, id_torneo) values (?,?)";
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("idTorneo", idTorneo);
-        params.addValue("idSquadra", idSquadra);
-        jdbcTemplate.update(s, new Object[]{idSquadra, idTorneo});
 
-        squadraTorneoModel.setIdTorneo(idTorneo);
-        squadraTorneoModel.setIdSquadra(idSquadra);
-        return SquadraTorneoMapper.squadraModelToDtoExtended(squadraTorneoModel);
+        jdbcTemplate.update(s, new Object[]{squadra.getIdSquadra(), torneo.getIdTorneo()});
+
+        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoEntity);
     }
 
     @Override
@@ -58,17 +58,14 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
         LinkedHashMap<Integer, Set<Integer>> mappaId = new LinkedHashMap<>();
 
-        jdbcTemplate.query(s, new RowMapper<Void>() {
-            @Override
-            public Void mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Integer idTorneo = rs.getInt("id_torneo");
-                Integer idSquadra = rs.getInt("id_squadra");
+        List<Map<String, Object>> results = jdbcTemplate.queryForList(s);
 
-                mappaId.computeIfAbsent(idTorneo, k -> new HashSet<>()).add(idSquadra);
+        for (Map<String, Object> row : results) {
+            Integer idTorneo = (Integer) row.get("id_torneo");
+            Integer idSquadra = (Integer) row.get("id_squadra");
 
-                return null;
-            }
-        });
+            mappaId.computeIfAbsent(idTorneo, k -> new HashSet<>()).add(idSquadra);
+        }
 
         return mappaId;
     }
@@ -92,8 +89,8 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
                 "join tifoseria ti on s.id = ti.id_squadra "+
                 "order by t.id, s.id";
 
-        List<TorneoModel> sqlListaResult = jdbcTemplate.query(s, new BeanPropertyRowMapper<>(TorneoModel.class));
+        List<TorneoEntity> sqlListaResult = jdbcTemplate.query(s, new BeanPropertyRowMapper<>(TorneoEntity.class));
 
-        return sqlListaResult.stream().map(TorneoMapper::torneoModelToDtoExtended).collect(Collectors.toSet());
+        return sqlListaResult.stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 }

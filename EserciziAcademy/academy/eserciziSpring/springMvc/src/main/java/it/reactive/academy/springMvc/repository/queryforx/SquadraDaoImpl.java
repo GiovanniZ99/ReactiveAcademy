@@ -2,13 +2,12 @@ package it.reactive.academy.springMvc.repository.queryforx;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.rowmapper.SquadraRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -31,7 +30,7 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
 
         String s = "insert into squadra (nome, colori_sociali) values (?, ?)";
 
@@ -39,9 +38,9 @@ public class SquadraDaoImpl implements SquadraDao {
         jdbcTemplate.update(s,
                 new Object[]{squadraDTOExtended.getNome(), squadraDTOExtended.getColoriSociali()},
                 keyHolder);
-        squadraModel.setIdSquadra((Objects.requireNonNull(keyHolder.getKey()).intValue()));
+        squadraEntity.setIdSquadra((Objects.requireNonNull(keyHolder.getKey()).intValue()));
 
-        SquadraDTOExtended squadraResult = SquadraMapper.squadraModelToDtoExtendended(squadraModel);
+        SquadraDTOExtended squadraResult = SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
         squadraResult.setGiocatori(squadraDTOExtended.getGiocatori());
         return squadraResult;
     }
@@ -50,17 +49,17 @@ public class SquadraDaoImpl implements SquadraDao {
     public List<SquadraDTOExtended> readAll() throws SQLException {
         List<Map<String, Object>> mapSquadra = jdbcTemplate.queryForList("select * from squadra");
 
-        List<SquadraModel> squadre = new ArrayList<>();
+        List<SquadraEntity> squadre = new ArrayList<>();
         for (Map<String, Object> map : mapSquadra) {
-            SquadraModel squadraModel = new SquadraModel();
-            squadraModel.setIdSquadra((Integer) map.get("idSquadra"));
-            squadraModel.setNome((String) map.get("nome"));
-            squadraModel.setColoriSociali((String) map.get("coloriSociali"));
-            squadre.add(squadraModel);
+            SquadraEntity squadraEntity = new SquadraEntity();
+            squadraEntity.setIdSquadra((Integer) map.get("idSquadra"));
+            squadraEntity.setNome((String) map.get("nome"));
+            squadraEntity.setColoriSociali((String) map.get("coloriSociali"));
+            squadre.add(squadraEntity);
         }
 
         return squadre.stream()
-                .map(SquadraMapper::squadraModelToDtoExtendended)
+                .map(SquadraMapper::squadraEntityToDtoExtendended)
                 .collect(Collectors.toList());
     }
 
@@ -68,9 +67,9 @@ public class SquadraDaoImpl implements SquadraDao {
     public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
         String s = "select * from squadra where id = ?";
 
-        SquadraModel squadraModel = jdbcTemplate.queryForObject(s, new SquadraRowMapper(), idSquadra);
+        SquadraEntity squadraEntity = jdbcTemplate.queryForObject(s, new SquadraRowMapper(), idSquadra);
 
-        return SquadraMapper.squadraModelToDtoExtendended(squadraModel);
+        return SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
     }
 
     @Override

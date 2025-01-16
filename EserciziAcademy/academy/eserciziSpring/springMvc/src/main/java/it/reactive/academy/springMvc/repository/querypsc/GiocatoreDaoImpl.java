@@ -4,8 +4,8 @@ import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.GiocatoreMapper;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
-import it.reactive.academy.springMvc.model.GiocatoreModel;
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.GiocatoreEntity;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import org.springframework.context.annotation.Profile;
@@ -36,79 +36,79 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
-        GiocatoreModel giocatoreModel = GiocatoreMapper.giocatoreDtoExtendedToModel(giocatoreDTOExtended);
+        GiocatoreEntity giocatoreEntity = GiocatoreMapper.giocatoreDtoExtendedToEntity(giocatoreDTOExtended);
 
         String s = "insert into giocatore (nome_cognome, id_squadra) values (?, ?)";
         PreparedStatementCreator psc = new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, giocatoreModel.getNomeCognome());
-                ps.setInt(2, giocatoreModel.getSquadra().getIdSquadra());
+                ps.setString(1, giocatoreEntity.getNomeCognome());
+                ps.setInt(2, giocatoreEntity.getSquadra().getIdSquadra());
                 return ps;
             }
         };
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
-        giocatoreModel.setIdGiocatore((Integer) keyHolder.getKeys().get("id"));
+        giocatoreEntity.setIdGiocatore((Integer) keyHolder.getKeys().get("id"));
 
-        return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
+        return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
 
     @Override
     public Set<GiocatoreDTOExtended> createAll(Set<GiocatoreDTOExtended> giocatoriDTOExtended) throws SQLException {
-        Set<GiocatoreModel> giocatoriModel = giocatoriDTOExtended.stream().map(GiocatoreMapper::giocatoreDtoExtendedToModel).collect(Collectors.toSet());
+        Set<GiocatoreEntity> giocatoriModel = giocatoriDTOExtended.stream().map(GiocatoreMapper::giocatoreDtoExtendedToEntity).collect(Collectors.toSet());
         String s = "insert into giocatore (nome_cognome, id_squadra) values (?, ?)";
 
-        for (GiocatoreModel giocatoreModel : giocatoriModel) {
+        for (GiocatoreEntity giocatoreEntity : giocatoriModel) {
             PreparedStatementCreator psc = new PreparedStatementCreator() {
                 @Override
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                     PreparedStatement ps = con.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
-                    ps.setString(1, giocatoreModel.getNomeCognome());
-                    ps.setInt(2, giocatoreModel.getSquadra().getIdSquadra());
+                    ps.setString(1, giocatoreEntity.getNomeCognome());
+                    ps.setInt(2, giocatoreEntity.getSquadra().getIdSquadra());
                     return ps;
                 }
             };
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(psc, keyHolder);
-            giocatoreModel.setIdGiocatore((Integer) keyHolder.getKeys().get("id"));
+            giocatoreEntity.setIdGiocatore((Integer) keyHolder.getKeys().get("id"));
         }
-        return giocatoriModel.stream().map(GiocatoreMapper::giocatoreModelToDTOExtended).collect(Collectors.toSet());
+        return giocatoriModel.stream().map(GiocatoreMapper::giocatoreEntityToDTOExtended).collect(Collectors.toSet());
     }
 
 
     @Override
     public Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
 
         String s = "select * from giocatore where id_squadra = (?)";
         PreparedStatementCreator psc = new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(s);
-                ps.setInt(1, squadraModel.getIdSquadra());
+                ps.setInt(1, squadraEntity.getIdSquadra());
                 return ps;
             }
         };
-        ResultSetExtractor<Set<GiocatoreModel>> rse = new ResultSetExtractor<Set<GiocatoreModel>>() {
+        ResultSetExtractor<Set<GiocatoreEntity>> rse = new ResultSetExtractor<Set<GiocatoreEntity>>() {
             @Override
-            public Set<GiocatoreModel> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                Set<GiocatoreModel> giocatori = new HashSet<>();
+            public Set<GiocatoreEntity> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                Set<GiocatoreEntity> giocatori = new HashSet<>();
                 while (rs.next()) {
-                    GiocatoreModel giocatoreModel = new GiocatoreModel();
-                    giocatoreModel.setIdGiocatore(rs.getInt(1));
-                    giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-                    giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
-                    giocatoreModel.setSquadra(squadraModel);
-                    giocatori.add(giocatoreModel);
+                    GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
+                    giocatoreEntity.setIdGiocatore(rs.getInt(1));
+                    giocatoreEntity.setNomeCognome(rs.getString("nome_cognome"));
+                    giocatoreEntity.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+                    giocatoreEntity.setSquadra(squadraEntity);
+                    giocatori.add(giocatoreEntity);
                 }
                 return giocatori;
             }
         };
         return (Objects.requireNonNull(jdbcTemplate.query(psc, rse))
                 .stream()
-                .map(GiocatoreMapper::giocatoreModelToDTOExtended))
+                .map(GiocatoreMapper::giocatoreEntityToDTOExtended))
                 .collect(Collectors.toSet());
     }
 
@@ -123,23 +123,23 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
     @Override
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
-        GiocatoreModel giocatoreModel = new GiocatoreModel();
+        GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
         String s = "select id, nome_cognome, numero_ammonizioni from giocatore where id = ?";
-        ResultSetExtractor<GiocatoreModel> rse = new ResultSetExtractor<GiocatoreModel>() {
+        ResultSetExtractor<GiocatoreEntity> rse = new ResultSetExtractor<GiocatoreEntity>() {
             @Override
-            public GiocatoreModel extractData(ResultSet rs) throws SQLException, DataAccessException {
+            public GiocatoreEntity extractData(ResultSet rs) throws SQLException, DataAccessException {
                 if (rs.next()) {
-                    giocatoreModel.setIdGiocatore(rs.getInt("id"));
-                    giocatoreModel.setNomeCognome(rs.getString("nome_cognome"));
-                    giocatoreModel.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
+                    giocatoreEntity.setIdGiocatore(rs.getInt("id"));
+                    giocatoreEntity.setNomeCognome(rs.getString("nome_cognome"));
+                    giocatoreEntity.setNumeroAmmonizioni(rs.getInt("numero_ammonizioni"));
                 }
-                return giocatoreModel;
+                return giocatoreEntity;
             }
         };
 
         jdbcTemplate.query(s, rse, id);
 
-        return GiocatoreMapper.giocatoreModelToDTOExtended(giocatoreModel);
+        return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
 
     @Override

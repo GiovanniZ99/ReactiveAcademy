@@ -1,7 +1,7 @@
 package it.reactive.academy.springMvc.repository.queryforx;
 
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.model.TorneoModel;
+import it.reactive.academy.springMvc.entity.TorneoEntity;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
@@ -26,25 +26,25 @@ public class TorneoDaoImpl implements TorneoDao {
 
     @Override
     public TorneoDTOExtended create(String nomeTorneo) throws SQLException {
-        TorneoModel torneoModel = new TorneoModel();
-        torneoModel.setNomeTorneo(nomeTorneo);
+        TorneoEntity torneoEntity = new TorneoEntity();
+        torneoEntity.setNomeTorneo(nomeTorneo);
 
         String s = "insert into torneo (nome_torneo) values (?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(s, nomeTorneo, keyHolder);
-        torneoModel.setIdTorneo((Integer) keyHolder.getKey());
+        torneoEntity.setIdTorneo((Integer) keyHolder.getKey());
 
-        return TorneoMapper.torneoModelToDtoExtended(torneoModel);
+        return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
     }
 
     @Override
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
-        TorneoModel torneoModel = jdbcTemplate.queryForObject(
+        TorneoEntity torneoEntity = jdbcTemplate.queryForObject(
                 "select id, nome_torneo from torneo where id = ?",
                 new TorneoRowMapper(), idTorneo);
 
-        return TorneoMapper.torneoModelToDtoExtended(torneoModel);
+        return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
     }
 
     @Override

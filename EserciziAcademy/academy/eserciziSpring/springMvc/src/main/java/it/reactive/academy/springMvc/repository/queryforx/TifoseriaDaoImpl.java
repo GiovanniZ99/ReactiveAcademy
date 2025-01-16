@@ -4,13 +4,12 @@ import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.utility.mapper.TifoseriaMapper;
-import it.reactive.academy.springMvc.model.SquadraModel;
-import it.reactive.academy.springMvc.model.TifoseriaModel;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
+import it.reactive.academy.springMvc.entity.TifoseriaEntity;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.rowmapper.TifoseriaRowMapper;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -31,40 +30,40 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
 
     @Override
     public TifoseriaDTOExtended createWithTeam(TifoseriaDTOExtended tifoseriaDTOExtended, Integer idSquadra) throws SQLException {
-        TifoseriaModel tifoseriaModel = TifoseriaMapper.tifoseriaDtoExtendedToModel(tifoseriaDTOExtended);
+        TifoseriaEntity tifoseriaEntity = TifoseriaMapper.tifoseriaDtoExtendedToEntity(tifoseriaDTOExtended);
 
         String s = "insert into tifoseria (nome_tifoseria, id_squadra) values (?,?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(s, new Object[]{tifoseriaModel.getNomeTifoseria(), idSquadra}, keyHolder);
-        tifoseriaModel.setIdTifoseria((Objects.requireNonNull(keyHolder.getKey()).intValue()));
+        jdbcTemplate.update(s, new Object[]{tifoseriaEntity.getNomeTifoseria(), idSquadra}, keyHolder);
+        tifoseriaEntity.setIdTifoseria((Objects.requireNonNull(keyHolder.getKey()).intValue()));
 
-        return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
+        return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
 
     @Override
     public TifoseriaDTOExtended readByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        TifoseriaModel tifoseriaResult;
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        TifoseriaEntity tifoseriaResult;
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
 
-        String s = "select id, nome_tifoseria from tifoseria where id_squadra = ?";
+        String s = "select id, nome_tifoseria, id_squadra from tifoseria where id_squadra = ?";
 
-        tifoseriaResult = jdbcTemplate.queryForObject(s, new TifoseriaRowMapper(), squadraModel.getIdSquadra());
+        tifoseriaResult = jdbcTemplate.queryForObject(s, new TifoseriaRowMapper(), squadraEntity.getIdSquadra());
 
-        return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaResult);
+        return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaResult);
     }
 
     @Override
     public TifoseriaDTOExtended updateName(String nomeTifoseria, Integer idSquadra) throws SQLException {
-        TifoseriaModel tifoseriaModel = new TifoseriaModel();
-        tifoseriaModel.setNomeTifoseria(nomeTifoseria);
-        tifoseriaModel.setSquadra(new SquadraModel());
-        tifoseriaModel.getSquadra().setIdSquadra(idSquadra);
+        TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
+        tifoseriaEntity.setNomeTifoseria(nomeTifoseria);
+        tifoseriaEntity.setSquadra(new SquadraEntity());
+        tifoseriaEntity.getSquadra().setIdSquadra(idSquadra);
         String s = "update tifoseria set nome_tifoseria = ? where id_squadra = ?";
 
         jdbcTemplate.update(s, nomeTifoseria, idSquadra);
 
-        return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
+        return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
 
 }

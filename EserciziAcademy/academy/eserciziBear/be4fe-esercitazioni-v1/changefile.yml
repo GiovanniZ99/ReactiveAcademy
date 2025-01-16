@@ -1,0 +1,30 @@
+---
+config:
+  node: "linux && prod"
+
+build:
+  type: "maven_bear"
+  jdk_version: "8"
+  mvn_version: "3.6.3"
+  skiptest: true
+  loglevel: "info"
+  pre_action:
+    type: sh
+    command: "ls -la"
+  post_action:
+    type: sh
+    command: "ls -la"
+
+quality:
+  sonar:
+    active: true
+
+deployment:
+  openshift:
+    active: true
+    base_image: "OPENJDK-8-UBI8-ISP:2.1.14-5.1666624658.0"
+
+notification:
+    email: "bear-noreply@intesasanpaolo.com"
+    when : always
+

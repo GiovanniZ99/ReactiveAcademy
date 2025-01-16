@@ -4,8 +4,8 @@ import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TifoseriaDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.utility.mapper.TifoseriaMapper;
-import it.reactive.academy.springMvc.model.SquadraModel;
-import it.reactive.academy.springMvc.model.TifoseriaModel;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
+import it.reactive.academy.springMvc.entity.TifoseriaEntity;
 import it.reactive.academy.springMvc.repository.dao.TifoseriaDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import org.springframework.context.annotation.Profile;
@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -34,13 +33,13 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
 
     @Override
     public TifoseriaDTOExtended createWithTeam(TifoseriaDTOExtended tifoseriaDTOExtended, Integer idSquadra) throws SQLException {
-        TifoseriaModel tifoseriaModel = TifoseriaMapper.tifoseriaDtoExtendedToModel(tifoseriaDTOExtended);
+        TifoseriaEntity tifoseriaEntity = TifoseriaMapper.tifoseriaDtoExtendedToEntity(tifoseriaDTOExtended);
 
         PreparedStatementCreator psc = new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement("insert into tifoseria (nome_tifoseria, id_squadra) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, tifoseriaModel.getNomeTifoseria());
+                ps.setString(1, tifoseriaEntity.getNomeTifoseria());
                 ps.setInt(2, idSquadra);
                 return ps;
             }
@@ -48,41 +47,41 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
 
-        tifoseriaModel.setIdTifoseria((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
-        return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
+        tifoseriaEntity.setIdTifoseria((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
+        return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
 
     @Override
     public TifoseriaDTOExtended readByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        TifoseriaModel tifoseriaResult;
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        TifoseriaEntity tifoseriaResult;
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
 
-        ResultSetExtractor<TifoseriaModel> rse = new ResultSetExtractor<TifoseriaModel>() {
+        ResultSetExtractor<TifoseriaEntity> rse = new ResultSetExtractor<TifoseriaEntity>() {
             @Override
-            public TifoseriaModel extractData(ResultSet rs) throws SQLException, DataAccessException {
-                TifoseriaModel tifoseriaModel = new TifoseriaModel();
+            public TifoseriaEntity extractData(ResultSet rs) throws SQLException, DataAccessException {
+                TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
                 if (rs.next()) {
-                    tifoseriaModel.setIdTifoseria(rs.getInt("id"));
-                    tifoseriaModel.setNomeTifoseria(rs.getString("nome_tifoseria"));
-                    return tifoseriaModel;
+                    tifoseriaEntity.setIdTifoseria(rs.getInt("id"));
+                    tifoseriaEntity.setNomeTifoseria(rs.getString("nome_tifoseria"));
+                    return tifoseriaEntity;
                 }
                 return null;
             }
         };
-        String s = "select id, nome_tifoseria from tifoseria where id_squadra = ?";
-        tifoseriaResult = jdbcTemplate.query(s, rse, squadraModel.getIdSquadra());
+        String s = "select id, nome_tifoseria, id_squadra from tifoseria where id_squadra = ?";
+        tifoseriaResult = jdbcTemplate.query(s, rse, squadraEntity.getIdSquadra());
         if (tifoseriaResult == null) {
             return new TifoseriaDTOExtended();
         }
-        return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaResult);
+        return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaResult);
     }
 
     @Override
     public TifoseriaDTOExtended updateName(String nomeTifoseria, Integer idSquadra) throws SQLException {
-        TifoseriaModel tifoseriaModel = new TifoseriaModel();
-        tifoseriaModel.setNomeTifoseria(nomeTifoseria);
-        tifoseriaModel.setSquadra(new SquadraModel());
-        tifoseriaModel.getSquadra().setIdSquadra(idSquadra);
+        TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
+        tifoseriaEntity.setNomeTifoseria(nomeTifoseria);
+        tifoseriaEntity.setSquadra(new SquadraEntity());
+        tifoseriaEntity.getSquadra().setIdSquadra(idSquadra);
 
         PreparedStatementCreator psc = con -> {
           PreparedStatement ps =  con.prepareStatement("update tifoseria set nome_tifoseria = ? where id_squadra = ?");
@@ -92,7 +91,7 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         };
 
         jdbcTemplate.update(psc);
-        return TifoseriaMapper.tifoseriaModelToDtoExtended(tifoseriaModel);
+        return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
 
 }

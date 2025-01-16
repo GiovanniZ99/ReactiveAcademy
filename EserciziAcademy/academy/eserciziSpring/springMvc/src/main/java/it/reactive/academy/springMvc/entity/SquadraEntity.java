@@ -1,30 +1,27 @@
 package it.reactive.academy.springMvc.entity;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "squadra")
 public class SquadraEntity {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idSquadra;
-    @Column(name = "nome_cognome")
+
     private String nome;
+
     @Column(name = "colori_sociali")
     private String coloriSociali;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "squadra")
-    private Set<GiocatoreEntity> giocatori;
 
-    public SquadraEntity(){}
-
-    public SquadraEntity(Integer idSquadra, String nome, String coloriSociali, Set<GiocatoreEntity> giocatori) {
+    public SquadraEntity(Integer idSquadra, String nome, String coloriSociali) {
         this.idSquadra = idSquadra;
         this.nome = nome;
         this.coloriSociali = coloriSociali;
-        this.giocatori = giocatori;
+    }
+
+    public SquadraEntity() {
     }
 
     public Integer getIdSquadra() {
@@ -51,11 +48,4 @@ public class SquadraEntity {
         this.coloriSociali = coloriSociali;
     }
 
-    public Set<GiocatoreEntity> getGiocatori() {
-        return giocatori;
-    }
-
-    public void setGiocatori(Set<GiocatoreEntity> giocatori) {
-        this.giocatori = giocatori;
-    }
 }

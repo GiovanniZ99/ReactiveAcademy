@@ -1,12 +1,10 @@
 package it.reactive.academy.springMvc.entity;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "torneo")
 public class TorneoEntity {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,16 +13,13 @@ public class TorneoEntity {
     @Column(name = "nome_torneo")
     private String nomeTorneo;
 
-    @ManyToMany
-    @JoinTable(name = "squadra_torneo", joinColumns = @JoinColumn(name = "id_torneo"), inverseJoinColumns = @JoinColumn(name = "id_squadra"))
-    private Set<SquadraEntity> squadre;
-
-    public TorneoEntity(){}
-
-    public TorneoEntity(Integer idTorneo, String nomeTorneo, Set<SquadraEntity> squadre) {
+    public TorneoEntity(Integer idTorneo, String nomeTorneo) {
         this.idTorneo = idTorneo;
         this.nomeTorneo = nomeTorneo;
-        this.squadre = squadre;
+    }
+
+    public TorneoEntity() {
+
     }
 
     public Integer getIdTorneo() {
@@ -43,11 +38,4 @@ public class TorneoEntity {
         this.nomeTorneo = nomeTorneo;
     }
 
-    public Set<SquadraEntity> getSquadre() {
-        return squadre;
-    }
-
-    public void setSquadre(Set<SquadraEntity> squadre) {
-        this.squadre = squadre;
-    }
 }

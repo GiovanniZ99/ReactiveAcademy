@@ -2,20 +2,23 @@ package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.GiocatoreDTO;
 import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
-import it.reactive.academy.springMvc.model.GiocatoreModel;
+import it.reactive.academy.springMvc.entity.GiocatoreEntity;
 import it.reactive.academy.springMvc.resource.Giocatore;
 
 import java.util.stream.Collectors;
 
 public class GiocatoreMapper {
-    // DTO-IN -> DTO-EXTENDED s  //    DTO-EXTEDNED -> MODEL s //    MODEL -> DTO-EXTENDED s //    DTO-EXTENDED -> RESOURCE s
-    public static GiocatoreDTOExtended giocatoreModelToDTOExtended(GiocatoreModel giocatoreModel) {
+
+    private GiocatoreMapper() {
+    }
+
+    public static GiocatoreDTOExtended giocatoreEntityToDTOExtended(GiocatoreEntity giocatoreEntity) {
         GiocatoreDTOExtended giocatoreDTOExtended = new GiocatoreDTOExtended();
-        giocatoreDTOExtended.setIdGiocatore(giocatoreModel.getIdGiocatore());
-        giocatoreDTOExtended.setNomeCognome(giocatoreModel.getNomeCognome());
-        giocatoreDTOExtended.setNumeroAmmonizioni(giocatoreModel.getNumeroAmmonizioni());
-        if(giocatoreModel.getSquadra() != null) {
-            giocatoreDTOExtended.setSquadra(SquadraMapper.squadraModelToDtoExtendended(giocatoreModel.getSquadra()));
+        giocatoreDTOExtended.setIdGiocatore(giocatoreEntity.getIdGiocatore());
+        giocatoreDTOExtended.setNomeCognome(giocatoreEntity.getNomeCognome());
+        giocatoreDTOExtended.setNumeroAmmonizioni(giocatoreEntity.getNumeroAmmonizioni());
+        if(giocatoreEntity.getSquadra() != null) {
+            giocatoreDTOExtended.setSquadra(SquadraMapper.squadraEntityToDtoExtendended(giocatoreEntity.getSquadra()));
         }
         return giocatoreDTOExtended;
     }
@@ -26,23 +29,23 @@ public class GiocatoreMapper {
         return giocatoreDTOExtended;
     }
 
-    public static GiocatoreModel giocatoreDtoExtendedToModel(GiocatoreDTOExtended giocatoreDTOExtended) {
-        GiocatoreModel giocatoreModel = new GiocatoreModel();
+    public static GiocatoreEntity giocatoreDtoExtendedToEntity(GiocatoreDTOExtended giocatoreDTOExtended) {
+        GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
         if(giocatoreDTOExtended.getNomeCognome()!= null) {
-            giocatoreModel.setNomeCognome(giocatoreDTOExtended.getNomeCognome());
+            giocatoreEntity.setNomeCognome(giocatoreDTOExtended.getNomeCognome());
         }
         if(giocatoreDTOExtended.getNumeroAmmonizioni() != null) {
-            giocatoreModel.setNumeroAmmonizioni(giocatoreModel.getNumeroAmmonizioni());
+            giocatoreEntity.setNumeroAmmonizioni(giocatoreEntity.getNumeroAmmonizioni());
         }
         if(giocatoreDTOExtended.getSquadra()!= null) {
-            giocatoreModel.setSquadra(SquadraMapper.squadraDtoExtendedToModel(giocatoreDTOExtended.getSquadra()));
+            giocatoreEntity.setSquadra(SquadraMapper.squadraDtoExtendedToEntity(giocatoreDTOExtended.getSquadra()));
         }
         if(giocatoreDTOExtended.getTrasferimenti()!= null){
-        giocatoreModel.setTrasferimenti(giocatoreDTOExtended.getTrasferimenti()
+        giocatoreEntity.setTrasferimenti(giocatoreDTOExtended.getTrasferimenti()
                 .stream()
                 .map(elem -> TrasferimentiMapper.trasferimentiDtoExtendedToModel(elem))
                 .collect(Collectors.toSet()));}
-        return giocatoreModel;
+        return giocatoreEntity;
     }
 
     public static Giocatore giocatoreDTOExtendedToResource(GiocatoreDTOExtended giocatoreDTOExtended) {
@@ -57,4 +60,5 @@ public class GiocatoreMapper {
         }
         return giocatore;
     }
+
 }

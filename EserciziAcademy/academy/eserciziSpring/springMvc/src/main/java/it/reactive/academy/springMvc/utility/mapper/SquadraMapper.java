@@ -2,37 +2,40 @@ package it.reactive.academy.springMvc.utility.mapper;
 
 import it.reactive.academy.springMvc.dto.SquadraDTO;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.resource.Squadra;
 
 import java.util.stream.Collectors;
 
 public class SquadraMapper {
-    public static SquadraDTOExtended squadraModelToDtoExtendended(SquadraModel squadraModel) {
+    private SquadraMapper() {
+    }
+
+    public static SquadraDTOExtended squadraEntityToDtoExtendended(SquadraEntity squadraEntity) {
         SquadraDTOExtended squadraDTOExtended = new SquadraDTOExtended();
-        if(squadraModel.getIdSquadra() != null){
-        squadraDTOExtended.setIdSquadra(squadraModel.getIdSquadra());
+        if(squadraEntity.getIdSquadra() != null){
+        squadraDTOExtended.setIdSquadra(squadraEntity.getIdSquadra());
         }
-        if(squadraModel.getNome()!= null){
-        squadraDTOExtended.setNome(squadraModel.getNome());
+        if(squadraEntity.getNome()!= null){
+        squadraDTOExtended.setNome(squadraEntity.getNome());
         }
-        if(squadraModel.getColoriSociali() != null){
-        squadraDTOExtended.setColoriSociali(squadraModel.getColoriSociali());
+        if(squadraEntity.getColoriSociali() != null){
+        squadraDTOExtended.setColoriSociali(squadraEntity.getColoriSociali());
         }
         return squadraDTOExtended;
     }
 
-    public static SquadraModel squadraDtoExtendedToModel(SquadraDTOExtended squadraDTOExtended) {
-        SquadraModel squadraModel = new SquadraModel();
+    public static SquadraEntity squadraDtoExtendedToEntity(SquadraDTOExtended squadraDTOExtended) {
+        SquadraEntity squadraEntity = new SquadraEntity();
         if(squadraDTOExtended.getIdSquadra()!= null){
-            squadraModel.setIdSquadra(squadraDTOExtended.getIdSquadra());
+            squadraEntity.setIdSquadra(squadraDTOExtended.getIdSquadra());
         }
         if(squadraDTOExtended.getNome() != null){
-        squadraModel.setNome(squadraDTOExtended.getNome());}
+        squadraEntity.setNome(squadraDTOExtended.getNome());}
         if(squadraDTOExtended.getColoriSociali() != null){
-        squadraModel.setColoriSociali(squadraDTOExtended.getColoriSociali());
+        squadraEntity.setColoriSociali(squadraDTOExtended.getColoriSociali());
         }
-        return squadraModel;
+        return squadraEntity;
     }
 
     public static Squadra squadraDtoExtendedToResource(SquadraDTOExtended squadraDTOExtended) {

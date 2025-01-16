@@ -1,20 +1,20 @@
 package it.reactive.academy.springMvc.utility.rowmapper;
 
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SquadraRowMapper implements RowMapper<SquadraModel> {
+public class SquadraRowMapper implements RowMapper<SquadraEntity> {
 
     @Override
-    public SquadraModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-        SquadraModel squadraModel = new SquadraModel();
+    public SquadraEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        SquadraEntity squadraEntity = new SquadraEntity();
 
-        squadraModel.setIdSquadra(rs.getInt("id"));
-        squadraModel.setNome(rs.getString("nome"));
-        squadraModel.setColoriSociali(rs.getString("colori_sociali"));
-        return squadraModel;
+        squadraEntity.setIdSquadra(rs.getInt("id"));
+        squadraEntity.setNome(rs.getString("nome"));
+        squadraEntity.setColoriSociali(rs.getString("colori_sociali"));
+        return squadraEntity;
     }
 }

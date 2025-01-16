@@ -1,5 +1,6 @@
 package it.reactive.academy.springMvc.repository.dao;
 
+import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 
@@ -8,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 public interface SquadraTorneoDao {
-    SquadraTorneoDTOExtended create(Integer idTorneo, Integer idSquadra) throws SQLException;
+    SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException;
 
     Set<Integer> readAllTeamsById(Integer idTorneo) throws SQLException;
 

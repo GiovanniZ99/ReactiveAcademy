@@ -2,7 +2,7 @@ package it.reactive.academy.springMvc.repository.query;
 
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
-import it.reactive.academy.springMvc.model.TorneoModel;
+import it.reactive.academy.springMvc.entity.TorneoEntity;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.rowmapper.TorneoRowMapper;
@@ -29,8 +29,8 @@ public class TorneoDaoImpl implements TorneoDao {
 
     @Override
     public TorneoDTOExtended create(String nomeTorneo) throws SQLException {
-        TorneoModel torneoModel = new TorneoModel();
-        torneoModel.setNomeTorneo(nomeTorneo);
+        TorneoEntity torneoEntity = new TorneoEntity();
+        torneoEntity.setNomeTorneo(nomeTorneo);
 
         String s = "insert into torneo (nome_torneo) values (:nomeTorneo)";
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -38,24 +38,24 @@ public class TorneoDaoImpl implements TorneoDao {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(s, params, keyHolder);
-        torneoModel.setIdTorneo((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
+        torneoEntity.setIdTorneo((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
 
-        return TorneoMapper.torneoModelToDtoExtended(torneoModel);
+        return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
     }
 
     @Override
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idTorneo", idTorneo);
-        List<TorneoModel> torneo = namedParameterJdbcTemplate.query(
+        List<TorneoEntity> torneo = namedParameterJdbcTemplate.query(
                 "select id, nome_torneo from torneo where id = :idTorneo",
                 params,
                new TorneoRowMapper());
 
         if(torneo.get(0) == null){
-            torneo.add(new TorneoModel());
+            torneo.add(new TorneoEntity());
         }
-        return TorneoMapper.torneoModelToDtoExtended(torneo.get(0));
+        return TorneoMapper.torneoEntityToDtoExtended(torneo.get(0));
     }
 
     @Override

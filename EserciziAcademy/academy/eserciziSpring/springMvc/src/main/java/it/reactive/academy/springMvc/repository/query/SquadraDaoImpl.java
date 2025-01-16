@@ -2,20 +2,17 @@ package it.reactive.academy.springMvc.repository.query;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
-import it.reactive.academy.springMvc.model.SquadraModel;
+import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.rowmapper.SquadraRowMapper;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -33,31 +30,31 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraModel squadraModel = SquadraMapper.squadraDtoExtendedToModel(squadraDTOExtended);
+        SquadraEntity squadraEntity = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
 
         String s = "insert into squadra (nome, colori_sociali) values (:nome, :coloriSociali)";
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("nome", squadraModel.getNome());
-        params.addValue("coloriSociali", squadraModel.getColoriSociali());
+        params.addValue("nome", squadraEntity.getNome());
+        params.addValue("coloriSociali", squadraEntity.getColoriSociali());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(s, params, keyHolder);
-        squadraModel.setIdSquadra((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
+        squadraEntity.setIdSquadra((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
 
-        SquadraDTOExtended squadraResult = SquadraMapper.squadraModelToDtoExtendended(squadraModel);
+        SquadraDTOExtended squadraResult = SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
         squadraResult.setGiocatori(squadraDTOExtended.getGiocatori());
         return squadraResult;
     }
 
     @Override
     public List<SquadraDTOExtended> readAll() throws SQLException {
-        List<SquadraModel> listaSquadra;
+        List<SquadraEntity> listaSquadra;
 
         listaSquadra = namedParameterJdbcTemplate.query("select * from squadra",
                 new SquadraRowMapper());
 
         return listaSquadra.stream()
-                .map(SquadraMapper::squadraModelToDtoExtendended)
+                .map(SquadraMapper::squadraEntityToDtoExtendended)
                 .collect(Collectors.toList());
     }
 
@@ -67,12 +64,12 @@ public class SquadraDaoImpl implements SquadraDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idSquadra", idSquadra);
 
-        List<SquadraModel> listaResult = namedParameterJdbcTemplate.query(s, params, new SquadraRowMapper());
+        List<SquadraEntity> listaResult = namedParameterJdbcTemplate.query(s, params, new SquadraRowMapper());
         // perché ho dovuto usare per forza il metodo query da esercizio
         if (listaResult.isEmpty()) {
-            listaResult.add(new SquadraModel());
+            listaResult.add(new SquadraEntity());
         }
-        return SquadraMapper.squadraModelToDtoExtendended(listaResult.get(0));
+        return SquadraMapper.squadraEntityToDtoExtendended(listaResult.get(0));
     }
 
     @Override
