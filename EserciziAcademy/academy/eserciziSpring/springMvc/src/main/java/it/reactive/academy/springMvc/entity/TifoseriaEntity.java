@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "tifoseria")
+@NamedQuery(name = "findByTeam", query = "select t from TifoseriaEntity t where t.squadra.idSquadra = :idSquadra")
 public class TifoseriaEntity {
 
     @Id

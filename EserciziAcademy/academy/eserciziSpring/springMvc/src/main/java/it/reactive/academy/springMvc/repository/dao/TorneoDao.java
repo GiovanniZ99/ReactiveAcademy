@@ -11,5 +11,6 @@ public interface TorneoDao {
     TorneoDTOExtended findById(Integer idTorneo) throws SQLException;
 
     Set<TorneoDTOExtended> findAll() throws SQLException;
+
     void delete(Integer id) throws SQLException;
 }

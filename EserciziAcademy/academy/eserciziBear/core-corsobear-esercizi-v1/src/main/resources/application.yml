@@ -7,6 +7,19 @@ spring:
 error-manager:
   enabled: true
 
+connectors:
+  jdbcConfigurations:
+    default:
+      connectionPoolSize: 5
+      timeout: 30000
+      mocked: false
+    items:
+      DemoJDBCConnector:
+      uri: org.postgresql.Driver
+      driver-class-name: oracle.jdbc.OracleDriver
+      username: postgres
+      password: example
+
 #### Security configuration
 keycloak:
   enabled: false

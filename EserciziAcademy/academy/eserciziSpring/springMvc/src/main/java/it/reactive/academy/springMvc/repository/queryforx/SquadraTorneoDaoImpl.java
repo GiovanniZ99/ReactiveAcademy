@@ -33,14 +33,16 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
-        squadraTorneoId.setTorneoEntity(torneo);
-        squadraTorneoId.setSquadraEntity(squadra);
+        squadraTorneoId.setIdTorneo(torneo.getIdTorneo());
+        squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
 
+        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        squadraTorneoEntity.setId(squadraTorneoId);
         String s = "insert into squadra_torneo (id_squadra, id_torneo) values (?,?)";
 
         jdbcTemplate.update(s, new Object[]{squadra.getIdSquadra(), torneo.getIdTorneo()});
 
-        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoId);
+        return SquadraTorneoMapper.squadraTorneoEntityToDtoExtended(squadraTorneoEntity);
     }
 
     @Override

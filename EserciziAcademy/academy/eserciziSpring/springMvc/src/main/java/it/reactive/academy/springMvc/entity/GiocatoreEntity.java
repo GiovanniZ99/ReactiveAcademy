@@ -5,7 +5,12 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.Set;
+
 @Entity
+@NamedQuery(name = "Giocatore.findByName",
+        query = "select g from GiocatoreEntity g where g.nomeCognome = :input")
+@NamedQuery(name = "Giocatore.findByTeam",
+        query = "select g from GiocatoreEntity g where g.squadra.idSquadra = :idSquadra")
 @Table(name = "giocatore")
 public class GiocatoreEntity {
 

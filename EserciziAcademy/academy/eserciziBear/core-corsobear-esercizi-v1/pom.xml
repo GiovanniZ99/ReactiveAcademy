@@ -48,7 +48,23 @@
          <version>${bear.version}</version>
          <scope>test</scope>
      </dependency>
-</dependencies>
+      <dependency>
+      <groupId>com.intesasanpaolo.bear</groupId>
+      <artifactId>bear-arch-jdbc</artifactId>
+      <version>${bear.version}</version>
+  </dependency>
+      <dependency>
+          <groupId>com.intesasanpaolo.bear</groupId>
+          <artifactId>bear-arch-jdbc-mock</artifactId>
+          <version>${bear.version}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.intesasanpaolo.bear</groupId>
+          <artifactId>bear-arch-common-oracle-12</artifactId>
+          <version>${bear.version}</version>
+      </dependency>
+  </dependencies>
 
   <build>
     <directory>${project.basedir}/target/diraliases/OPENSHIFT/</directory>

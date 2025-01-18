@@ -33,20 +33,34 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
-        squadraTorneoId.setTorneoEntity(torneo);
-        squadraTorneoId.setSquadraEntity(squadra);
+        squadraTorneoId.setIdTorneo(torneo.getIdTorneo());
+        squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)")) {
+        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        squadraTorneoEntity.setId(squadraTorneoId);
 
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)");
             ps.setInt(1, squadra.getIdSquadra());
             ps.setInt(2, torneo.getIdTorneo());
             ps.executeUpdate();
-
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
-        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoId);
+        return SquadraTorneoMapper.squadraTorneoEntityToDtoExtended(squadraTorneoEntity);
     }
 
     @Override
@@ -54,44 +68,40 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         Set<SquadraEntity> listaSquadre = new HashSet<>();
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select id_squadra from squadra_torneo where id_torneo = ?")) {
-
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "select id_squadra from squadra_torneo where id_torneo = ?");
             ps.setInt(1, torneo.getIdTorneo());
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    SquadraEntity squadra = new SquadraEntity();
-                    squadra.setIdSquadra(rs.getInt(1));
-                    listaSquadre.add(squadra);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                SquadraEntity squadra = new SquadraEntity();
+                squadra.setIdSquadra(rs.getInt(1));
+                listaSquadre.add(squadra);
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return listaSquadre.stream().map(SquadraMapper::squadraEntityToDtoExtendended).collect(Collectors.toSet());
-    }
-
-    public LinkedHashMap<TorneoDTOExtended, Set<SquadraDTOExtended>> readAllTornei() throws SQLException {
-        LinkedHashMap<TorneoDTOExtended, Set<SquadraDTOExtended>> mappaSquadraTorneo = new LinkedHashMap<>();
-        String s = "select id_squadra, id_torneo from squadra_torneo order by id_torneo";
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(s)){
-            try (ResultSet rs = ps.executeQuery()) {
-                while(rs.next()){
-
-                    TorneoEntity torneo = new TorneoEntity();
-                    SquadraEntity squadra = new SquadraEntity();
-                    torneo.setIdTorneo(rs.getInt("id_torneo"));
-                    squadra.setIdSquadra(rs.getInt("id_squadra"));
-                    TorneoDTOExtended torneoDTOExtended = TorneoMapper.torneoEntityToDtoExtended(torneo);
-                    SquadraDTOExtended squadraDTOExtended = SquadraMapper.squadraEntityToDtoExtendended(squadra);
-                    mappaSquadraTorneo.computeIfAbsent(torneoDTOExtended, k -> new HashSet<>()).add(squadraDTOExtended);
-                }
-            }
-        }finally {
-            DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
-        }
-        return mappaSquadraTorneo;
     }
 
     @Override
@@ -99,18 +109,38 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
         Set<TorneoEntity> listaTornei = new HashSet<>();
         String s = "select id_squadra, id_torneo from squadra_torneo where id_squadra = ?";
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-
-            try (PreparedStatement ps = con.prepareStatement(s)) {
-                ps.setInt(1, squadra.getIdSquadra());
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        TorneoEntity torneo = new TorneoEntity();
-                        torneo.setIdTorneo(rs.getInt("id_torneo"));
-                        listaTornei.add(torneo);
-                    }
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(s);
+            ps.setInt(1, squadra.getIdSquadra());
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                TorneoEntity torneo = new TorneoEntity();
+                torneo.setIdTorneo(rs.getInt("id_torneo"));
+                listaTornei.add(torneo);
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
+        }
         return listaTornei.stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
     }
 
@@ -124,58 +154,78 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         TorneoDTOExtended torneoDTOExtended = new TorneoDTOExtended();
         torneoDTOExtended.setSquadre(new HashSet<>());
 
-        Connection con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
-        try (PreparedStatement ps = con.prepareStatement(
-                "select * from torneo t " +
-                        "join squadra_torneo st on t.id = st.id_torneo " +
-                        "join squadra s on st.id_squadra = s.id " +
-                        "join giocatore g on s.id = g.id_squadra " +
-                        "join tifoseria ti on s.id = ti.id_squadra " +
-                        "order by t.id, s.id")) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DataSourceUtils.getConnection(Objects.requireNonNull(((DataSourceTransactionManager) transactionManager).getDataSource()));
+            ps = con.prepareStatement(
+                    "select * from torneo t " +
+                            "join squadra_torneo st on t.id = st.id_torneo " +
+                            "join squadra s on st.id_squadra = s.id " +
+                            "join giocatore g on s.id = g.id_squadra " +
+                            "join tifoseria ti on s.id = ti.id_squadra " +
+                            "order by t.id, s.id");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                TorneoEntity torneoEntity = new TorneoEntity();
+                SquadraEntity squadraEntity = new SquadraEntity();
+                GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
+                TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    TorneoEntity torneoEntity = new TorneoEntity();
-                    SquadraEntity squadraEntity = new SquadraEntity();
-                    GiocatoreEntity giocatoreEntity = new GiocatoreEntity();
-                    TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
+                torneoEntity.setIdTorneo(rs.getInt(1));
+                torneoEntity.setNomeTorneo(rs.getString(2));
 
-                    torneoEntity.setIdTorneo(rs.getInt(1));
-                    torneoEntity.setNomeTorneo(rs.getString(2));
+                squadraEntity.setIdSquadra(rs.getInt(3));
+                squadraEntity.setNome(rs.getString(6));
+                squadraEntity.setColoriSociali(rs.getString(7));
 
-                    squadraEntity.setIdSquadra(rs.getInt(3));
-                    squadraEntity.setNome(rs.getString(6));
-                    squadraEntity.setColoriSociali(rs.getString(7));
+                tifoseriaEntity.setIdTifoseria(rs.getInt(12));
+                tifoseriaEntity.setNomeTifoseria(rs.getString(13));
 
-                    tifoseriaEntity.setIdTifoseria(rs.getInt(12));
-                    tifoseriaEntity.setNomeTifoseria(rs.getString(13));
+                giocatoreEntity.setIdGiocatore(rs.getInt(8));
+                giocatoreEntity.setNomeCognome(rs.getString(9));
+                giocatoreEntity.setNumeroAmmonizioni(rs.getInt(10));
 
-                    giocatoreEntity.setIdGiocatore(rs.getInt(8));
-                    giocatoreEntity.setNomeCognome(rs.getString(9));
-                    giocatoreEntity.setNumeroAmmonizioni(rs.getInt(10));
+                if (!Objects.equals(squadraDTOExtended.getIdSquadra(), squadraEntity.getIdSquadra())) {
+                    squadraDTOExtended = new SquadraDTOExtended();
+                    squadraDTOExtended.setGiocatori(new HashSet<>());
+                }
+                squadraDTOExtended.setIdSquadra(squadraEntity.getIdSquadra());
+                squadraDTOExtended.setNome(squadraEntity.getNome());
+                squadraDTOExtended.setColoriSociali(squadraEntity.getColoriSociali());
+                squadraDTOExtended.getGiocatori().add(GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity));
+                squadraDTOExtended.setTifoseria(TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity));
 
-                    if (!Objects.equals(squadraDTOExtended.getIdSquadra(), squadraEntity.getIdSquadra())) {
-                        squadraDTOExtended = new SquadraDTOExtended();
-                        squadraDTOExtended.setGiocatori(new HashSet<>());
-                    }
-                    squadraDTOExtended.setIdSquadra(squadraEntity.getIdSquadra());
-                    squadraDTOExtended.setNome(squadraEntity.getNome());
-                    squadraDTOExtended.setColoriSociali(squadraEntity.getColoriSociali());
-                    squadraDTOExtended.getGiocatori().add(GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity));
-                    squadraDTOExtended.setTifoseria(TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity));
-
-                    if (!Objects.equals(torneoDTOExtended.getIdTorneo(), torneoEntity.getIdTorneo())) {
-                        torneoDTOExtended = new TorneoDTOExtended();
-                        torneoDTOExtended.setSquadre(new HashSet<>());
-                    }
-                    torneoDTOExtended.setIdTorneo(torneoEntity.getIdTorneo());
-                    torneoDTOExtended.getSquadre().add(squadraDTOExtended);
-                    torneoDTOExtended.setNomeTorneo(torneoEntity.getNomeTorneo());
-                    tornei.add(torneoDTOExtended);
+                if (!Objects.equals(torneoDTOExtended.getIdTorneo(), torneoEntity.getIdTorneo())) {
+                    torneoDTOExtended = new TorneoDTOExtended();
+                    torneoDTOExtended.setSquadre(new HashSet<>());
+                }
+                torneoDTOExtended.setIdTorneo(torneoEntity.getIdTorneo());
+                torneoDTOExtended.getSquadre().add(squadraDTOExtended);
+                torneoDTOExtended.setNomeTorneo(torneoEntity.getNomeTorneo());
+                tornei.add(torneoDTOExtended);
+            }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (con != null) {
+                DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
+            }
         }
-        DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         return tornei;
     }
+
 }

@@ -1,4 +1,4 @@
-package it.reactive.academy.springMvc.repository.jparbridgerepository;
+package it.reactive.academy.springMvc.repository.entitymanagerbase;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraTorneoDTOExtended;
@@ -8,9 +8,6 @@ import it.reactive.academy.springMvc.entity.SquadraTorneoEntity;
 import it.reactive.academy.springMvc.entity.SquadraTorneoId;
 import it.reactive.academy.springMvc.entity.TorneoEntity;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
-import it.reactive.academy.springMvc.repository.jparepository.SquadraRepository;
-import it.reactive.academy.springMvc.repository.jparepository.SquadraTorneoRepository;
-import it.reactive.academy.springMvc.repository.jparepository.TorneoRepository;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.utility.mapper.SquadraTorneoMapper;
@@ -18,40 +15,20 @@ import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
-@Profile(Costanti.TORNEO_DAO_SPRING_JPA_JPAREPOSITORY)
+@Profile(Costanti.TORNEO_DAO_SPRING_JPA_ENTITY_MANAGER_BASE)
 public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
-    private final SquadraTorneoRepository squadraTorneoRepository;
-    private final SquadraRepository squadraRepository;
-    private final TorneoRepository torneoRepository;
-
-    public SquadraTorneoDaoImpl(SquadraTorneoRepository squadraTorneoRepository, SquadraRepository squadraRepository, TorneoRepository torneoRepository) {
-        this.squadraTorneoRepository = squadraTorneoRepository;
-        this.squadraRepository = squadraRepository;
-        this.torneoRepository = torneoRepository;
-    }
-
-//    @Override
-//    public Set<Integer> readAllTeamsById(Integer idTorneo) throws SQLException {
-//        Set<Integer> set = squadraTorneoRepository.findAllByIdTorneo(idTorneo);
-//        return set;
-//    }
-//
-//    @Override
-//    public LinkedHashMap<Integer, Set<Integer>> readAllTornei() throws SQLException {
-//        return null;
-//    }
-//
-//    @Override
-//    public Set<Integer> readAllTorneoByIdSquadra(Integer idSquadra) throws SQLException {
-//        return Collections.emptySet();
-//    }
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
@@ -62,18 +39,33 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
         SquadraTorneoEntity squadraTorneo = new SquadraTorneoEntity();
         squadraTorneo.setId(squadraTorneoId);
-        return SquadraTorneoMapper.squadraTorneoEntityToDtoExtended(squadraTorneoRepository.save(squadraTorneo));
+        entityManager.persist(squadraTorneo);
+        return SquadraTorneoMapper.squadraTorneoEntityToDtoExtended(squadraTorneo);
     }
 
     @Override
     public Set<SquadraDTOExtended> readAllTeamsById(TorneoDTOExtended torneoDTOExtended) throws SQLException {
-      return squadraTorneoRepository.findByTorneoIdTorneo(torneoDTOExtended.getIdTorneo()).stream().map(SquadraMapper::squadraEntityToDtoExtendended).collect(Collectors.toSet());
+        Set<SquadraTorneoEntity> squadraTornei = new HashSet<>(entityManager.createQuery(
+                        "SELECT st FROM SquadraTorneoEntity st WHERE st.id.torneoEntity.idTorneo = :idTorneo", SquadraTorneoEntity.class)
+                .setParameter("idTorneo", torneoDTOExtended.getIdTorneo())
+                .getResultList());
+
+        return squadraTornei.stream()
+                .map(st -> SquadraMapper.squadraEntityToDtoExtendended(st.getSquadra()))
+                .collect(Collectors.toSet());
     }
 
 
     @Override
     public Set<TorneoDTOExtended> readAllTorneoByIdSquadra(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        return squadraTorneoRepository.findBySquadraIdSquadra(squadraDTOExtended.getIdSquadra()).stream().map(TorneoMapper::torneoEntityToDtoExtended).collect(Collectors.toSet());
+        Set<SquadraTorneoEntity> squadraTornei = new HashSet<>(entityManager.createQuery(
+                        "SELECT st FROM SquadraTorneoEntity st WHERE st.id.squadraEntity.idSquadra = :idSquadra", SquadraTorneoEntity.class)
+                .setParameter("idSquadra", squadraDTOExtended.getIdSquadra())
+                .getResultList());
+
+        return squadraTornei.stream()
+                .map(st -> TorneoMapper.torneoEntityToDtoExtended(st.getTorneo()))
+                .collect(Collectors.toSet());
     }
 
     @Override

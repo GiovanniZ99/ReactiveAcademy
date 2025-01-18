@@ -1,41 +1,53 @@
 package it.reactive.academy.springMvc.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class SquadraTorneoId implements Serializable {
 
-//    @ManyToOne
-////    @MapsId("id_squadra")
-//    @JoinColumn(name = "id_squadra", referencedColumnName = "id")
-    private SquadraEntity squadraEntity;
+    @Column(name = "id_squadra")
+    private Integer idSquadra;
 
-    private TorneoEntity torneoEntity;
-    public SquadraTorneoId(SquadraEntity squadraEntity, TorneoEntity torneoEntity) {
-        this.squadraEntity = squadraEntity;
-        this.torneoEntity = torneoEntity;
+    @Column(name = "id_torneo")
+    private Integer idTorneo;
+
+    public SquadraTorneoId(Integer idSquadra, Integer idTorneo) {
+        this.idSquadra = idSquadra;
+        this.idTorneo = idTorneo;
     }
 
     public SquadraTorneoId() {
     }
 
-    public SquadraEntity getSquadraEntity() {
-        return squadraEntity;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SquadraTorneoId that = (SquadraTorneoId) o;
+        return Objects.equals(idSquadra, that.idSquadra) && Objects.equals(idTorneo, that.idTorneo);
     }
 
-    public void setSquadraEntity(SquadraEntity squadraEntity) {
-        this.squadraEntity = squadraEntity;
+    @Override
+    public int hashCode() {
+        return Objects.hash(idSquadra, idTorneo);
     }
 
-    public TorneoEntity getTorneoEntity() {
-        return torneoEntity;
+    public Integer getIdSquadra() {
+        return idSquadra;
     }
 
-    public void setTorneoEntity(TorneoEntity torneoEntity) {
-        this.torneoEntity = torneoEntity;
+    public void setIdSquadra(Integer idSquadra) {
+        this.idSquadra = idSquadra;
+    }
+
+    public Integer getIdTorneo() {
+        return idTorneo;
+    }
+
+    public void setIdTorneo(Integer idTorneo) {
+        this.idTorneo = idTorneo;
     }
 }

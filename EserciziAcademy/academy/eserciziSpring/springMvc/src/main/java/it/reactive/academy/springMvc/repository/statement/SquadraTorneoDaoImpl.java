@@ -32,8 +32,11 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
-        squadraTorneoId.setTorneoEntity(torneo);
-        squadraTorneoId.setSquadraEntity(squadra);
+        squadraTorneoId.setIdTorneo(torneo.getIdTorneo());
+        squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
+
+        SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
+        squadraTorneoEntity.setId(squadraTorneoId);
 
         Connection con = null;
         Statement statement = null;
@@ -58,7 +61,7 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
             }
         }
 
-        return SquadraTorneoMapper.squadraEntityToDtoExtended(squadraTorneoId);
+        return SquadraTorneoMapper.squadraTorneoEntityToDtoExtended(squadraTorneoEntity);
     }
 
     @Override

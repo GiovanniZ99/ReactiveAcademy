@@ -9,6 +9,9 @@ public class CountryModel {
         this.info = info;
     }
 
+    public CountryModel() {
+    }
+
     public long getId() {
         return id;
     }

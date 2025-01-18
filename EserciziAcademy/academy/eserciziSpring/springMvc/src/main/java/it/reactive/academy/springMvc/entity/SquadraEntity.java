@@ -1,11 +1,11 @@
 package it.reactive.academy.springMvc.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "squadra")
-public class SquadraEntity implements Serializable {
+public class SquadraEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +16,9 @@ public class SquadraEntity implements Serializable {
 
     @Column(name = "colori_sociali")
     private String coloriSociali;
+
+    @OneToMany(mappedBy = "squadra", fetch = FetchType.LAZY)
+    private Set<GiocatoreEntity> giocatori;
 
     public SquadraEntity(Integer idSquadra, String nome, String coloriSociali) {
         this.idSquadra = idSquadra;
@@ -50,4 +53,11 @@ public class SquadraEntity implements Serializable {
         this.coloriSociali = coloriSociali;
     }
 
+    public Set<GiocatoreEntity> getGiocatori() {
+        return giocatori;
+    }
+
+    public void setGiocatori(Set<GiocatoreEntity> giocatori) {
+        this.giocatori = giocatori;
+    }
 }
