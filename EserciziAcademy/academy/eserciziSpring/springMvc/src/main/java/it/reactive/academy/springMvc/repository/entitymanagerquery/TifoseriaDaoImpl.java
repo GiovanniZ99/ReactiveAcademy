@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.sql.SQLException;
@@ -28,19 +29,31 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         tifoseriaEntity.setSquadra(new SquadraEntity());
         tifoseriaEntity.getSquadra().setIdSquadra(idSquadra);
 
-        Query query = entityManager.createNativeQuery("insert into tifoseria (nome_tifoseria, id_squadra) values (:nomeTifoseria, :id");
+        Query query = entityManager.createNativeQuery("insert into tifoseria (nome_tifoseria, id_squadra) values (:nomeTifoseria, :idSquadra) returning id");
         query.setParameter("nomeTifoseria", tifoseriaEntity.getNomeTifoseria());
         query.setParameter("idSquadra", tifoseriaEntity.getSquadra().getIdSquadra());
+
+        Object result = query.getSingleResult();
+
+        Integer idTifoseria = ((Number) result).intValue();
+        tifoseriaEntity.setIdTifoseria(idTifoseria);
 
         return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
 
     @Override
     public TifoseriaDTOExtended readByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        Query query = entityManager.createNamedQuery("TifoseriaEntity.findByTeam", TifoseriaEntity.class);
-        query.setParameter("idSquadra", squadraDTOExtended.getIdSquadra());
-        TifoseriaEntity tifoseriaEntity = (TifoseriaEntity) query.getResultList().get(0);
-        return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
+        try {
+            Query query = entityManager.createNamedQuery("findByTeam", TifoseriaEntity.class);
+            query.setParameter("idSquadra", squadraDTOExtended.getIdSquadra());
+            if(!query.getResultList().isEmpty()) {
+                TifoseriaEntity tifoseriaEntity = (TifoseriaEntity) query.getResultList().get(0);
+                return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
+            }
+        } catch (NoResultException e) {
+            return null;
+        }
+        return null;
     }
 
     @Override

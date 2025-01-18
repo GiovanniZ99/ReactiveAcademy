@@ -157,7 +157,7 @@ public class SquadraDaoImpl implements SquadraDao {
             ps = con.prepareStatement("select id from squadra where nome = ?");
             ps.setString(1, nomeSquadra);
             rs = ps.executeQuery();
-
+            return rs.next();
         } finally {
             if (ps != null) {
                 try {
@@ -175,7 +175,6 @@ public class SquadraDaoImpl implements SquadraDao {
             }
             DataSourceUtils.releaseConnection(con, ((DataSourceTransactionManager) transactionManager).getDataSource());
         }
-        return rs.next();
     }
 
     @Override

@@ -114,12 +114,14 @@ public class SquadraService {
         SquadraDTOExtended squadraDTOExtended = SquadraDiGiocatoriMapper.squadraDiGiocatoriToDTOExtended(squadraDiGiocatori);
 
         try {
-          squadraDTOExtended = squadraDao.create(squadraDTOExtended);
+            SquadraDTOExtended squadraSenzaGiocatori = squadraDao.create(squadraDTOExtended);
+            squadraDTOExtended.setIdSquadra(squadraSenzaGiocatori.getIdSquadra());
+            squadraDTOExtended.setNome(squadraSenzaGiocatori.getNome());
+            squadraDTOExtended.setColoriSociali(squadraSenzaGiocatori.getColoriSociali());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        SquadraDTOExtended finalSquadraDTOExtended = squadraDTOExtended;
-        squadraDTOExtended.getGiocatori().forEach(elem -> elem.setSquadra(finalSquadraDTOExtended));
+        squadraDTOExtended.getGiocatori().forEach(elem -> elem.setSquadra(squadraDTOExtended));
         try {
             squadraDTOExtended.setGiocatori(giocatoreDao.createAll(squadraDTOExtended.getGiocatori()));
         } catch (SQLException e) {
@@ -133,7 +135,7 @@ public class SquadraService {
         if (Boolean.TRUE.equals(completo)) {
             try {
                 List<SquadraDTOExtended> listaSquadreDtoExt = squadraDao.readAll();
-                listaSquadreDtoExt.forEach(elem-> {
+                listaSquadreDtoExt.forEach(elem -> {
                     try {
                         elem.setGiocatori(giocatoreDao.readAllByTeam(elem));
                     } catch (SQLException e) {
@@ -158,8 +160,12 @@ public class SquadraService {
         }
     }
 
-    public void delete(Integer id){
+    @Transactional
+    public void delete(Integer id) {
         try {
+            if(squadraDao.findSquadraById(id).getIdSquadra() == null){
+                throw new SquadraNonPresenteException("Squadra non presente");
+            }
             squadraDao.delete(id);
         } catch (SQLException e) {
             throw new RuntimeException(e);

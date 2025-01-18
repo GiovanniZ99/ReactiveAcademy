@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.sql.SQLException;
@@ -31,14 +32,19 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     public GiocatoreDTOExtended create(GiocatoreDTOExtended giocatoreDTOExtended) throws SQLException {
         GiocatoreEntity giocatoreEntity = GiocatoreMapper.giocatoreDtoExtendedToEntity(giocatoreDTOExtended);
 
-        String s = "insert into giocatore (nome_cognome, numero_ammonizioni, id_squadra) values (:nomeCognome, :numeroAmmonizioni, :idSquadra)";
+        String s = "insert into giocatore (nome_cognome, numero_ammonizioni, id_squadra) values (:nomeCognome, :numeroAmmonizioni, :idSquadra)" +
+                "returning id";
 
         Query query = entityManager.createNativeQuery(s);
         query.setParameter("nomeCognome", giocatoreEntity.getNomeCognome());
         query.setParameter("numeroAmmonizioni", giocatoreEntity.getNumeroAmmonizioni());
         query.setParameter("idSquadra", giocatoreEntity.getSquadra().getIdSquadra());
 
-        query.executeUpdate();
+        Object result = query.getSingleResult();
+
+        Integer idGiocatore = ((Number) result).intValue();
+        giocatoreEntity.setIdGiocatore(idGiocatore);
+
 
         return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
@@ -68,7 +74,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     public Set<GiocatoreDTOExtended> readAllByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
 
-        Query query = entityManager.createNamedQuery("GiocatoreEntity.findBySquadraIdSquadra", GiocatoreEntity.class);
+        Query query = entityManager.createNamedQuery("Giocatore.findByTeam", GiocatoreEntity.class);
         query.setParameter("idSquadra", squadra.getIdSquadra());
         Set<GiocatoreEntity> giocatori = new HashSet<>(query.getResultList());
 
@@ -78,21 +84,26 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
     }
 
     public GiocatoreDTOExtended findGiocatoreById(Integer id) throws SQLException {
-        Query query = entityManager.createQuery("select GiocatoreEntity g where idGiocatore =:id");
-        query.setParameter("id", id);
-        GiocatoreEntity giocatore = (GiocatoreEntity) query.getResultList().get(0);
-        return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatore);
+        try {
+            Query query = entityManager.createQuery("select g from GiocatoreEntity g where g.idGiocatore =:id");
+            query.setParameter("id", id);
+            GiocatoreEntity giocatore = (GiocatoreEntity) query.getSingleResult();
+            return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatore);
+        }catch (NoResultException e){
+            return new GiocatoreDTOExtended();
+        }
     }
 
     @Override
     public boolean checkByName(String input) throws SQLException {
-        Query query = entityManager.createNamedQuery("GiocatoreEntity.findByNomeCognome");
+        Query query = entityManager.createNamedQuery("Giocatore.findByName");
         query.setParameter("input", input);
         return !query.getResultList().isEmpty();
     }
 
     @Override
     public void updateAmmonizioni(Integer id) throws SQLException {
-        entityManager.createQuery("update GiocatoreEntity g set numeroAmmonizioni = numeroAmmonizioni +1 where idGiocatore = :id", GiocatoreEntity.class);
+        entityManager.createQuery("update GiocatoreEntity g set numeroAmmonizioni = numeroAmmonizioni +1 " +
+                "where idGiocatore = :id").setParameter("id", id).executeUpdate();
     }
 }

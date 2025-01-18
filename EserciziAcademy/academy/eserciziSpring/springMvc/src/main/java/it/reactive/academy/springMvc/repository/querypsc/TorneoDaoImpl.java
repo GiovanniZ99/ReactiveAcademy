@@ -59,7 +59,6 @@ public class TorneoDaoImpl implements TorneoDao {
             if (rs.next()) {
                 torneoEntity.setIdTorneo(rs.getInt(1));
                 torneoEntity.setNomeTorneo(rs.getString(2));
-
             }
             return torneoEntity;
         };

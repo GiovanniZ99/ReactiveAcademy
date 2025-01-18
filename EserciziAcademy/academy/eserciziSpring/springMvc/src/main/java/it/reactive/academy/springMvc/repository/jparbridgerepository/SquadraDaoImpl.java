@@ -3,7 +3,10 @@ package it.reactive.academy.springMvc.repository.jparbridgerepository;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
+import it.reactive.academy.springMvc.repository.jparepository.GiocatoreRepository;
 import it.reactive.academy.springMvc.repository.jparepository.SquadraRepository;
+import it.reactive.academy.springMvc.repository.jparepository.SquadraTorneoRepository;
+import it.reactive.academy.springMvc.repository.jparepository.TifoseriaRepository;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import org.springframework.context.annotation.Profile;
@@ -19,9 +22,15 @@ import java.util.stream.Collectors;
 public class SquadraDaoImpl implements SquadraDao {
 
     private final SquadraRepository squadraRepository;
+    private final TifoseriaRepository tifoseriaRepository;
+    private final GiocatoreRepository giocatoreRepository;
+    private final SquadraTorneoRepository squadraTorneoRepository;
 
-    public SquadraDaoImpl(SquadraRepository squadraRepository) {
+    public SquadraDaoImpl(SquadraRepository squadraRepository, TifoseriaRepository tifoseriaRepository, GiocatoreRepository giocatoreRepository, SquadraTorneoRepository squadraTorneoRepository) {
         this.squadraRepository = squadraRepository;
+        this.tifoseriaRepository = tifoseriaRepository;
+        this.giocatoreRepository = giocatoreRepository;
+        this.squadraTorneoRepository = squadraTorneoRepository;
     }
 
     @Override
@@ -56,6 +65,9 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public void delete(Integer id) throws SQLException {
+        squadraTorneoRepository.deleteBySquadraIdSquadra(id);
+        tifoseriaRepository.deleteBySquadraIdSquadra(id);
+        giocatoreRepository.deleteBySquadraIdSquadra(id);
         squadraRepository.deleteById(id);
     }
 }

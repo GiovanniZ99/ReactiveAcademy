@@ -123,7 +123,7 @@ public class TorneoDaoImpl implements TorneoDao {
             while (rs.next()) {
                 TorneoEntity torneo = new TorneoEntity();
                 torneo.setIdTorneo(rs.getInt("id"));
-                torneo.setNomeTorneo(rs.getString("nome"));
+                torneo.setNomeTorneo(rs.getString("nome_torneo"));
                 tornei.add(torneo);
             }
         } finally {

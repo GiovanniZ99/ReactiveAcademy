@@ -14,7 +14,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,11 +37,14 @@ public class SquadraDaoImpl implements SquadraDao {
         String s = "insert into squadra (nome, colori_sociali) values (?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(s,
-                new Object[]{squadraDTOExtended.getNome(), squadraDTOExtended.getColoriSociali()},
-                keyHolder);
-        squadraEntity.setIdSquadra((Objects.requireNonNull(keyHolder.getKey()).intValue()));
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, squadraEntity.getNome());
+            ps.setString(2, squadraEntity.getColoriSociali());
+            return ps;
+        }, keyHolder);
 
+        squadraEntity.setIdSquadra((Integer) keyHolder.getKeyList().get(0).get("id"));
         SquadraDTOExtended squadraResult = SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
         squadraResult.setGiocatori(squadraDTOExtended.getGiocatori());
         return squadraResult;
@@ -52,9 +57,9 @@ public class SquadraDaoImpl implements SquadraDao {
         List<SquadraEntity> squadre = new ArrayList<>();
         for (Map<String, Object> map : mapSquadra) {
             SquadraEntity squadraEntity = new SquadraEntity();
-            squadraEntity.setIdSquadra((Integer) map.get("idSquadra"));
+            squadraEntity.setIdSquadra((Integer) map.get("id"));
             squadraEntity.setNome((String) map.get("nome"));
-            squadraEntity.setColoriSociali((String) map.get("coloriSociali"));
+            squadraEntity.setColoriSociali((String) map.get("colori_sociali"));
             squadre.add(squadraEntity);
         }
 
@@ -85,7 +90,6 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public void delete(Integer id) throws SQLException {
-        String sqlSquadraTorneo = "delete from squadra_torneo where id_squadra = :idSquadra";
         String sqlTifoseria = "delete from tifoseria where id_squadra = :idSquadra";
         String sqlGiocatore = "delete from giocatore where id_squadra = :idSquadra";
         String sqlSquadra = "delete from squadra where id = :idSquadra";
@@ -93,7 +97,6 @@ public class SquadraDaoImpl implements SquadraDao {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idSquadra", id);
 
-        jdbcTemplate.update(sqlSquadraTorneo, params);
         jdbcTemplate.update(sqlTifoseria, params);
         jdbcTemplate.update(sqlGiocatore, params);
         jdbcTemplate.update(sqlSquadra, params);

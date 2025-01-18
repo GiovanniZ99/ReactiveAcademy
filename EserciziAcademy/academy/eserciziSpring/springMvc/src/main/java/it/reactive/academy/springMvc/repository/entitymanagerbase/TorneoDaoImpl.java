@@ -3,11 +3,13 @@ package it.reactive.academy.springMvc.repository.entitymanagerbase;
 
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
 import it.reactive.academy.springMvc.entity.TorneoEntity;
+import it.reactive.academy.springMvc.exception.TorneoNonTrovatoException;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -32,7 +34,11 @@ public class TorneoDaoImpl implements TorneoDao {
 
     @Override
     public TorneoDTOExtended findById(Integer idTorneo) throws SQLException {
-        return TorneoMapper.torneoEntityToDtoExtended(entityManager.find(TorneoEntity.class, idTorneo));
+        TorneoEntity torneoEntity = entityManager.find(TorneoEntity.class, idTorneo);
+        if (torneoEntity == null) {
+            throw new TorneoNonTrovatoException("Torneo non trovato");
+        }
+        return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
     }
 
     @Override
@@ -44,6 +50,7 @@ public class TorneoDaoImpl implements TorneoDao {
                 .collect(Collectors.toSet());
     }
 
+    @Transactional
     @Override
     public void delete(Integer id) throws SQLException {
         TorneoEntity torneo = entityManager.find(TorneoEntity.class, id);

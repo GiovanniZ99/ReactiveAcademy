@@ -17,7 +17,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,8 +44,13 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         params.addValue("idSquadra", giocatoreEntity.getSquadra().getIdSquadra());
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(s, keyHolder);
-        giocatoreEntity.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, giocatoreEntity.getNomeCognome());
+            ps.setInt(2, giocatoreEntity.getSquadra().getIdSquadra());
+            return ps;
+        }, keyHolder);
+        giocatoreEntity.setIdGiocatore(Objects.requireNonNull((Integer) keyHolder.getKeyList().get(0).get("id")));
 
         return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }
@@ -55,13 +62,16 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
 
         String s = "insert into giocatore (nome_cognome, id_squadra) values (?,?)";
 
-        MapSqlParameterSource params = new MapSqlParameterSource();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
         for (GiocatoreEntity giocatoreEntity : giocatoriModel) {
-            params.addValue("nomeCognome", giocatoreEntity.getNomeCognome());
-            params.addValue("idSquadra", giocatoreEntity.getSquadra().getIdSquadra());
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(s, keyHolder);
-            giocatoreEntity.setIdGiocatore(Objects.requireNonNull(keyHolder.getKey()).intValue());
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, giocatoreEntity.getNomeCognome());
+                ps.setInt(2, giocatoreEntity.getSquadra().getIdSquadra());
+                return ps;
+            }, keyHolder);
+            giocatoreEntity.setIdGiocatore((Integer) keyHolder.getKeyList().get(0).get("id"));
         }
         return giocatoriModel.stream().map(GiocatoreMapper::giocatoreEntityToDTOExtended).collect(Collectors.toSet());
     }
@@ -100,7 +110,7 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
         GiocatoreEntity giocatoreEntity;
         String s = "select id, nome_cognome, numero_ammonizioni from giocatore where id = ?";
 
-        giocatoreEntity = jdbcTemplate.queryForObject(s, new GiocatoreRowMapper(),id);
+        giocatoreEntity = jdbcTemplate.queryForObject(s, new GiocatoreRowMapper(), id);
 
         return GiocatoreMapper.giocatoreEntityToDTOExtended(giocatoreEntity);
     }

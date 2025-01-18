@@ -19,9 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -39,10 +37,14 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
         squadraTorneoId.setIdTorneo(torneo.getIdTorneo());
         squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
+
         SquadraTorneoEntity squadraTorneo = new SquadraTorneoEntity();
         squadraTorneo.setId(squadraTorneoId);
+        squadraTorneo.setTorneo(torneo);
+        squadraTorneo.setSquadra(squadra);
 
-        Query query = entityManager.createNativeQuery("insert into squadra_torneo (id_squadra, id_torneo) values (?,?)");
+        String s = "insert into squadra_torneo (id_squadra, id_torneo) values (?,?)";
+        Query query = entityManager.createNativeQuery(s);
         query.setParameter(1, squadra.getIdSquadra());
         query.setParameter(2, torneo.getIdTorneo());
         query.executeUpdate();
@@ -53,25 +55,29 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
     @Override
     public Set<SquadraDTOExtended> readAllTeamsById(TorneoDTOExtended torneoDTOExtended) throws SQLException {
         Set<SquadraTorneoEntity> squadraTornei = new HashSet<>(entityManager.createQuery(
-                        "select st from SquadraTorneoEntity st where st.id.torneoEntity.idTorneo = :idTorneo", SquadraTorneoEntity.class)
+                        "select st from SquadraTorneoEntity st where st.torneo.idTorneo = :idTorneo", SquadraTorneoEntity.class)
                 .setParameter("idTorneo", torneoDTOExtended.getIdTorneo())
                 .getResultList());
 
-        return squadraTornei.stream()
-                .map(st -> SquadraMapper.squadraEntityToDtoExtendended(st.getSquadra()))
-                .collect(Collectors.toSet());
+        Set<SquadraEntity> squadre = new HashSet<>();
+        squadraTornei.forEach(elem -> squadre.add(elem.getSquadra()));
+
+        return squadre.stream().map(SquadraMapper::squadraEntityToDtoExtendended).collect(Collectors.toSet());
     }
 
 
     @Override
     public Set<TorneoDTOExtended> readAllTorneoByIdSquadra(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         Set<SquadraTorneoEntity> squadraTornei = new HashSet<>(entityManager.createQuery(
-                        "select st from SquadraTorneoEntity st where st.id.squadraEntity.idSquadra = :idSquadra", SquadraTorneoEntity.class)
+                        "select st from SquadraTorneoEntity st where st.squadra.idSquadra = :idSquadra", SquadraTorneoEntity.class)
                 .setParameter("idSquadra", squadraDTOExtended.getIdSquadra())
                 .getResultList());
 
-        return squadraTornei.stream()
-                .map(st -> TorneoMapper.torneoEntityToDtoExtended(st.getTorneo()))
+        Set<TorneoEntity> tornei = new HashSet<>();
+        squadraTornei.forEach(elem -> tornei.add(elem.getTorneo()));
+
+        return tornei.stream()
+                .map(TorneoMapper::torneoEntityToDtoExtended)
                 .collect(Collectors.toSet());
     }
 

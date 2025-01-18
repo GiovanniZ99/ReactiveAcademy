@@ -30,13 +30,18 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
     @Override
     public SquadraTorneoDTOExtended create(TorneoDTOExtended torneoDTOExtended, SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         TorneoEntity torneo = TorneoMapper.torneoDTOExtendedToEntity(torneoDTOExtended);
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
+
+        SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
         squadraTorneoId.setIdTorneo(torneo.getIdTorneo());
         squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
+
         SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
         squadraTorneoEntity.setId(squadraTorneoId);
+        squadraTorneoEntity.setTorneo(torneo);
+        squadraTorneoEntity.setSquadra(squadra);
+
         String s = "insert into squadra_torneo (id_squadra, id_torneo) values (:idSquadra, :idTorneo)";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("idSquadra", squadra.getIdSquadra());

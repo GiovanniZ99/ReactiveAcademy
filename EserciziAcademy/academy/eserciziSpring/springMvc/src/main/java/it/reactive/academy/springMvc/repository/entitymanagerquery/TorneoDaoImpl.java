@@ -28,10 +28,14 @@ public class TorneoDaoImpl implements TorneoDao {
         TorneoEntity torneo = new TorneoEntity();
         torneo.setNomeTorneo(nomeTorneo);
 
-        String s = "insert into torneo t (nome_torneo) values (:nomeTorneo)";
-        Query query = entityManager.createNativeQuery(s, TorneoEntity.class);
+        String s = "insert into torneo (nome_torneo) values (:nomeTorneo) returning id";
+        Query query = entityManager.createNativeQuery(s);
         query.setParameter("nomeTorneo", nomeTorneo);
-        query.executeUpdate();
+
+        Object result = query.getSingleResult();
+
+        Integer idTorneo = ((Number) result).intValue();
+        torneo.setIdTorneo(idTorneo);
 
         return TorneoMapper.torneoEntityToDtoExtended(torneo);
     }
@@ -57,8 +61,12 @@ public class TorneoDaoImpl implements TorneoDao {
 
     @Override
     public void delete(Integer id) throws SQLException {
+        entityManager.createQuery("delete from SquadraTorneoEntity st where st.torneo.idTorneo = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+
         entityManager.createQuery("delete from TorneoEntity t where t.idTorneo = :id")
-                .setParameter(1, id)
+                .setParameter("id", id)
                 .executeUpdate();
     }
 }

@@ -9,12 +9,15 @@ import it.reactive.academy.springMvc.utility.mapper.SquadraMapper;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.utility.rowmapper.TorneoRowMapper;
 import org.springframework.context.annotation.Profile;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,8 +39,12 @@ public class TorneoDaoImpl implements TorneoDao {
         String s = "insert into torneo (nome_torneo) values (?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(s, nomeTorneo, keyHolder);
-        torneoEntity.setIdTorneo((Integer) keyHolder.getKey());
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, nomeTorneo);
+            return ps;
+        }, keyHolder);
+        torneoEntity.setIdTorneo((Integer) keyHolder.getKeyList().get(0).get("id"));
 
         return TorneoMapper.torneoEntityToDtoExtended(torneoEntity);
     }

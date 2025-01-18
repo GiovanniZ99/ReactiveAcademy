@@ -1,10 +1,10 @@
 package it.reactive.academy.springMvc.repository.query;
 
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
-import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.entity.TorneoEntity;
 import it.reactive.academy.springMvc.repository.dao.TorneoDao;
 import it.reactive.academy.springMvc.utility.Costanti;
+import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
 import it.reactive.academy.springMvc.utility.rowmapper.TorneoRowMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,7 +14,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class TorneoDaoImpl implements TorneoDao {
                 params,
                new TorneoRowMapper());
 
-        if(torneo.get(0) == null){
+        if(torneo.isEmpty()){
             torneo.add(new TorneoEntity());
         }
         return TorneoMapper.torneoEntityToDtoExtended(torneo.get(0));

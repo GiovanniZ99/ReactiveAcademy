@@ -11,10 +11,12 @@ public class SquadraTorneoEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("idSquadra")
+    @JoinColumn(name = "id_squadra")
     private SquadraEntity squadra;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("idTorneo")
+    @JoinColumn(name = "id_torneo")
     private TorneoEntity torneo;
 
     public SquadraTorneoEntity(SquadraTorneoId id, SquadraEntity squadra, TorneoEntity torneo) {

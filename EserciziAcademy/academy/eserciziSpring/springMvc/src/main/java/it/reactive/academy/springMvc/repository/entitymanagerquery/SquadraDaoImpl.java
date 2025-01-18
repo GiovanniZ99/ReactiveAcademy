@@ -1,7 +1,6 @@
 package it.reactive.academy.springMvc.repository.entitymanagerquery;
 
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
-import it.reactive.academy.springMvc.entity.GiocatoreEntity;
 import it.reactive.academy.springMvc.entity.SquadraEntity;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.utility.Costanti;
@@ -26,10 +25,16 @@ public class SquadraDaoImpl implements SquadraDao {
     @Override
     public SquadraDTOExtended create(SquadraDTOExtended squadraDTOExtended) throws SQLException {
         SquadraEntity squadra = SquadraMapper.squadraDtoExtendedToEntity(squadraDTOExtended);
-        Query query = entityManager.createNativeQuery("insert into squadra (nome, colori_sociali) values :nome, :coloriSociali)");
+        Query query = entityManager.createNativeQuery("insert into squadra (nome, colori_sociali) values (:nome, :coloriSociali)" +
+                "returning id");
         query.setParameter("nome", squadra.getNome());
         query.setParameter("coloriSociali", squadra.getColoriSociali());
-        query.executeUpdate();
+
+        Object result = query.getSingleResult();
+
+        Integer idSquadra = ((Number) result).intValue();
+        squadra.setIdSquadra(idSquadra);
+
         return SquadraMapper.squadraEntityToDtoExtendended(squadra);
     }
 
@@ -45,10 +50,14 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public SquadraDTOExtended findSquadraById(Integer idSquadra) throws SQLException {
-        String s = "select s from SquadraEntity s where s.id = :idSquadra";
-        SquadraEntity squadraEntity = entityManager.createQuery(s, SquadraEntity.class)
-                .setParameter("idSquadra", idSquadra).getSingleResult();
-        return SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
+        try {
+            String s = "select s from SquadraEntity s where s.id = :idSquadra";
+            SquadraEntity squadraEntity = entityManager.createQuery(s, SquadraEntity.class)
+                    .setParameter("idSquadra", idSquadra).getSingleResult();
+            return SquadraMapper.squadraEntityToDtoExtendended(squadraEntity);
+        } catch (javax.persistence.NoResultException e) {
+            return new SquadraDTOExtended();
+        }
     }
 
     @Override
@@ -65,8 +74,26 @@ public class SquadraDaoImpl implements SquadraDao {
 
     @Override
     public void delete(Integer idSquadra) throws SQLException {
-        String s ="delete from GiocatoreEntity where id = :idSquadra";
-        entityManager.createQuery(s, GiocatoreEntity.class).setParameter("idSquadra", idSquadra);
+
+        String deleteSquadraTorneo = "DELETE FROM squadra_torneo WHERE id_squadra = :idSquadra";
+        entityManager.createNativeQuery(deleteSquadraTorneo)
+                .setParameter("idSquadra", idSquadra)
+                .executeUpdate();
+
+        String deleteGiocatori = "delete from giocatore where id_squadra = :idSquadra";
+        entityManager.createNativeQuery(deleteGiocatori)
+                .setParameter("idSquadra", idSquadra)
+                .executeUpdate();
+
+        String deleteTifoseria = "delete from tifoseria where id_squadra = :idSquadra";
+        entityManager.createNativeQuery(deleteTifoseria)
+                .setParameter("idSquadra", idSquadra)
+                .executeUpdate();
+
+        String deleteSquadra = "delete from squadra where id = :idSquadra";
+        entityManager.createNativeQuery(deleteSquadra)
+                .setParameter("idSquadra", idSquadra)
+                .executeUpdate();
     }
 }
 

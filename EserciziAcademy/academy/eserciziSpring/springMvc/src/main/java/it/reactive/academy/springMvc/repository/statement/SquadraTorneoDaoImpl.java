@@ -37,7 +37,8 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
         SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
         squadraTorneoEntity.setId(squadraTorneoId);
-
+        squadraTorneoEntity.setTorneo(torneo);
+        squadraTorneoEntity.setSquadra(squadra);
         Connection con = null;
         Statement statement = null;
 
@@ -46,7 +47,7 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
             statement = con.createStatement();
 
             String s = "insert into squadra_torneo (id_squadra, id_torneo) values(" +
-                    squadraDTOExtended.getIdSquadra() + "," + torneoDTOExtended.getIdTorneo() + ")";
+                    squadra.getIdSquadra() + "," + torneo.getIdTorneo() + ")";
             statement.executeUpdate(s);
         } finally {
             if (statement != null) {

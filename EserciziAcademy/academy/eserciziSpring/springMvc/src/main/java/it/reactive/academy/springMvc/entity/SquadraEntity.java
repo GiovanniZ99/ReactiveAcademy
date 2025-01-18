@@ -17,13 +17,18 @@ public class SquadraEntity {
     @Column(name = "colori_sociali")
     private String coloriSociali;
 
-    @OneToMany(mappedBy = "squadra", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "squadra", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GiocatoreEntity> giocatori;
 
-    public SquadraEntity(Integer idSquadra, String nome, String coloriSociali) {
+    @OneToOne(mappedBy = "squadra", cascade = CascadeType.ALL, orphanRemoval = true)
+    private TifoseriaEntity tifoseria;
+
+    public SquadraEntity(Integer idSquadra, String nome, String coloriSociali, Set<GiocatoreEntity> giocatori, TifoseriaEntity tifoseria) {
         this.idSquadra = idSquadra;
         this.nome = nome;
         this.coloriSociali = coloriSociali;
+        this.giocatori = giocatori;
+        this.tifoseria = tifoseria;
     }
 
     public SquadraEntity() {
@@ -59,5 +64,13 @@ public class SquadraEntity {
 
     public void setGiocatori(Set<GiocatoreEntity> giocatori) {
         this.giocatori = giocatori;
+    }
+
+    public TifoseriaEntity getTifoseria() {
+        return tifoseria;
+    }
+
+    public void setTifoseria(TifoseriaEntity tifoseria) {
+        this.tifoseria = tifoseria;
     }
 }

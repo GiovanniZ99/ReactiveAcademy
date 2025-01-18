@@ -62,8 +62,10 @@ public class SquadraTorneoService {
                     elem.setGiocatori(giocatoreDao.readAllByTeam(elem));
 
                     TifoseriaDTOExtended tifoseria = tifoseriaDao.readByTeam(elem);
-                    tifoseria.setSquadra(elem);
-                    elem.setTifoseria(tifoseria);
+                    if(tifoseria != null){
+                        tifoseria.setSquadra(elem);
+                        elem.setTifoseria(tifoseria);
+                    }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

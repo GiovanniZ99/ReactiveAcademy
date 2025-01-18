@@ -15,7 +15,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 @Repository
@@ -35,8 +37,13 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         String s = "insert into tifoseria (nome_tifoseria, id_squadra) values (?,?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(s, new Object[]{tifoseriaEntity.getNomeTifoseria(), idSquadra}, keyHolder);
-        tifoseriaEntity.setIdTifoseria((Objects.requireNonNull(keyHolder.getKey()).intValue()));
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, tifoseriaEntity.getNomeTifoseria());
+            ps.setInt(2, idSquadra);
+            return ps;
+        }, keyHolder);
+        tifoseriaEntity.setIdTifoseria(((Integer) keyHolder.getKeyList().get(0).get("id")));
 
         return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
@@ -49,7 +56,9 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
         String s = "select id, nome_tifoseria, id_squadra from tifoseria where id_squadra = ?";
 
         tifoseriaResult = jdbcTemplate.queryForObject(s, new TifoseriaRowMapper(), squadraEntity.getIdSquadra());
-
+        if(tifoseriaResult == null){
+            tifoseriaResult = new TifoseriaEntity();
+        }
         return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaResult);
     }
 

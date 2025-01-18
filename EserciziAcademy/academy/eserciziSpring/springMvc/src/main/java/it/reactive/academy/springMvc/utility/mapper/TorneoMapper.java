@@ -17,7 +17,9 @@ public class TorneoMapper {
         if(torneoEntity.getIdTorneo() != null) {
             torneoDTOExtended.setIdTorneo(torneoEntity.getIdTorneo());
         }
-        torneoDTOExtended.setNomeTorneo(torneoEntity.getNomeTorneo());
+        if(torneoEntity.getNomeTorneo()!=null) {
+            torneoDTOExtended.setNomeTorneo(torneoEntity.getNomeTorneo());
+        }
         return torneoDTOExtended;
     }
     public static TorneoEntity torneoDTOExtendedToEntity(TorneoDTOExtended torneoDTOExtended){

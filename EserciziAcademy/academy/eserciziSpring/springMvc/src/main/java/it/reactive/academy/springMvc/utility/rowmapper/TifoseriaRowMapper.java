@@ -13,7 +13,7 @@ public class TifoseriaRowMapper implements RowMapper<TifoseriaEntity> {
         TifoseriaEntity tifoseriaEntity = new TifoseriaEntity();
         tifoseriaEntity.setIdTifoseria(rs.getInt("id"));
         tifoseriaEntity.setNomeTifoseria(rs.getString("nome_tifoseria"));
-        tifoseriaEntity.setSquadra(new SquadraEntity(rs.getInt("id_squadra"), null, null));
+        tifoseriaEntity.setSquadra(new SquadraEntity(rs.getInt("id_squadra"), null, null, null, null));
         return tifoseriaEntity;
     }
 }

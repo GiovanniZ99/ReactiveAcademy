@@ -37,6 +37,8 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
         squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
         SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
         squadraTorneoEntity.setId(squadraTorneoId);
+        squadraTorneoEntity.setTorneo(torneo);
+        squadraTorneoEntity.setSquadra(squadra);
 
         String s = "insert into squadra_torneo (id_squadra, id_torneo) values (?, ?)";
         jdbcTemplate.update(s, squadra.getIdSquadra(), torneo.getIdTorneo());

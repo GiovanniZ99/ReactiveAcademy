@@ -3,6 +3,7 @@ package it.reactive.academy.springMvc.service;
 import it.reactive.academy.springMvc.dto.TorneoDTO;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.TorneoDTOExtended;
+import it.reactive.academy.springMvc.exception.TorneoNonTrovatoException;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import it.reactive.academy.springMvc.repository.dao.SquadraTorneoDao;
 import it.reactive.academy.springMvc.utility.mapper.TorneoMapper;
@@ -37,6 +38,9 @@ public class TorneoService {
     public void delete(Integer id){
         try {
             TorneoDTOExtended torneoDTOExtended = torneoDao.findById(id);
+            if(torneoDTOExtended.getIdTorneo() == null){
+                throw new TorneoNonTrovatoException("Torneo non trovato");
+            }
             Set<SquadraDTOExtended> squadre = squadraTorneoDao.readAllTeamsById(torneoDTOExtended);
             torneoDao.delete(id);
             squadre.forEach(squadra -> {

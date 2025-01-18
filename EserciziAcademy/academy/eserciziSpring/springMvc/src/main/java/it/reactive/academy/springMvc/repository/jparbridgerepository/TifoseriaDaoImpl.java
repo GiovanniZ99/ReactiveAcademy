@@ -34,6 +34,9 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
     @Override
     public TifoseriaDTOExtended readByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
       TifoseriaEntity tifoseriaEntity =  tifoseriaRepository.findBySquadraIdSquadra(squadraDTOExtended.getIdSquadra());
+      if(tifoseriaEntity == null){
+          tifoseriaEntity = new TifoseriaEntity();
+      }
       return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
 

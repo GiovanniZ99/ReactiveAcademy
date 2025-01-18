@@ -38,6 +38,8 @@ public class SquadraTorneoDaoImpl implements SquadraTorneoDao {
 
         SquadraTorneoEntity squadraTorneoEntity = new SquadraTorneoEntity();
         squadraTorneoEntity.setId(squadraTorneoId);
+        squadraTorneoEntity.setTorneo(torneo);
+        squadraTorneoEntity.setSquadra(squadra);
 
         Connection con = null;
         PreparedStatement ps = null;

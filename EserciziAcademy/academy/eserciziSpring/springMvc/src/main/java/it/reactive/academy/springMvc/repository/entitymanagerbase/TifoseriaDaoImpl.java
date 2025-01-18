@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 
@@ -33,10 +34,15 @@ public class TifoseriaDaoImpl implements TifoseriaDao {
 
     @Override
     public TifoseriaDTOExtended readByTeam(SquadraDTOExtended squadraDTOExtended) throws SQLException {
-        TifoseriaEntity tifoseriaEntity = entityManager.createQuery(
-                        "select t from TifoseriaEntity t where t.squadra.idSquadra = :idSquadra", TifoseriaEntity.class)
-                .setParameter("idSquadra", squadraDTOExtended.getIdSquadra())
-                .getSingleResult();
+        TifoseriaEntity tifoseriaEntity = null;
+        try {
+            tifoseriaEntity = entityManager.createQuery(
+                            "select t from TifoseriaEntity t where t.squadra.idSquadra = :idSquadra", TifoseriaEntity.class)
+                    .setParameter("idSquadra", squadraDTOExtended.getIdSquadra())
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
 
         return TifoseriaMapper.tifoseriaEntityToDtoExtended(tifoseriaEntity);
     }
