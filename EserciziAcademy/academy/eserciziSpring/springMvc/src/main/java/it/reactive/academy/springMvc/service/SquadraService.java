@@ -28,17 +28,16 @@ public class SquadraService {
 
     private final SquadraDao squadraDao;
     private final GiocatoreDao giocatoreDao;
+    private final TrasferimentiService trasferimentiService;
 
-    public SquadraService(SquadraDao squadraDaoImpl, GiocatoreDao giocatoreDao) {
+    public SquadraService(SquadraDao squadraDaoImpl, GiocatoreDao giocatoreDao, TrasferimentiService trasferimentiService) {
         this.squadraDao = squadraDaoImpl;
         this.giocatoreDao = giocatoreDao;
+        this.trasferimentiService = trasferimentiService;
     }
 
     @Transactional
     public Squadra create(SquadraDTO input) {
-        if (input == null) {
-            throw new SquadraNonPresenteException("Squadra inserita assente");
-        }
         try {
             if (squadraDao.checkSquadraByName(input.getNome())) {
                 throw new SquadraGiaCensitaException("Squadra già censita");
@@ -81,6 +80,7 @@ public class SquadraService {
         Set<GiocatoreDTOExtended> giocatori;
         try {
             giocatori = giocatoreDao.readAllByTeam(squadraDTOExtended);
+            giocatori.forEach(elem-> elem.setTrasferimenti(trasferimentiService.trasferimenti(elem.getNomeCognome())));
             squadraDTOExtended.setGiocatori(giocatori);
             if (giocatori == null) {
                 giocatori = new HashSet<>();
@@ -101,9 +101,6 @@ public class SquadraService {
 
     @Transactional
     public Squadra createWithPlayers(SquadraDiGiocatoriDTO squadraDiGiocatori) {
-        if (squadraDiGiocatori == null) {
-            throw new SquadraNonPresenteException("Squadra inserita assente");
-        }
         try {
             if (squadraDao.checkSquadraByName(squadraDiGiocatori.getNome())) {
                 throw new SquadraGiaCensitaException("Squadra già censita");
@@ -121,7 +118,10 @@ public class SquadraService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        squadraDTOExtended.getGiocatori().forEach(elem -> elem.setSquadra(squadraDTOExtended));
+        squadraDTOExtended.getGiocatori().forEach(elem ->{
+            elem.setSquadra(squadraDTOExtended);
+            elem.setTrasferimenti(trasferimentiService.trasferimenti(elem.getNomeCognome()));
+        });
         try {
             squadraDTOExtended.setGiocatori(giocatoreDao.createAll(squadraDTOExtended.getGiocatori()));
         } catch (SQLException e) {

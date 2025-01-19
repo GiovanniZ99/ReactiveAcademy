@@ -17,9 +17,10 @@ import java.util.Set;
 
 @Service
 public class TorneoService {
-    private  final TorneoDao torneoDao;
+    private final TorneoDao torneoDao;
     private final SquadraTorneoDao squadraTorneoDao;
     private final SquadraDao squadraDao;
+
     public TorneoService(TorneoDao torneoDao, SquadraTorneoDao squadraTorneoDao, SquadraDao squadraDao) {
         this.torneoDao = torneoDao;
         this.squadraTorneoDao = squadraTorneoDao;

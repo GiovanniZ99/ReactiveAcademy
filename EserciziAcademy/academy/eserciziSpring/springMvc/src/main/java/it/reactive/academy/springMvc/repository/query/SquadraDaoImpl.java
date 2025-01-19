@@ -65,7 +65,6 @@ public class SquadraDaoImpl implements SquadraDao {
         params.addValue("idSquadra", idSquadra);
 
         List<SquadraEntity> listaResult = namedParameterJdbcTemplate.query(s, params, new SquadraRowMapper());
-        // perché ho dovuto usare per forza il metodo query da esercizio
         if (listaResult.isEmpty()) {
             listaResult.add(new SquadraEntity());
         }
