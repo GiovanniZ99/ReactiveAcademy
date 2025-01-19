@@ -49,10 +49,19 @@
          <scope>test</scope>
      </dependency>
       <dependency>
+          <artifactId>bear-arch-jpa-light</artifactId>
+          <groupId>com.intesasanpaolo.bear</groupId>
+          <version>0.14.57</version>
+      </dependency>
+      <dependency>
       <groupId>com.intesasanpaolo.bear</groupId>
       <artifactId>bear-arch-jdbc</artifactId>
       <version>${bear.version}</version>
   </dependency>
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-data-jpa</artifactId>
+      </dependency>
       <dependency>
           <groupId>com.intesasanpaolo.bear</groupId>
           <artifactId>bear-arch-jdbc-mock</artifactId>

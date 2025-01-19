@@ -1,16 +1,13 @@
 package com.intesasanpaolo.bear.mpab0.corsobearesercizi.controller;
 
 import com.intesasanpaolo.bear.core.controller.CoreController;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.command.CountryCommand;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.command.CountryCommandService;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.command.CountryCommandServiceParam;
+import com.intesasanpaolo.bear.mpab0.corsobearesercizi.command.*;
+import com.intesasanpaolo.bear.mpab0.corsobearesercizi.factory.CountryMapper;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.model.CountryModel;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.resource.CountryResource;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +15,14 @@ import java.util.List;
 @RequestMapping("/country")
 @RestController
 public class CountryController extends CoreController {
-
-
+    
     private final BeanFactory beanFactory;
 
     public CountryController(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
+    //    @GetMapping(value = "/countries")
     public ResponseEntity<List<CountryResource>> getCountries() {
         List<CountryResource> listaCountry = new ArrayList<>();
         listaCountry.add(new CountryResource(1L, "Italia", "italiano", "Europa"));
@@ -35,56 +32,45 @@ public class CountryController extends CoreController {
     }
 
 
-    public ResponseEntity<List<CountryResource>> countriesCommand() throws Exception {
-        List<CountryModel> countryModels = beanFactory.getBean(CountryCommand.class).execute();
-
-        List<CountryResource> countryResources = new ArrayList<>();
-        for (CountryModel countryModel : countryModels) {
-            CountryResource countryResource = new CountryResource();
-            countryResource.setId(countryModel.getId());
-            String[] info = countryModel.getInfo().split("-");
-            countryResource.setName(info[0]);
-            countryResource.setLanguage(info[1]);
-            countryResource.setContinent(info[2]);
-            countryResources.add(countryResource);
+   // @GetMapping(value = "command")
+    public ResponseEntity<List<CountryResource>> getCountriesCommand() throws Exception {
+        List<CountryModel> countries = beanFactory.getBean(CountryCommand.class).execute();
+        List<CountryResource> countriesResources = new ArrayList<>();
+        for (CountryModel countryModel : countries) {
+            countriesResources.add(CountryMapper.modelToResource(countryModel));
         }
-
-        return ResponseEntity.ok(countryResources);
+        return ResponseEntity.ok(countriesResources);
     }
 
-    // @GetMapping(value = "/service")
-    public ResponseEntity<List<CountryResource>> countriesCommandService() throws Exception {
-        List<CountryModel> countryModels = beanFactory.getBean(CountryCommandService.class).execute();
-
-        List<CountryResource> countryResources = new ArrayList<>();
-        for (CountryModel countryModel : countryModels) {
-            CountryResource countryResource = new CountryResource();
-            countryResource.setId(countryModel.getId());
-            String[] info = countryModel.getInfo().split("-");
-            countryResource.setName(info[0]);
-            countryResource.setLanguage(info[1]);
-            countryResource.setContinent(info[2]);
-            countryResources.add(countryResource);
+    //    @GetMapping(value="/service")
+    public ResponseEntity<List<CountryResource>> getCountriesCommandService() throws Exception {
+        List<CountryModel> countries = beanFactory.getBean(CountryCommandService.class, "variabile d'istanza di tipo String", 1).execute();
+        List<CountryResource> countriesR = new ArrayList<>();
+        for (CountryModel cM : countries) {
+            countriesR.add(CountryMapper.modelToResource(cM));
         }
-
-        return ResponseEntity.ok(countryResources);
+        return ResponseEntity.ok(countriesR);
     }
 
-    @GetMapping(value = "/service")
-    public ResponseEntity<List<CountryResource>> countriesCommandServiceWithParam() throws Exception {
-        List<CountryModel> countryModels = beanFactory.getBean(CountryCommandServiceParam.class, 4L, "StatiUniti-inglese-America").execute();
-
-        List<CountryResource> countryResources = new ArrayList<>();
-        for (CountryModel countryModel : countryModels) {
-            CountryResource countryResource = new CountryResource();
-            countryResource.setId(countryModel.getId());
-            String[] info = countryModel.getInfo().split("-");
-            countryResource.setName(info[0]);
-            countryResource.setLanguage(info[1]);
-            countryResource.setContinent(info[2]);
-            countryResources.add(countryResource);
+    //    @GetMapping(value="/serviceParametri")
+    public ResponseEntity<List<CountryResource>> getCountriesCommandServiceWithParams() throws Exception {
+        List<CountryModel> countries = beanFactory.getBean(CountryCommandServiceParam.class, "Germania - Tedesco - Europa", 3L).execute();
+        List<CountryResource> countriesR = new ArrayList<>();
+        for (CountryModel cM : countries) {
+            countriesR.add(CountryMapper.modelToResource(cM));
         }
+        return ResponseEntity.ok(countriesR);
+    }
 
-        return ResponseEntity.ok(countryResources);
+    //    @GetMapping(value="connector")
+    public ResponseEntity<List<CountryResource>> getCountriesCommandConnector() throws Exception {
+        List<CountryResource> countries = beanFactory.getBean(CountryCommandJdbc.class).execute();
+        return ResponseEntity.ok(countries);
+    }
+
+    @PostMapping(value="/{id}")
+    public ResponseEntity<CountryResource> getCountries(@PathVariable Long id) throws Exception {
+        CountryResource countryResource = beanFactory.getBean(CountryCommandJpa.class, id).execute().orElseThrow(() -> new Exception("Country non presente"));
+        return ResponseEntity.ok(countryResource);
     }
 }
