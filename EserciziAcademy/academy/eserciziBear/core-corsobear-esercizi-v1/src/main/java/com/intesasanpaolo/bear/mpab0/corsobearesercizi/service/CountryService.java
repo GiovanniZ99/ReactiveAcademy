@@ -3,9 +3,10 @@ package com.intesasanpaolo.bear.mpab0.corsobearesercizi.service;
 import com.intesasanpaolo.bear.connector.jdbc.JDBCQueryType;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJDBCResponseTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJdbcConnector;
+import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJdbcRequestTransformer;
+import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.JpaRepository;
+import com.intesasanpaolo.bear.mpab0.corsobearesercizi.exception.CountryNonTrovatoException;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.factory.CountryMapper;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.factory.DemoJDBCRequestTransformer;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.factory.DemoJDBCResponseTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.model.CountryModel;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.resource.CountryResource;
 import com.intesasanpaolo.bear.service.BaseService;
@@ -19,23 +20,26 @@ public class CountryService extends BaseService {
 
     private final GetCountriesJdbcConnector getCountriesJdbcConnector;
 
-    private final DemoJDBCRequestTransformer demoJDBCRequestTransformer;
+    private final GetCountriesJDBCResponseTransformer responseTransformer;
 
-    private final DemoJDBCResponseTransformer demoJDBCResponseTransformer;
+    private final GetCountriesJdbcRequestTransformer requestTransformer;
 
-    public CountryService(GetCountriesJdbcConnector getCountriesJdbcConnector, DemoJDBCRequestTransformer demoJDBCRequestTransformer, DemoJDBCResponseTransformer demoJDBCResponseTransformer) {
+    private final JpaRepository jpaRepository;
+
+    public CountryService(GetCountriesJdbcConnector getCountriesJdbcConnector, GetCountriesJDBCResponseTransformer responseTransformer, GetCountriesJdbcRequestTransformer requestTransformer, JpaRepository jpaRepository) {
         this.getCountriesJdbcConnector = getCountriesJdbcConnector;
-        this.demoJDBCRequestTransformer = demoJDBCRequestTransformer;
-        this.demoJDBCResponseTransformer = demoJDBCResponseTransformer;
+        this.responseTransformer = responseTransformer;
+        this.requestTransformer = requestTransformer;
+        this.jpaRepository = jpaRepository;
     }
 
-//    public List<CountryModel> getCountries() {
-//        List<CountryModel> listaCountry = new ArrayList<>();
-//        listaCountry.add(new CountryModel(1L, "Italia-italiano-Europa"));
-//        listaCountry.add(new CountryModel(2L, "Giappone-giapponese-Asia"));
-//        listaCountry.add(new CountryModel(3L, "StatiUniti-inglese-America"));
-//        return listaCountry;
-//    }
+    public List<CountryModel> getCountries() {
+        List<CountryModel> listaCountry = new ArrayList<>();
+        listaCountry.add(new CountryModel(1L, "Italia-italiano-Europa"));
+        listaCountry.add(new CountryModel(2L, "Giappone-giapponese-Asia"));
+        listaCountry.add(new CountryModel(3L, "StatiUniti-inglese-America"));
+        return listaCountry;
+    }
 
     public List<CountryModel> getCountriesWithParam(Long id, String info) {
         List<CountryModel> countryModels = new ArrayList<>();
@@ -47,8 +51,13 @@ public class CountryService extends BaseService {
         return countryModels;
     }
 
-    public List<CountryResource> getCountries() {
-        List<CountryModel> countryModelList = getCountriesJdbcConnector.call("select * from countries ", jdbcRequestTransformer, GetCountriesJDBCResponseTransformer, JDBCQueryType.FIND);
-        return CountryMapper.countryModelListToRescourceList(countryModelList);
+
+    public List<CountryModel> getCountriesJdbsConnector(){
+        return getCountriesJdbcConnector.call("select * from countries", requestTransformer, responseTransformer, JDBCQueryType.FIND);
+    }
+
+
+    public CountryModel getJpa(Long key){
+        return jpaRepository.findById(key).orElseThrow(CountryNonTrovatoException::new);
     }
 }

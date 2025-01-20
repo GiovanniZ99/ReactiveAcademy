@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/country")
 @RestController
 public class CountryController extends CoreController {
-    
+
     private final BeanFactory beanFactory;
 
     public CountryController(BeanFactory beanFactory) {
@@ -70,7 +70,7 @@ public class CountryController extends CoreController {
 
     @PostMapping(value="/{id}")
     public ResponseEntity<CountryResource> getCountries(@PathVariable Long id) throws Exception {
-        CountryResource countryResource = beanFactory.getBean(CountryCommandJpa.class, id).execute().orElseThrow(() -> new Exception("Country non presente"));
+        CountryResource countryResource = beanFactory.getBean(CountryCommandJpa.class, id).execute();
         return ResponseEntity.ok(countryResource);
     }
 }
