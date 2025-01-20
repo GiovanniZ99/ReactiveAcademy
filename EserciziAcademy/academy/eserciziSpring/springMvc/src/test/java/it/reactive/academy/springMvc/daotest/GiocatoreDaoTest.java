@@ -5,6 +5,7 @@ import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.SQLException;
@@ -13,25 +14,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public abstract class GiocatoreDaoTest {
-    private final GiocatoreDao giocatoreDao;
-    private final SquadraDao squadraDao;
-
-    protected GiocatoreDaoTest(GiocatoreDao giocatoreDao, SquadraDao squadraDao) {
-        this.giocatoreDao = giocatoreDao;
-        this.squadraDao = squadraDao;
-    }
+    @Autowired
+    private GiocatoreDao giocatoreDao;
+    @Autowired
+    private SquadraDao squadraDao;
 
     @Test
     void findGiocatoreById() throws SQLException {
         GiocatoreDTOExtended giocatore = giocatoreDao.findGiocatoreById(1);
-        assertEquals("string", giocatore.getNomeCognome());
-        assertNull(giocatore.getNumeroAmmonizioni());
+        assertEquals("giocatore", giocatore.getNomeCognome());
     }
+
     @Test
-    void updateAmmonizioni() throws SQLException{
+    void updateAmmonizioni() throws SQLException {
         GiocatoreDTOExtended giocatore = new GiocatoreDTOExtended();
         giocatore.setIdGiocatore(1);
         giocatoreDao.updateAmmonizioni(1);
+        giocatore = giocatoreDao.findGiocatoreById(1);
         assertEquals(1, giocatore.getNumeroAmmonizioni());
     }
 

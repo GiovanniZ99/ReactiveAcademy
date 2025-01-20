@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Service
 public class TrasferimentiService {
-    @Value("${urlTrasferimenti}")
+    @Value("${url-trasferimenti}")
     private String urlTrasferimenti;
 
     public Set<TrasferimentiDTOExtended> trasferimenti(String nome) {

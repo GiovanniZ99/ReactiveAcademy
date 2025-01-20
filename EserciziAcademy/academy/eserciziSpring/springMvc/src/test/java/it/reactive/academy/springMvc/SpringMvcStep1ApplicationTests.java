@@ -1,4 +1,4 @@
-package it.reactive.academy.SpringMvcStep1;
+package it.reactive.academy.springMvc;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
