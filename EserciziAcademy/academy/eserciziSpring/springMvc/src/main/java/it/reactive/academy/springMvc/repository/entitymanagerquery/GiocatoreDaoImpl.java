@@ -17,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,13 +55,16 @@ public class GiocatoreDaoImpl implements GiocatoreDao {
                 .collect(Collectors.toSet());
 
         for (GiocatoreEntity giocatore : giocatori) {
-            String sql = "insert into giocatore (nome_cognome, numero_ammonizioni, id_squadra) values (:nomeCognome, :numeroAmmonizioni, :idSquadra)";
+            String sql = "insert into giocatore (nome_cognome, numero_ammonizioni, id_squadra) values (:nomeCognome, :numeroAmmonizioni, :idSquadra)"+
+                    "returning id";
             Query query = entityManager.createNativeQuery(sql);
             query.setParameter("nomeCognome", giocatore.getNomeCognome());
             query.setParameter("numeroAmmonizioni", giocatore.getNumeroAmmonizioni());
             query.setParameter("idSquadra", giocatore.getSquadra().getIdSquadra());
+            Object result = query.getSingleResult();
 
-            query.executeUpdate();
+            Integer idGiocatore = ((Number) result).intValue();
+            giocatore.setIdGiocatore(idGiocatore);
         }
 
         return giocatori.stream()
