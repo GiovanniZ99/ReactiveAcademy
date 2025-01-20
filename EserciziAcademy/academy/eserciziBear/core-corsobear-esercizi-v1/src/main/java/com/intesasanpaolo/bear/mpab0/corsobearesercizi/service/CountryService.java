@@ -6,9 +6,7 @@ import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJdb
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJdbcRequestTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.JpaRepository;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.exception.CountryNonTrovatoException;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.factory.CountryMapper;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.model.CountryModel;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.resource.CountryResource;
 import com.intesasanpaolo.bear.service.BaseService;
 import org.springframework.stereotype.Service;
 

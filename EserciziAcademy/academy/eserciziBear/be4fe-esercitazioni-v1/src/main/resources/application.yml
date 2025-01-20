@@ -55,3 +55,34 @@ keycloak:
         - name: reserved
           patterns:
             - /*
+
+KAFKA_TOPIC: Country-Zaffinelli
+KAFKA_STRATEGIA_BROKERS: 10.207.236.68:8034
+KAFKA_STRATEGIA_GROUPID: mpab0
+KAFKA_STRATEGIA_SECURITY_PROTOCOL: PLAINTEXT
+KEYTAB_KERB_FILE_PATH: /usr/local/security/SDH_MPAB0.keytab
+KEYTAB_KERB_USERNAME: SDH_MPAB0
+KEYTAB_KERB_REALM_DOMAIN: SYSSEDE.SYSTEST.SANPAOLOIMI.COM
+
+connectors:
+  bearInternalConfigurations:
+    items:
+      CountryRestConnector:
+        url: http://localhost:8080/country
+        enabledTracing: true
+        timeout: 5000
+        mocked: false
+        method: POST
+  eventConfigurations:
+    items:
+      CountryEventConnector:
+        topic: ${KAFKA_TOPIC}
+        bootstrapServers: ${KAFKA_STRATEGIA_BROKERS}
+        security:
+          protocol: ${KAFKA_STRATEGIA_SECURITY_PROTOCOL}
+        sasl:
+          kerberos:
+            service:
+              name: ${KAFKA_STRATEGIA_SERVICE_NAME:xx}
+          jaas:
+            config: "com.sun.security.auth.module.Krb5LoginModule required useKeyTab=true keyTab=\"${KEYTAB_KERB_FILE_PATH}\" principal=\"${KEYTAB_KERB_USERNAME}@${KEYTAB_KERB_REALM_DOMAIN}\";"

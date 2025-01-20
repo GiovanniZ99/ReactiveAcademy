@@ -8,18 +8,32 @@ error-manager:
   enabled: true
 
 connectors:
+
   jdbcConfigurations:
     default:
       connectionPoolSize: 5
       timeout: 30000
       mocked: false
     items:
-      DemoJDBCConnector:
-      uri: org.postgresql.Driver
-      driver-class-name: oracle.jdbc.OracleDriver
+      GetCountriesJdbcConnector:
+        uri: jdbc:postgresql://localhost:5432/bear
+        driver-class-name: org.postgresql.Driver
+        username: postgres
+        password: example
+
+  jpaConfigurations:
+    connection:
+      url: jdbc:postgresql://localhost:5432/bear
+      driver-class-name: org.postgresql.Driver
       username: postgres
       password: example
-
+      connectionPoolSize: 5
+      timeout: 30000
+      mocked: false
+      hbm2ddl: none
+      hibernateDialect: org.hibernate.dialect.PostgreSQLDialect
+    repositories:
+      - com/intesasanpaolo/bear/mpab0/corsobearesercizi/connector/JpaRepository.java
 #### Security configuration
 keycloak:
   enabled: false

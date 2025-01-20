@@ -2,7 +2,6 @@ package com.intesasanpaolo.bear.mpab0.corsobearesercizi.command;
 
 import com.intesasanpaolo.bear.core.command.BaseCommand;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.factory.CountryMapper;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.model.CountryModel;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.resource.CountryResource;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.service.CountryService;
 import org.springframework.beans.factory.config.BeanDefinition;
