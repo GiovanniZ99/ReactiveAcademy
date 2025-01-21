@@ -68,10 +68,9 @@ public class CountryController extends CoreController {
         return ResponseEntity.ok(countries);
     }
 
-    @PostMapping
-    public ResponseEntity<CountryResource> getCountries(@RequestBody Long id) throws Exception {
+    @PostMapping("country/{id}")
+    public ResponseEntity<CountryResource> getCountries(@PathVariable Long id) throws Exception {
         CountryResource countryResource = beanFactory.getBean(CountryCommandJpa.class, id).execute();
         return ResponseEntity.ok(countryResource);
     }
-
 }

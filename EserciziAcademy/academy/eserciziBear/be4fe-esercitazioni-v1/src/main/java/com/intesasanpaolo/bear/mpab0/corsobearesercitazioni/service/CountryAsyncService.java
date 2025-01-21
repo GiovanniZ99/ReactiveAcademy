@@ -4,10 +4,11 @@ import com.intesasanpaolo.bear.mpab0.corsobearesercitazioni.connector.event.Coun
 import com.intesasanpaolo.bear.mpab0.corsobearesercitazioni.connector.event.CountryEventRequestTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercitazioni.connector.event.CountryEventResponseTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercitazioni.dto.CountryLangDTO;
+import com.intesasanpaolo.bear.service.BaseService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CountryAsyncService {
+public class CountryAsyncService extends BaseService {
     private final CountryEventConnector connector;
 
     private final CountryEventRequestTransformer eventRequestTransformer;
@@ -19,7 +20,8 @@ public class CountryAsyncService {
         this.eventRequestTransformer = eventRequestTransformer;
         this.eventResponseTransformer = eventResponseTransformer;
     }
-    public Boolean getCountry(String language) {
-        return connector.call(new CountryLangDTO(language), eventRequestTransformer, eventResponseTransformer);
+
+    public Boolean getCountry(CountryLangDTO countryLangDTO) {
+        return connector.call(countryLangDTO, eventRequestTransformer, eventResponseTransformer);
     }
 }

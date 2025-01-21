@@ -32,6 +32,11 @@
          <groupId>com.intesasanpaolo.bear</groupId>
          <version>${bear.version}</version>
      </dependency>
+      <dependency>
+          <artifactId>bear-arch-event-raw</artifactId>
+      <groupId>com.intesasanpaolo.bear</groupId>
+      <version>${bear.version}</version>
+  </dependency>
      <dependency>
          <artifactId>bear-arch-rest</artifactId>
          <groupId>com.intesasanpaolo.bear</groupId>

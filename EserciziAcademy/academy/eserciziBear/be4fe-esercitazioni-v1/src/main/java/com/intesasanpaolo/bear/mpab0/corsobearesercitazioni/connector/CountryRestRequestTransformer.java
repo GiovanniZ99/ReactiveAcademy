@@ -5,12 +5,12 @@ import com.intesasanpaolo.bear.connector.rest.transformer.IRestRequestTransforme
 import org.springframework.stereotype.Service;
 
 @Service
-public class CountryRestRequestTransformer<String> implements IRestRequestTransformer<String,Integer> {
+public class CountryRestRequestTransformer implements IRestRequestTransformer<String,Long> {
 
     @Override
-    public RestConnectorRequest<Integer> transform(String om, Object... args) {
-        RestConnectorRequest<Integer> restConnectorRequest = new RestConnectorRequest<>();
-        restConnectorRequest.setRequest(Integer.parseInt((java.lang.String) om));
+    public RestConnectorRequest<Long> transform(String om, Object... args) {
+        RestConnectorRequest<Long> restConnectorRequest = new RestConnectorRequest<>();
+        restConnectorRequest.setRequest(Long.valueOf(om));
         return restConnectorRequest;
     }
 }

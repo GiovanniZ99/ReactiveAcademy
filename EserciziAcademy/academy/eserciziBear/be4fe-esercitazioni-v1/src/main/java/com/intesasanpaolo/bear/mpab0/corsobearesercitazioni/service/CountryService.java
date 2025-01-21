@@ -11,13 +11,13 @@ public class CountryService {
 
     private final CountryRestConnector countryRestConnector;
 
-    private final CountryRestResponseTransformer<String> countryRestResponseTransformer;
+    private final CountryRestResponseTransformer countryRestResponseTransformer;
 
-    private final CountryRestRequestTransformer<String> countryRestRequestTransformer;
+    private final CountryRestRequestTransformer countryRestRequestTransformer;
 
     public CountryService(CountryRestConnector countryRestConnector,
-                          CountryRestResponseTransformer<String> countryRestResponseTransformer,
-                          CountryRestRequestTransformer<String> countryRestRequestTransformer) {
+                          CountryRestResponseTransformer countryRestResponseTransformer,
+                          CountryRestRequestTransformer countryRestRequestTransformer) {
         this.countryRestConnector = countryRestConnector;
         this.countryRestResponseTransformer = countryRestResponseTransformer;
         this.countryRestRequestTransformer = countryRestRequestTransformer;

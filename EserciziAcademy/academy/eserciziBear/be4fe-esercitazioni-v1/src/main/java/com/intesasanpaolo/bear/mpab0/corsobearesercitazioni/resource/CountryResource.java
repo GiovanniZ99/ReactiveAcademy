@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class CountryResource extends BaseResource {
-    private String key;
+    private Long key;
 
     private Instant oraAggiornamento;
 
@@ -15,22 +15,22 @@ public class CountryResource extends BaseResource {
     public CountryResource() {
     }
 
-    public CountryResource(String key, Instant oraAggiornamento, String lingua) {
+    public CountryResource(Long key, Instant oraAggiornamento, String lingua) {
         this.key = key;
         this.oraAggiornamento = oraAggiornamento;
         this.lingua = lingua;
     }
 
-    public String getKey() {
+    public Instant getOraAggiornamento() {
+        return oraAggiornamento;
+    }
+
+    public Long getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(Long key) {
         this.key = key;
-    }
-
-    public Instant getOraAggiornamento() {
-        return oraAggiornamento;
     }
 
     public void setOraAggiornamento(Instant oraAggiornamento) {

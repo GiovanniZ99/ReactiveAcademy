@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class CountryCommand extends BaseCommand<CountryResource> {
     private final CountryService countryService;
 
-    private String id;
+    private final String id;
 
     public CountryCommand(CountryService countryService, String id) {
         this.countryService = countryService;
@@ -20,6 +20,6 @@ public class CountryCommand extends BaseCommand<CountryResource> {
     }
     @Override
     protected CountryResource doExecute() throws Exception {
-        return countryService.getCountry(id);
+        return countryService.getCountry(this.id);
     }
 }

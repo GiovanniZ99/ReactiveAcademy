@@ -54,9 +54,8 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.1</version> <!-- Usa la versione più recente disponibile -->
+			<version>42.3.1</version>
 		</dependency>
-
 		<!--
 		<dependency>
 			<artifactId>integration-connector-kafka</artifactId>

@@ -6,5 +6,5 @@ import com.intesasanpaolo.bear.mpab0.corsobearesercitazioni.resource.CountryReso
 import org.springframework.stereotype.Service;
 
 @Service
-public class CountryRestConnector extends BearInternalConnector<String, CountryResource, Integer, CountryDTO> {
+public class CountryRestConnector extends BearInternalConnector<String, CountryResource, Long, CountryDTO> {
 }
