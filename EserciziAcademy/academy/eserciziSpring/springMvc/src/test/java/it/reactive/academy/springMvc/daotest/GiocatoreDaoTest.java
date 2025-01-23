@@ -4,16 +4,19 @@ import it.reactive.academy.springMvc.dto.extended.GiocatoreDTOExtended;
 import it.reactive.academy.springMvc.dto.extended.SquadraDTOExtended;
 import it.reactive.academy.springMvc.repository.dao.GiocatoreDao;
 import it.reactive.academy.springMvc.repository.dao.SquadraDao;
+import it.reactive.academy.springMvc.utility.Costanti;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public abstract class GiocatoreDaoTest {
+@ActiveProfiles(Costanti.TORNEO_DAO_JDBC_PREPAREDSTATEMENT)
+class GiocatoreDaoTest {
     @Autowired
     private GiocatoreDao giocatoreDao;
     @Autowired

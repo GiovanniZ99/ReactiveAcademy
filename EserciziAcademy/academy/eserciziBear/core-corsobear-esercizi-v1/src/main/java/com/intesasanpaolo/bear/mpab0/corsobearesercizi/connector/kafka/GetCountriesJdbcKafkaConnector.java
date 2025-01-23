@@ -8,5 +8,5 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GetCountriesJdbcKafkaConnector extends JdbcConnector<String, List<CountryResource>, Void,List<CountryModel>> {
+public class GetCountriesJdbcKafkaConnector extends JdbcConnector<String, List<CountryResource>, Void,CountryModel> {
 }

@@ -10,11 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class CountryListener extends BaseEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryListener.class);
@@ -22,11 +25,8 @@ public class CountryListener extends BaseEventListener {
     @Value("${KAFKA_TOPIC_DEMO}")
     private String TOPIC;
 
-    private final CountryKafkaCommand command;
-    public CountryListener(CountryKafkaCommand command) {
-        this.command = command;
-
-    }
+    @Autowired
+    private BeanFactory beanFactory;
 
     @Override
     public void onReceived(byte[] payload, Headers headers) {
@@ -37,15 +37,13 @@ public class CountryListener extends BaseEventListener {
 
             List<CountryResource> countryResourceList;
             try {
-                countryResourceList = command.execute();
+                countryResourceList = beanFactory.getBean(CountryKafkaCommand.class, message).execute();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
             if (countryResourceList != null) {
-                countryResourceList.forEach((elem) -> {
-                    logger.info("Country con lingua ricercata trovate: {}", elem.getName());
-                });
+                countryResourceList.forEach(elem -> logger.info("Country con lingua ricercata trovate: {}", elem.getName()));
             } else {
                 logger.warn("Nessuna Country trovata con la lingua richiesta.");
             }

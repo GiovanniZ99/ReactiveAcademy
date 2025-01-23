@@ -43,6 +43,9 @@ public class SquadraTorneoService {
             if (squadraDTOExtended.getIdSquadra() == null) {
                 throw new SquadraNonPresenteException("Squadra non presente");
             }
+            if(squadraTorneoDao.readAllTeamsById(torneoDTOExtended).contains(squadraDTOExtended)){
+                throw new RuntimeException("Chiavi dupulicate");
+            }
             SquadraTorneoDTOExtended squadraTorneoDTOExtended = squadraTorneoDao.create(torneoDTOExtended, squadraDTOExtended);
             Set<SquadraDTOExtended> listaSquadre = squadraTorneoDao.readAllTeamsById(torneoDTOExtended);
             Set<SquadraDTOExtended> listaSquadreValorizzate = new HashSet<>();

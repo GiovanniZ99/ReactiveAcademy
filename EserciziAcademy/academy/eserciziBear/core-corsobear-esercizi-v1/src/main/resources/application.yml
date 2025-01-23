@@ -33,10 +33,9 @@ listeners:
             service:
               name: '${KAFKA_STRATEGIA_SERVICE_NAME:xx}'
           jaas:
-            config: >-
-              com.sun.security.auth.module.Krb5LoginModule required
-              useKeyTab=true keyTab="${KEYTAB_STRATEGIA_KERB_FILE_PATH}"
-              principal="${KEYTAB_STRATEGIA_KERB_USERNAME}@${KEYTAB_STRATEGIA_KERB_REALM_DOMAIN}";
+            config: "com.sun.security.auth.module.Krb5LoginModule required
+          useKeyTab=true keyTab=\"${KEYTAB_KERB_FILE_PATH}\"
+          principal=\"${KEYTAB_KERB_USERNAME}@${KEYTAB_KERB_REALM_DOMAIN}\";"
 
 connectors:
 
@@ -47,6 +46,12 @@ connectors:
       mocked: false
     items:
       GetCountriesJdbcConnector:
+        uri: jdbc:postgresql://localhost:5432/bear
+        driver-class-name: org.postgresql.Driver
+        username: postgres
+        password: example
+
+      GetCountriesJdbcKafkaConnector:
         uri: jdbc:postgresql://localhost:5432/bear
         driver-class-name: org.postgresql.Driver
         username: postgres

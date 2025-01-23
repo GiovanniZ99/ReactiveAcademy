@@ -5,7 +5,7 @@ import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJDB
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJdbcConnector;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.GetCountriesJdbcRequestTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.JpaRepository;
-import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.kafka.GetCountriesJDBCResponseKafkaTransformer;
+import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.kafka.GetCountriesJdbcResponseKafkaTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.kafka.GetCountriesJdbcKafkaConnector;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.connector.kafka.GetCountriesJdbcRequestKafkaTransformer;
 import com.intesasanpaolo.bear.mpab0.corsobearesercizi.dto.CountryLangDTO;
@@ -28,12 +28,12 @@ public class CountryService extends BaseService {
     private final GetCountriesJdbcRequestTransformer requestTransformer;
 
     private final GetCountriesJdbcRequestKafkaTransformer requestKafkaTransformer;
-    private final GetCountriesJDBCResponseKafkaTransformer responseKafkaTransformer;
+    private final GetCountriesJdbcResponseKafkaTransformer responseKafkaTransformer;
     private final GetCountriesJdbcKafkaConnector kafkaConnector;
 
     private final JpaRepository jpaRepository;
 
-    public CountryService(GetCountriesJdbcConnector getCountriesJdbcConnector, GetCountriesJDBCResponseTransformer responseTransformer, GetCountriesJdbcRequestTransformer requestTransformer, GetCountriesJdbcRequestKafkaTransformer requestKafkaTransformer, GetCountriesJDBCResponseKafkaTransformer responseKafkaTransformer, GetCountriesJdbcKafkaConnector kafkaConnector, JpaRepository jpaRepository) {
+    public CountryService(GetCountriesJdbcConnector getCountriesJdbcConnector, GetCountriesJDBCResponseTransformer responseTransformer, GetCountriesJdbcRequestTransformer requestTransformer, GetCountriesJdbcRequestKafkaTransformer requestKafkaTransformer, GetCountriesJdbcResponseKafkaTransformer responseKafkaTransformer, GetCountriesJdbcKafkaConnector kafkaConnector, JpaRepository jpaRepository) {
         this.getCountriesJdbcConnector = getCountriesJdbcConnector;
         this.responseTransformer = responseTransformer;
         this.requestTransformer = requestTransformer;
@@ -67,7 +67,9 @@ public class CountryService extends BaseService {
     }
 
     public List<CountryResource> getCountriesByLangWithJDBC(CountryLangDTO countryLangDTO) {
-        return kafkaConnector.call("select * from countries where info like '%- ? -%'", requestKafkaTransformer, responseKafkaTransformer, countryLangDTO.getLanguage(), JDBCQueryType.FIND);
+        String param = "%-" + countryLangDTO.getLanguage() + "-%";
+        List<CountryResource> list = kafkaConnector.call("select * from countries where info like ?", requestKafkaTransformer, responseKafkaTransformer,JDBCQueryType.FIND, param);
+        return list;
     }
 
     public CountryModel getJpa(Long key){
