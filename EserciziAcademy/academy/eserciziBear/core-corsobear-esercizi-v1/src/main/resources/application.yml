@@ -7,6 +7,37 @@ spring:
 error-manager:
   enabled: true
 
+KAFKA_TOPIC_DEMO: Country-Zaffinelli
+KAFKA_STRATEGIA_BROKERS: localhost:9092
+KAFKA_STRATEGIA_GROUPID: mpab0
+KAFKA_STRATEGIA_SECURITY_PROTOCOL: PLAINTEXT
+KEYTAB_KERB_FILE_PATH: /usr/local/security/SDH_MPAB0.keytab
+KEYTAB_KERB_USERNAME: SDH_MPAB0
+KEYTAB_KERB_REALM_DOMAIN: SYSSEDE.SYSTEST.SANPAOLOIMI.COM
+
+listeners:
+  eventConfigurations:
+    items:
+      CountryListener:
+        bootstrapServers: '${KAFKA_STRATEGIA_BROKERS}'
+        topic: '${KAFKA_TOPIC_DEMO}'
+        groupId: '${KAFKA_STRATEGIA_GROUPID}'
+        clientId: DEMO
+        concurrency: 3
+        enable.auto.commit: true
+        max.poll.records: 10
+        security:
+          protocol: '${KAFKA_STRATEGIA_SECURITY_PROTOCOL}'
+        sasl:
+          kerberos:
+            service:
+              name: '${KAFKA_STRATEGIA_SERVICE_NAME:xx}'
+          jaas:
+            config: >-
+              com.sun.security.auth.module.Krb5LoginModule required
+              useKeyTab=true keyTab="${KEYTAB_STRATEGIA_KERB_FILE_PATH}"
+              principal="${KEYTAB_STRATEGIA_KERB_USERNAME}@${KEYTAB_STRATEGIA_KERB_REALM_DOMAIN}";
+
 connectors:
 
   jdbcConfigurations:

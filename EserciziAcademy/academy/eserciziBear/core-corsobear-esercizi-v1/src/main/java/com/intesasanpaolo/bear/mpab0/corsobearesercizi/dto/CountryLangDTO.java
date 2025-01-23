@@ -1,7 +1,6 @@
-package com.intesasanpaolo.bear.mpab0.corsobearesercitazioni.dto;
+package com.intesasanpaolo.bear.mpab0.corsobearesercizi.dto;
 
 public class CountryLangDTO {
-
     private String language;
 
     public CountryLangDTO(String language) {

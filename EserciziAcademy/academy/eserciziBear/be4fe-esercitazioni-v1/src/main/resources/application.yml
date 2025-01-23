@@ -56,13 +56,14 @@ keycloak:
           patterns:
             - /*
 
-KAFKA_TOPIC_DEMO: Country-Zaffinelli2
-KAFKA_STRATEGIA_BROKERS: 10.207.236.68:29092
+KAFKA_TOPIC_DEMO: Country-Zaffinelli
+KAFKA_STRATEGIA_BROKERS: localhost:9092
 KAFKA_STRATEGIA_GROUPID: mpab0
 KAFKA_STRATEGIA_SECURITY_PROTOCOL: PLAINTEXT
 KEYTAB_KERB_FILE_PATH: /usr/local/security/SDH_MPAB0.keytab
 KEYTAB_KERB_USERNAME: SDH_MPAB0
 KEYTAB_KERB_REALM_DOMAIN: SYSSEDE.SYSTEST.SANPAOLOIMI.COM
+
 listeners:
   eventConfigurations:
     items:
@@ -98,7 +99,7 @@ connectors:
   eventConfigurations:
     items:
       CountryEventConnector:
-        topic: ${KAFKA_TOPIC}
+        topic: ${KAFKA_TOPIC_DEMO}
         bootstrapServers: ${KAFKA_STRATEGIA_BROKERS}
         security:
           protocol: ${KAFKA_STRATEGIA_SECURITY_PROTOCOL}

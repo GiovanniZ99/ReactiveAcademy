@@ -8,13 +8,13 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CountryEventRequestTransformer implements IEventRequestTransformer<CountryLangDTO, String> {
+public class CountryEventRequestTransformer implements IEventRequestTransformer<CountryLangDTO, CountryLangDTO> {
     @Value("${KAFKA_TOPIC_DEMO}")
     private String topic;
 
     @Override
-        public EventRequest<String> transform(CountryLangDTO om, Object... args) {
-            EventRequest<String> event = new EventRequest<>();
+        public EventRequest<CountryLangDTO> transform(CountryLangDTO om, Object... args) {
+            EventRequest<CountryLangDTO> event = new EventRequest<>();
             JsonSerializer<CountryLangDTO> js =
                     new JsonSerializer<>();
             event.setTopic(topic);

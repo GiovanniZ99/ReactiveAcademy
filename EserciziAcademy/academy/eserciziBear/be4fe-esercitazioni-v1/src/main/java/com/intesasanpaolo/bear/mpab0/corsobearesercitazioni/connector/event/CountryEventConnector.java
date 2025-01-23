@@ -5,5 +5,5 @@ import com.intesasanpaolo.bear.mpab0.corsobearesercitazioni.dto.CountryLangDTO;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CountryEventConnector extends BaseEventConnector<CountryLangDTO, Boolean, String, Void> {
+public class CountryEventConnector extends BaseEventConnector<CountryLangDTO, Boolean, CountryLangDTO, Void> {
 }
