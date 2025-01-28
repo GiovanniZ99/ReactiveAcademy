@@ -123,6 +123,17 @@ public class SquadraService {
             elem.setTrasferimenti(trasferimentiService.trasferimenti(elem.getNomeCognome()));
         });
         try {
+            Set<String> nomiGiocatori = new HashSet<>();
+            squadraDTOExtended.getGiocatori().forEach(elem-> {
+                try {
+                    if(giocatoreDao.checkByName(elem.getNomeCognome()) || nomiGiocatori.contains(elem.getNomeCognome())){
+                        throw new GiocatoreGiaCensitoException("Giocatore già censito");
+                    }
+                    nomiGiocatori.add(elem.getNomeCognome());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             squadraDTOExtended.setGiocatori(giocatoreDao.createAll(squadraDTOExtended.getGiocatori()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
