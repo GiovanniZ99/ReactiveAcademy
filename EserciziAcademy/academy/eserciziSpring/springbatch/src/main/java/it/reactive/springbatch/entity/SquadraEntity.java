@@ -1,6 +1,8 @@
 package it.reactive.springbatch.entity;
 
 import jakarta.persistence.*;
+
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -72,5 +74,20 @@ public class SquadraEntity {
 
     public void setTifoseria(TifoseriaEntity tifoseria) {
         this.tifoseria = tifoseria;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SquadraEntity that = (SquadraEntity) o;
+        return Objects.equals(idSquadra, that.idSquadra) && Objects.equals(nome, that.nome) && Objects.equals(coloriSociali, that.coloriSociali) && Objects.equals(giocatori, that.giocatori) && Objects.equals(tifoseria, that.tifoseria);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idSquadra, nome, coloriSociali, giocatori, tifoseria);
+
     }
 }

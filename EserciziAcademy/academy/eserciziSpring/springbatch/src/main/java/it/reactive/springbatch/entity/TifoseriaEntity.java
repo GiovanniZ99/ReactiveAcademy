@@ -2,6 +2,8 @@ package it.reactive.springbatch.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "tifoseria")
 @NamedQuery(name = "findByTeam", query = "select t from TifoseriaEntity t where t.squadra.idSquadra = :idSquadra")
@@ -51,5 +53,19 @@ public class TifoseriaEntity {
 
     public void setSquadra(SquadraEntity squadra) {
         this.squadra = squadra;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TifoseriaEntity that = (TifoseriaEntity) o;
+        return Objects.equals(idTifoseria, that.idTifoseria) &&
+                Objects.equals(nomeTifoseria, that.nomeTifoseria);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idTifoseria, nomeTifoseria);
     }
 }

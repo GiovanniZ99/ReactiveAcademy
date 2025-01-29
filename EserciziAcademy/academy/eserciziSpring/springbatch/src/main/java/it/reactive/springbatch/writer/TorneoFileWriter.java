@@ -1,20 +1,23 @@
 package it.reactive.springbatch.writer;
 
-import org.springframework.batch.item.Chunk;
-import org.springframework.batch.item.ItemStreamWriter;
-import org.springframework.batch.item.ItemWriter;
+import jakarta.persistence.EntityManagerFactory;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TorneoFileWriter {
-    @Bean
-    public ItemWriter<Object> setupItemWriter(){
-        return new ItemStreamWriter<Object>() {
-            @Override
-            public void write(Chunk<?> chunk) throws Exception {
 
-            }
-        }
+    private final EntityManagerFactory entityManagerFactory;
+
+    public TorneoFileWriter(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
+    @Bean
+    public JpaItemWriter<Object> jpaWriter() {
+        JpaItemWriter<Object> writer = new JpaItemWriter<>();
+        writer.setEntityManagerFactory(entityManagerFactory);
+        return writer;
     }
 }

@@ -2,6 +2,8 @@ package it.reactive.springbatch.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "squadra_torneo")
 public class SquadraTorneoEntity {
@@ -50,5 +52,18 @@ public class SquadraTorneoEntity {
 
     public void setTorneo(TorneoEntity torneo) {
         this.torneo = torneo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SquadraTorneoEntity that = (SquadraTorneoEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(squadra, that.squadra) && Objects.equals(torneo, that.torneo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, squadra, torneo);
     }
 }

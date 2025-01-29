@@ -3,6 +3,7 @@ package it.reactive.springbatch.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -51,5 +52,18 @@ public class TorneoEntity implements Serializable {
 
     public void setSquadraTornei(Set<SquadraTorneoEntity> squadraTornei) {
         this.squadraTornei = squadraTornei;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TorneoEntity that = (TorneoEntity) o;
+        return Objects.equals(idTorneo, that.idTorneo) && Objects.equals(nomeTorneo, that.nomeTorneo) && Objects.equals(squadraTornei, that.squadraTornei);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idTorneo, nomeTorneo, squadraTornei);
     }
 }

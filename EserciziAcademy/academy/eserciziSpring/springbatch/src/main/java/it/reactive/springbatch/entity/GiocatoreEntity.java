@@ -5,6 +5,7 @@ import it.reactive.springbatch.model.TrasferimentiModel;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -84,5 +85,18 @@ public class GiocatoreEntity {
 
     public void setTrasferimenti(Set<TrasferimentiModel> trasferimenti) {
         this.trasferimenti = trasferimenti;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GiocatoreEntity giocatore = (GiocatoreEntity) o;
+        return Objects.equals(idGiocatore, giocatore.idGiocatore) && Objects.equals(nomeCognome, giocatore.nomeCognome) && Objects.equals(numeroAmmonizioni, giocatore.numeroAmmonizioni) && Objects.equals(squadra, giocatore.squadra) && Objects.equals(trasferimenti, giocatore.trasferimenti);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idGiocatore, nomeCognome, numeroAmmonizioni, squadra, trasferimenti);
     }
 }

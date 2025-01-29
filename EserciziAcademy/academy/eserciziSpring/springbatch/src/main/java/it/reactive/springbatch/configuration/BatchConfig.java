@@ -3,13 +3,18 @@ package it.reactive.springbatch.configuration;
 import it.reactive.springbatch.repository.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.*;
+import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -35,6 +40,17 @@ public class BatchConfig {
     }
 
     @Bean
+    public JobLauncherApplicationRunner jobLauncherApplicationRunner(
+            JobLauncher jobLauncher,
+            JobExplorer jobExplorer,
+            JobRepository jobRepository,
+            @Qualifier("jobSetup") Job jobSetup) {
+
+        JobLauncherApplicationRunner runner = new JobLauncherApplicationRunner(jobLauncher, jobExplorer, jobRepository);
+        runner.setJobName("jobSetup");
+        return runner;
+    }
+    @Bean("delete")
     public Job jobDelete(JobRepository jobRepository,
                          @Qualifier("deleteAll") Step delete) {
         return new JobBuilder("jobDelete", jobRepository)
@@ -42,6 +58,16 @@ public class BatchConfig {
                 .build();
     }
 
+    @Bean("jobSetup")
+    public Job jobSetup(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+                         FlatFileItemReader<Object> reader,
+                         JpaItemWriter<Object> writer,
+                        ItemProcessor<Object, Object> itemProcessor,@Qualifier("tsDelet") Tasklet tasklet){
+        return new JobBuilder("jobSetup", jobRepository)
+                .start(deleteAll(jobRepository, transactionManager,tasklet))
+                .next(dbSetup(jobRepository, transactionManager, reader, writer, itemProcessor))
+                .build();
+    }
 
     @Bean
     public Step deleteAll(JobRepository jobRepository,
@@ -68,15 +94,16 @@ public class BatchConfig {
     }
 
     @Bean
+    @Transactional
     public Step dbSetup(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                        @Qualifier("setuoFileReader") ItemReader<String> itemReader,
-                        @Qualifier("setupFileWriter") ItemWriter<Object> itemWriter,
-                        @Qualifier("setupFileProcessor") ItemProcessor<String, Object> itemProcessor) {
+                        FlatFileItemReader<Object> reader,
+                        JpaItemWriter<Object> writer,
+                        ItemProcessor<Object, Object> itemProcessor) {
         return new StepBuilder("dbSetup", jobRepository)
-                .<String, Object>chunk(50, transactionManager)
-                .reader(itemReader)
+                .<Object, Object>chunk(100, transactionManager)
+                .reader(reader)
                 .processor(itemProcessor)
-                .writer(itemWriter)
+                .writer(writer)
                 .build();
     }
 }
