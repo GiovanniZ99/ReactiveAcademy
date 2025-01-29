@@ -23,19 +23,6 @@ public class SquadraTorneoId implements Serializable {
     public SquadraTorneoId() {
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SquadraTorneoId that = (SquadraTorneoId) o;
-        return Objects.equals(idSquadra, that.idSquadra) && Objects.equals(idTorneo, that.idTorneo);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idSquadra, idTorneo);
-    }
-
     public Integer getIdSquadra() {
         return idSquadra;
     }
@@ -50,5 +37,18 @@ public class SquadraTorneoId implements Serializable {
 
     public void setIdTorneo(Integer idTorneo) {
         this.idTorneo = idTorneo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SquadraTorneoId that = (SquadraTorneoId) o;
+        return Objects.equals(idSquadra, that.idSquadra) && Objects.equals(idTorneo, that.idTorneo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idSquadra, idTorneo);
     }
 }

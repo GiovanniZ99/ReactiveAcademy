@@ -10,6 +10,7 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,7 @@ public class TorneoFileReader extends FlatFileItemReader<Object> {
             @NonNull
             public Object mapFieldSet(@NonNull FieldSet fieldSet) throws BindException {
                 String tipo = fieldSet.readString(0).trim();
+
                 return switch (tipo) {
                     case "TO" -> torneoFieldSetMapper.mapFieldSet(fieldSet);
                     case "SQ" -> squadraFieldSetMapper.mapFieldSet(fieldSet);

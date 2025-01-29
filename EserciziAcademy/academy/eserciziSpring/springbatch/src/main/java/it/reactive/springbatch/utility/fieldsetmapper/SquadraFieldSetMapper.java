@@ -2,10 +2,8 @@ package it.reactive.springbatch.utility.fieldsetmapper;
 
 import it.reactive.springbatch.entity.SquadraEntity;
 import it.reactive.springbatch.entity.TifoseriaEntity;
-import it.reactive.springbatch.repository.TifoseriaRepository;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
@@ -19,7 +17,6 @@ public class SquadraFieldSetMapper implements FieldSetMapper<SquadraEntity> {
         SquadraEntity squadra = new SquadraEntity();
         squadra.setNome(fieldSet.readString(1).trim());
         squadra.setColoriSociali(fieldSet.readString(2).trim());
-
         String nomeTifoseria = fieldSet.readString(3).trim();
         if (nomeTifoseria.isBlank()) {
             squadra.setTifoseria(null);

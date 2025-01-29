@@ -11,12 +11,12 @@ public class SquadraTorneoEntity {
     @EmbeddedId
     private SquadraTorneoId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("idSquadra")
     @JoinColumn(name = "id_squadra")
     private SquadraEntity squadra;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("idTorneo")
     @JoinColumn(name = "id_torneo")
     private TorneoEntity torneo;
@@ -54,16 +54,17 @@ public class SquadraTorneoEntity {
         this.torneo = torneo;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SquadraTorneoEntity that = (SquadraTorneoEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(squadra, that.squadra) && Objects.equals(torneo, that.torneo);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, squadra, torneo);
+        return Objects.hash(id);
     }
 }

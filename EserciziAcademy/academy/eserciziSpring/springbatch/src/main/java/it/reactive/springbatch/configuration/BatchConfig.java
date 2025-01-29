@@ -83,24 +83,23 @@ public class BatchConfig {
     public Tasklet tsDelet() {
         return (contribution, chunkContext) -> {
 
-            squadraTorneoRepository.deleteAll();
-            tifoseriaRepository.deleteAll();
-            giocatoreRepository.deleteAll();
-            torneoRepository.deleteAll();
-            squadraRepository.deleteAll();
+            squadraTorneoRepository.deleteAllInBatch();
+            tifoseriaRepository.deleteAllInBatch();
+            giocatoreRepository.deleteAllInBatch();
+            torneoRepository.deleteAllInBatch();
+            squadraRepository.deleteAllInBatch();
 
             return RepeatStatus.FINISHED;
         };
     }
 
     @Bean
-    @Transactional
     public Step dbSetup(JobRepository jobRepository, PlatformTransactionManager transactionManager,
                         FlatFileItemReader<Object> reader,
                         JpaItemWriter<Object> writer,
                         ItemProcessor<Object, Object> itemProcessor) {
         return new StepBuilder("dbSetup", jobRepository)
-                .<Object, Object>chunk(100, transactionManager)
+                .<Object, Object>chunk(1000, transactionManager)
                 .reader(reader)
                 .processor(itemProcessor)
                 .writer(writer)
