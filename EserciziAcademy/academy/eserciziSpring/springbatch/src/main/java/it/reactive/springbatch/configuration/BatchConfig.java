@@ -60,9 +60,9 @@ public class BatchConfig {
 
     @Bean("jobSetup")
     public Job jobSetup(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                         FlatFileItemReader<Object> reader,
+                         FlatFileItemReader<String> reader,
                          JpaItemWriter<Object> writer,
-                        ItemProcessor<Object, Object> itemProcessor,@Qualifier("tsDelet") Tasklet tasklet){
+                        ItemProcessor<String, Object> itemProcessor,@Qualifier("tsDelet") Tasklet tasklet){
         return new JobBuilder("jobSetup", jobRepository)
                 .start(deleteAll(jobRepository, transactionManager,tasklet))
                 .next(dbSetup(jobRepository, transactionManager, reader, writer, itemProcessor))
@@ -83,24 +83,23 @@ public class BatchConfig {
     public Tasklet tsDelet() {
         return (contribution, chunkContext) -> {
 
-            squadraTorneoRepository.deleteAll();
-            tifoseriaRepository.deleteAll();
-            giocatoreRepository.deleteAll();
-            torneoRepository.deleteAll();
-            squadraRepository.deleteAll();
+            squadraTorneoRepository.deleteAllInBatch();
+            tifoseriaRepository.deleteAllInBatch();
+            giocatoreRepository.deleteAllInBatch();
+            torneoRepository.deleteAllInBatch();
+            squadraRepository.deleteAllInBatch();
 
             return RepeatStatus.FINISHED;
         };
     }
 
     @Bean
-    @Transactional
     public Step dbSetup(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                        FlatFileItemReader<Object> reader,
+                        FlatFileItemReader<String> reader,
                         JpaItemWriter<Object> writer,
-                        ItemProcessor<Object, Object> itemProcessor) {
+                        ItemProcessor<String, Object> itemProcessor) {
         return new StepBuilder("dbSetup", jobRepository)
-                .<Object, Object>chunk(100, transactionManager)
+                .<String, Object>chunk(10, transactionManager)
                 .reader(reader)
                 .processor(itemProcessor)
                 .writer(writer)

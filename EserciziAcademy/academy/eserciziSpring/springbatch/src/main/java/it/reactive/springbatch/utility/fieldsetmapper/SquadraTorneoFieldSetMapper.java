@@ -2,11 +2,15 @@ package it.reactive.springbatch.utility.fieldsetmapper;
 
 import it.reactive.springbatch.entity.SquadraEntity;
 import it.reactive.springbatch.entity.SquadraTorneoEntity;
+import it.reactive.springbatch.entity.SquadraTorneoId;
 import it.reactive.springbatch.entity.TorneoEntity;
 import it.reactive.springbatch.repository.SquadraRepository;
 import it.reactive.springbatch.repository.TorneoRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
+import org.springframework.context.annotation.Scope;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
@@ -25,13 +29,31 @@ public class SquadraTorneoFieldSetMapper implements FieldSetMapper<SquadraTorneo
     @Override
     @NonNull
     public SquadraTorneoEntity mapFieldSet(FieldSet fieldSet) throws BindException {
-        SquadraTorneoEntity squadraTorneo = new SquadraTorneoEntity();
-        TorneoEntity torneo = new TorneoEntity();
-        torneo.setNomeTorneo(fieldSet.readString(1).trim());
-        squadraTorneo.setTorneo(torneo);
+        String nomeTorneo = fieldSet.readString(1).trim();
+        String nomeSquadra = fieldSet.readString(2).trim();
 
-        SquadraEntity squadra = new SquadraEntity();
-        squadra.setNome(fieldSet.readString(2).trim());
+        TorneoEntity torneo = torneoRepository.findByNomeTorneo(nomeTorneo)
+                .orElseGet(() -> {
+                    TorneoEntity newTorneo = new TorneoEntity();
+                    newTorneo.setNomeTorneo(nomeTorneo);
+                    return torneoRepository.save(newTorneo);
+                });
+
+        SquadraEntity squadra = squadraRepository.findByNome(nomeSquadra)
+                .orElseGet(() -> {
+                    SquadraEntity newSquadra = new SquadraEntity();
+                    newSquadra.setNome(nomeSquadra);
+                    newSquadra.setColoriSociali("default");
+                    return squadraRepository.save(newSquadra);
+                });
+
+        SquadraTorneoId squadraTorneoId = new SquadraTorneoId();
+        squadraTorneoId.setIdTorneo(torneo.getIdTorneo());
+        squadraTorneoId.setIdSquadra(squadra.getIdSquadra());
+
+        SquadraTorneoEntity squadraTorneo = new SquadraTorneoEntity();
+        squadraTorneo.setId(squadraTorneoId);
+        squadraTorneo.setTorneo(torneo);
         squadraTorneo.setSquadra(squadra);
 
         return squadraTorneo;

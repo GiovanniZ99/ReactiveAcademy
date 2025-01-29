@@ -28,7 +28,7 @@ public class GiocatoreEntity {
     @ColumnDefault("0")
     private Integer numeroAmmonizioni = 0;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_squadra")
     private SquadraEntity squadra;
 
@@ -91,12 +91,12 @@ public class GiocatoreEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GiocatoreEntity giocatore = (GiocatoreEntity) o;
-        return Objects.equals(idGiocatore, giocatore.idGiocatore) && Objects.equals(nomeCognome, giocatore.nomeCognome) && Objects.equals(numeroAmmonizioni, giocatore.numeroAmmonizioni) && Objects.equals(squadra, giocatore.squadra) && Objects.equals(trasferimenti, giocatore.trasferimenti);
+        GiocatoreEntity that = (GiocatoreEntity) o;
+        return Objects.equals(idGiocatore, that.idGiocatore);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idGiocatore, nomeCognome, numeroAmmonizioni, squadra, trasferimenti);
+        return Objects.hash(idGiocatore);
     }
 }

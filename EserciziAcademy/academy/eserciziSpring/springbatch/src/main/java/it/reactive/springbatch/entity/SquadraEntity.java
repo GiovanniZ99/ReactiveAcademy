@@ -19,10 +19,10 @@ public class SquadraEntity {
     @Column(name = "colori_sociali")
     private String coloriSociali;
 
-    @OneToMany(mappedBy = "squadra", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "squadra", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GiocatoreEntity> giocatori;
 
-    @OneToOne(mappedBy = "squadra", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "squadra", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private TifoseriaEntity tifoseria;
 
     public SquadraEntity(Integer idSquadra, String nome, String coloriSociali, Set<GiocatoreEntity> giocatori, TifoseriaEntity tifoseria) {
@@ -78,16 +78,14 @@ public class SquadraEntity {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SquadraEntity that = (SquadraEntity) o;
-        return Objects.equals(idSquadra, that.idSquadra) && Objects.equals(nome, that.nome) && Objects.equals(coloriSociali, that.coloriSociali) && Objects.equals(giocatori, that.giocatori) && Objects.equals(tifoseria, that.tifoseria);
+        return Objects.equals(idSquadra, that.idSquadra);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idSquadra, nome, coloriSociali, giocatori, tifoseria);
-
+        return Objects.hash(idSquadra);
     }
 }

@@ -18,7 +18,7 @@ public class TorneoEntity implements Serializable {
     @Column(name = "nome_torneo")
     private String nomeTorneo;
 
-    @OneToMany(mappedBy = "torneo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "torneo", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<SquadraTorneoEntity> squadraTornei;
 
     public TorneoEntity(Integer idTorneo, String nomeTorneo, Set<SquadraTorneoEntity> squadraTornei) {
@@ -53,17 +53,16 @@ public class TorneoEntity implements Serializable {
     public void setSquadraTornei(Set<SquadraTorneoEntity> squadraTornei) {
         this.squadraTornei = squadraTornei;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TorneoEntity that = (TorneoEntity) o;
-        return Objects.equals(idTorneo, that.idTorneo) && Objects.equals(nomeTorneo, that.nomeTorneo) && Objects.equals(squadraTornei, that.squadraTornei);
+        return Objects.equals(idTorneo, that.idTorneo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTorneo, nomeTorneo, squadraTornei);
+        return Objects.hash(idTorneo);
     }
 }
