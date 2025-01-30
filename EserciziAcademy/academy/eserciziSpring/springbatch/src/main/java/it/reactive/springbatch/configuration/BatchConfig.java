@@ -18,7 +18,6 @@ import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 public class BatchConfig {
@@ -50,18 +49,10 @@ public class BatchConfig {
         runner.setJobName("jobSetup");
         return runner;
     }
-    @Bean("delete")
-    public Job jobDelete(JobRepository jobRepository,
-                         @Qualifier("deleteAll") Step delete) {
-        return new JobBuilder("jobDelete", jobRepository)
-                .start(delete)
-                .build();
-    }
-
     @Bean("jobSetup")
     public Job jobSetup(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                         FlatFileItemReader<String> reader,
-                         JpaItemWriter<Object> writer,
+                        FlatFileItemReader<String> reader,
+                        JpaItemWriter<Object> writer,
                         ItemProcessor<String, Object> itemProcessor,@Qualifier("tsDelet") Tasklet tasklet){
         return new JobBuilder("jobSetup", jobRepository)
                 .start(deleteAll(jobRepository, transactionManager,tasklet))
@@ -79,7 +70,6 @@ public class BatchConfig {
     }
 
     @Bean
-    @Transactional
     public Tasklet tsDelet() {
         return (contribution, chunkContext) -> {
 
@@ -99,7 +89,7 @@ public class BatchConfig {
                         JpaItemWriter<Object> writer,
                         ItemProcessor<String, Object> itemProcessor) {
         return new StepBuilder("dbSetup", jobRepository)
-                .<String, Object>chunk(10, transactionManager)
+                .<String, Object>chunk(100, transactionManager)
                 .reader(reader)
                 .processor(itemProcessor)
                 .writer(writer)

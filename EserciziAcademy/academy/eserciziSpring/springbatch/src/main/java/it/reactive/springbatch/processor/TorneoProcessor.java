@@ -23,7 +23,7 @@ public class TorneoProcessor implements ItemProcessor<String, Object> {
     private final SquadraTorneoFieldSetMapper squadraTorneoFieldSetMapper;
     private final CustomLineTokenizer customLineTokenizer;
 
-    private final Set<String> processedRows = new HashSet<>();
+    private final Set<String> righe = new HashSet<>();
 
     @Autowired
     public TorneoProcessor(TorneoFieldSetMapper torneoFieldSetMapper, SquadraFieldSetMapper squadraFieldSetMapper,
@@ -37,13 +37,13 @@ public class TorneoProcessor implements ItemProcessor<String, Object> {
 
     @Override
     public Object process(@NonNull String item) throws Exception {
-        if (processedRows.contains(item)) {
+        if (righe.contains(item)) {
             return null;
         } else {
-            processedRows.add(item);
+            righe.add(item);
         }
 
-        String tipo = item.trim().substring(0, 2);
+        String tipo = item.substring(0, 2).trim();
 
         FieldSet fieldSet = customLineTokenizer.tokenize(item);
 

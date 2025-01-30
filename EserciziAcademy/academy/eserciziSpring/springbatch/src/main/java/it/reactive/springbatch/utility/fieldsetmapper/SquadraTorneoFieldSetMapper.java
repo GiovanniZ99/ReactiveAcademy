@@ -6,11 +6,9 @@ import it.reactive.springbatch.entity.SquadraTorneoId;
 import it.reactive.springbatch.entity.TorneoEntity;
 import it.reactive.springbatch.repository.SquadraRepository;
 import it.reactive.springbatch.repository.TorneoRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
-import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
@@ -21,6 +19,7 @@ public class SquadraTorneoFieldSetMapper implements FieldSetMapper<SquadraTorneo
 
     private final TorneoRepository torneoRepository;
 
+    @Autowired
     public SquadraTorneoFieldSetMapper(SquadraRepository squadraRepository, TorneoRepository torneoRepository) {
         this.squadraRepository = squadraRepository;
         this.torneoRepository = torneoRepository;

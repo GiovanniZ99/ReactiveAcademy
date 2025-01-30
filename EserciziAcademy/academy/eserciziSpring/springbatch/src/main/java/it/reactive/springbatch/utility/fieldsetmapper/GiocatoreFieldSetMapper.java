@@ -23,7 +23,10 @@ public class GiocatoreFieldSetMapper implements FieldSetMapper<GiocatoreEntity> 
     @NonNull
     public GiocatoreEntity mapFieldSet(FieldSet fieldSet) throws BindException {
         GiocatoreEntity giocatore = new GiocatoreEntity();
-        giocatore.setNomeCognome(fieldSet.readString(1) + fieldSet.readString(2).trim());
+        String nome = fieldSet.readString(1).trim();
+
+        String cognome = fieldSet.readString(2).trim();
+        giocatore.setNomeCognome(nome + " " + cognome);
 
         String nomeSquadra = fieldSet.readString(3).trim();
 

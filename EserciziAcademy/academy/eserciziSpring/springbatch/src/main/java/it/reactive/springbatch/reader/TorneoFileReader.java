@@ -4,8 +4,13 @@ import it.reactive.springbatch.utility.CustomLineTokenizer;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
+import org.springframework.batch.item.file.transform.FieldSet;
+import org.springframework.boot.context.properties.bind.BindException;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class TorneoFileReader extends FlatFileItemReader<String> {
@@ -16,7 +21,17 @@ public class TorneoFileReader extends FlatFileItemReader<String> {
 
         DefaultLineMapper<String> lineMapper = new DefaultLineMapper<>();
         lineMapper.setLineTokenizer(new CustomLineTokenizer());
-        lineMapper.setFieldSetMapper((FieldSetMapper<String>) fieldSet -> fieldSet.readString(0));
+        lineMapper.setFieldSetMapper(new FieldSetMapper<String>() {
+            @Override
+            @NonNull
+            public String mapFieldSet(@NonNull FieldSet fieldSet) throws BindException {
+                StringBuilder sb = new StringBuilder();
+                for (String value : fieldSet.getValues()) {
+                    sb.append(value);
+                }
+                return sb.toString();
+            }
+        });
 
         setLineMapper(lineMapper);
     }
