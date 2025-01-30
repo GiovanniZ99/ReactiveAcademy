@@ -1,6 +1,10 @@
 package it.reactive.springbatch.configuration;
 
+import it.reactive.springbatch.entity.GiocatoreEntity;
+
+import it.reactive.springbatch.model.GiocatoreCSV;
 import it.reactive.springbatch.repository.*;
+import it.reactive.springbatch.writer.GiocatoriWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -11,7 +15,9 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.*;
 import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
@@ -49,14 +55,31 @@ public class BatchConfig {
         runner.setJobName("jobSetup");
         return runner;
     }
+    @Bean
+    public JobLauncherApplicationRunner csvExportJobRunner(JobLauncher jobLauncher, JobExplorer jobExplorer, JobRepository jobRepository, @Qualifier("csvExportJob") Job csvExportJob) {
+        JobLauncherApplicationRunner runner = new JobLauncherApplicationRunner(jobLauncher, jobExplorer, jobRepository);
+        runner.setJobName("csvExportJob");
+        return runner;
+    }
+
     @Bean("jobSetup")
     public Job jobSetup(JobRepository jobRepository, PlatformTransactionManager transactionManager,
                         FlatFileItemReader<String> reader,
                         JpaItemWriter<Object> writer,
-                        ItemProcessor<String, Object> itemProcessor,@Qualifier("tsDelet") Tasklet tasklet){
+                        ItemProcessor<String, Object> itemProcessor, @Qualifier("tsDelet") Tasklet tasklet) {
         return new JobBuilder("jobSetup", jobRepository)
-                .start(deleteAll(jobRepository, transactionManager,tasklet))
+                .start(deleteAll(jobRepository, transactionManager, tasklet))
                 .next(dbSetup(jobRepository, transactionManager, reader, writer, itemProcessor))
+                .build();
+    }
+
+    @Bean("csvExportJob")
+    public Job csvExportJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+                             JpaPagingItemReader<GiocatoreEntity> reader,
+                            GiocatoriWriter writer,
+                             ItemProcessor<GiocatoreEntity, GiocatoreCSV> processor) {
+        return new JobBuilder("csvExportJob", jobRepository)
+                .start(csvStep(jobRepository, transactionManager, reader, writer, processor))
                 .build();
     }
 
@@ -76,8 +99,8 @@ public class BatchConfig {
             squadraTorneoRepository.deleteAllInBatch();
             tifoseriaRepository.deleteAllInBatch();
             giocatoreRepository.deleteAllInBatch();
-            torneoRepository.deleteAllInBatch();
             squadraRepository.deleteAllInBatch();
+            torneoRepository.deleteAllInBatch();
 
             return RepeatStatus.FINISHED;
         };
@@ -92,6 +115,19 @@ public class BatchConfig {
                 .<String, Object>chunk(100, transactionManager)
                 .reader(reader)
                 .processor(itemProcessor)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step csvStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+                        JpaPagingItemReader<GiocatoreEntity> reader,
+                        GiocatoriWriter writer,
+                        ItemProcessor<GiocatoreEntity, GiocatoreCSV> processor) {
+        return new StepBuilder("csvStep", jobRepository)
+                .<GiocatoreEntity, GiocatoreCSV>chunk(100, transactionManager)
+                .reader(reader)
+                .processor(processor)
                 .writer(writer)
                 .build();
     }
