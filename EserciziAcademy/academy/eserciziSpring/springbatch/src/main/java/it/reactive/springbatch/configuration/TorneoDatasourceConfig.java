@@ -1,5 +1,6 @@
 package it.reactive.springbatch.configuration;
 
+import it.reactive.springbatch.utility.Costanti;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,29 +25,27 @@ import javax.sql.DataSource;
     )
     public class TorneoDatasourceConfig {
 
-        public static final String DATA_SOURCE_TORNEO = "dataSource-torneo";
-
-        @Bean(name = DATA_SOURCE_TORNEO)
-        @ConfigurationProperties(prefix = "spring.datasource.torneo")
+        @Bean(name = Costanti.DATA_SOURCE_TORNEO)
+        @ConfigurationProperties(prefix = Costanti.PREFIX_PROPERTIES)
         public DataSource torneoDatasource() {
             return DataSourceBuilder.create().build();
         }
 
-        @Bean(name = "torneoEntityManager")
+        @Bean(name = Costanti.ENTITY_MANAGER_TORNEO)
         public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-                @Qualifier(DATA_SOURCE_TORNEO) DataSource datasource) {
+                @Qualifier(Costanti.DATA_SOURCE_TORNEO) DataSource datasource) {
             LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
             em.setDataSource(datasource);
-            em.setPackagesToScan("it.reactive.springbatch.entity");
+            em.setPackagesToScan(Costanti.ENTITIES_PACKAGE);
 
             HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
             em.setJpaVendorAdapter(vendorAdapter);
             return em;
         }
 
-        @Bean(name = "torneoTransactionManager")
+        @Bean(name = Costanti.TORNEO_TRANSACTION_MANAGER)
         public PlatformTransactionManager transactionManager(
-                @Qualifier("torneoEntityManager") EntityManagerFactory emf) {
+                @Qualifier(Costanti.ENTITY_MANAGER_TORNEO) EntityManagerFactory emf) {
             return new JpaTransactionManager(emf);
         }
     }

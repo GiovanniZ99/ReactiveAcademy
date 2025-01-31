@@ -2,11 +2,10 @@ package it.reactive.springbatch.processor;
 
 import it.reactive.springbatch.entity.GiocatoreEntity;
 import it.reactive.springbatch.model.GiocatoreCSV;
-import it.reactive.springbatch.utility.Costanti;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
-@Component(Costanti.GIOCATORI_PROCESSOR)
+@Component
 public class GiocatoreProcessor implements ItemProcessor<GiocatoreEntity, GiocatoreCSV> {
     @Override
     public GiocatoreCSV process(GiocatoreEntity item) throws Exception {

@@ -1,6 +1,5 @@
 package it.reactive.springbatch.processor;
 
-import it.reactive.springbatch.utility.Costanti;
 import it.reactive.springbatch.utility.CustomLineTokenizer;
 import it.reactive.springbatch.utility.fieldsetmapper.GiocatoreFieldSetMapper;
 import it.reactive.springbatch.utility.fieldsetmapper.SquadraFieldSetMapper;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(Costanti.TORNEO_PROCESSOR)
+@Component
 public class TorneoProcessor implements ItemProcessor<String, Object> {
     private final TorneoFieldSetMapper torneoFieldSetMapper;
     private final SquadraFieldSetMapper squadraFieldSetMapper;

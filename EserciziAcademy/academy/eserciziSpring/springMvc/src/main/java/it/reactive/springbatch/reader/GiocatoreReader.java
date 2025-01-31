@@ -1,15 +1,15 @@
 package it.reactive.springbatch.reader;
 
 import it.reactive.springbatch.entity.GiocatoreEntity;
-import it.reactive.springbatch.utility.Costanti;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-@Component(Costanti.GIOCATORI_DB_READER)
+@Component
 public class GiocatoreReader extends JpaPagingItemReader<GiocatoreEntity> {
 
-    public GiocatoreReader(EntityManagerFactory entityManagerFactory) {
+    public GiocatoreReader( @Qualifier("entityManagerFactoryTorneo") EntityManagerFactory entityManagerFactory) {
         this.setEntityManagerFactory(entityManagerFactory);
         this.setQueryString("SELECT g FROM GiocatoreEntity g");
         this.setPageSize(10);

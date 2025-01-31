@@ -1,6 +1,5 @@
 package it.reactive.springbatch.reader;
 
-import it.reactive.springbatch.utility.Costanti;
 import it.reactive.springbatch.utility.CustomLineTokenizer;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -12,7 +11,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 
-@Component(Costanti.TORNEO_CSV_READER)
+@Component
 public class TorneoFileReader extends FlatFileItemReader<String> {
 
     @Override

@@ -1,7 +1,7 @@
 package it.reactive.springbatch.writer;
 
 import it.reactive.springbatch.model.GiocatoreCSV;
-import it.reactive.springbatch.utility.Costanti;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
@@ -9,7 +9,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 
 
-@Component(Costanti.GIOCATORI_CSV_WRITER)
+@Component
 public class GiocatoriWriter extends FlatFileItemWriter<GiocatoreCSV> {
 
     public GiocatoriWriter() {
