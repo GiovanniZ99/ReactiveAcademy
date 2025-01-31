@@ -52,13 +52,6 @@ public class BatchConfig {
         return new JobLauncherApplicationRunner(jobLauncher, jobExplorer, jobRepository);
     }
 
-//    @Bean
-//    public JobLauncherApplicationRunner csvExportJobRunner(JobLauncher jobLauncher, JobExplorer jobExplorer, JobRepository jobRepository, @Qualifier("csvExportJob") Job csvExportJob) {
-//        JobLauncherApplicationRunner runner = new JobLauncherApplicationRunner(jobLauncher, jobExplorer, jobRepository);
-//        runner.setJobName("csvExportJob");
-//        return runner;
-//    }
-
     @Bean(Costanti.JOB_DB_SETUP_WITH_CSV)
     public Job jobSetupWithCsv(JobRepository jobRepository, PlatformTransactionManager transactionManager,
                         @Qualifier(Costanti.TORNEO_CSV_READER) FlatFileItemReader<String> reader,
@@ -74,16 +67,6 @@ public class BatchConfig {
                 .next(csvStep(jobRepository, transactionManager, giocatoreReader, giocatoreWriter, giocatoreProcessor))
                 .build();
     }
-
-//    @Bean("csvExportJob")
-//    public Job csvExportJob(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-//                            JpaPagingItemReader<GiocatoreEntity> reader,
-//                            @Qualifier() GiocatoriWriter writer,
-//                            ItemProcessor<GiocatoreEntity, GiocatoreCSV> processor) {
-//        return new JobBuilder("csvExportJob", jobRepository)
-//                .start(csvStep(jobRepository, transactionManager, reader, writer, processor))
-//                .build();
-//    }
 
     @Bean(name = Costanti.DELETE_ALL_STEP)
     public Step deleteAll(JobRepository jobRepository,

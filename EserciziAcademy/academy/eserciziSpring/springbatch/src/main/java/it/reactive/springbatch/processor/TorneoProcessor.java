@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Component(Costanti.TORNEO_PROCESSOR)
 public class TorneoProcessor implements ItemProcessor<String, Object> {
     private final TorneoFieldSetMapper torneoFieldSetMapper;
@@ -23,8 +20,6 @@ public class TorneoProcessor implements ItemProcessor<String, Object> {
     private final GiocatoreFieldSetMapper giocatoreFieldSetMapper;
     private final SquadraTorneoFieldSetMapper squadraTorneoFieldSetMapper;
     private final CustomLineTokenizer customLineTokenizer;
-
-    private final Set<String> righe = new HashSet<>();
 
     @Autowired
     public TorneoProcessor(TorneoFieldSetMapper torneoFieldSetMapper, SquadraFieldSetMapper squadraFieldSetMapper,
@@ -38,11 +33,6 @@ public class TorneoProcessor implements ItemProcessor<String, Object> {
 
     @Override
     public Object process(@NonNull String item) throws Exception {
-        if (righe.contains(item)) {
-            return null;
-        } else {
-            righe.add(item);
-        }
 
         String tipo = item.substring(0, 2).trim();
 
