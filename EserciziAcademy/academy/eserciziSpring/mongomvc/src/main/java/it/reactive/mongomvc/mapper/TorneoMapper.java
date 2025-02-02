@@ -11,12 +11,9 @@ import org.mapstruct.ReportingPolicy;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface TorneoMapper {
 
-//    TorneoDTOExtended torneoToDtoExtended(Torneo torneo);
-//
-//    Torneo torneoDTOExtendedToDocument(TorneoDTOExtended torneoDTOExtended);
-//
-//    TorneoResource torneoDtoExtendedToResource(TorneoDTOExtended torneoDTOExtended);
-//
-//    TorneoDTOExtended torneoDtoToDTOExtended(TorneoDTO torneoDTO);
-//    }
+    TorneoResource torneoToResource(Torneo torneo);
+
+    Torneo torneoDTOToDocument(TorneoDTO torneoDTO);
+
+
 }

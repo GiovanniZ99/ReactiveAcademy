@@ -4,7 +4,7 @@ package it.reactive.mongomvc.document;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.util.Set;
 
 @Document(collection = "squadre")
 public class Squadra {
@@ -15,12 +15,12 @@ public class Squadra {
 
     private String coloriSociali;
 
-    private List<Giocatore> giocatori;
+    private Set<Giocatore> giocatori;
 
     private Tifoseria tifoserie;
 
 
-    public Squadra(String id, String nome, String coloriSociali, List<Giocatore> giocatori, Tifoseria tifoserie) {
+    public Squadra(String id, String nome, String coloriSociali, Set<Giocatore> giocatori, Tifoseria tifoserie) {
         this.id = id;
         this.nome = nome;
         this.coloriSociali = coloriSociali;
@@ -55,12 +55,12 @@ public class Squadra {
         this.coloriSociali = coloriSociali;
     }
 
-    public List<Giocatore> getGiocatori() {
-        return giocatori;
+    public void setGiocatori(Set<Giocatore> giocatori) {
+        this.giocatori = giocatori;
     }
 
-    public void setGiocatori(List<Giocatore> giocatori) {
-        this.giocatori = giocatori;
+    public Set<Giocatore> getGiocatori() {
+        return giocatori;
     }
 
     public Tifoseria getTifoserie() {

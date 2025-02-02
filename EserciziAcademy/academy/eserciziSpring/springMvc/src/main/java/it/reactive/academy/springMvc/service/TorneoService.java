@@ -36,6 +36,7 @@ public class TorneoService {
         }
     }
 
+    @Transactional
     public void delete(Integer id){
         try {
             TorneoDTOExtended torneoDTOExtended = torneoDao.findById(id);

@@ -149,6 +149,12 @@ public class SquadraService {
                 listaSquadreDtoExt.forEach(elem -> {
                     try {
                         elem.setGiocatori(giocatoreDao.readAllByTeam(elem));
+                        elem.getGiocatori()
+                                .forEach(giocatore ->
+                                        giocatore.setTrasferimenti
+                                                (trasferimentiService
+                                                        .trasferimenti
+                                                                (giocatore.getNomeCognome())));
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
