@@ -3,7 +3,7 @@ package academy.esercizi.esercizio_parentesi;
 import java.util.Scanner;
 /*Dati gli input una stringa verificarne la validitala stringa si definisce valida
 se contiene solo caratteri parentesi (tutti i tipi) sono aperte   e chiuse tutte le coppie
-di parentesi la chiusura avviene nell ordine corretto: */
+di parentesi la chiusura avviene nell ordine corretto:*/
 public class Test {
     public static void main(String[] args) {
         System.out.println("Se il programma non stampa parentesi la stringa è corretta, altrimenti stampa le parentesi non valide");
