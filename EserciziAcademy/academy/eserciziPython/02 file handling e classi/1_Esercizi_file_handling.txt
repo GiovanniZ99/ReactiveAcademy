@@ -1,0 +1,128 @@
+Dato un file csv (data.txt) contenente:
+id,name,age,salary
+101,John Doe,28,5000
+102,Jane Smith,32,6000
+103,Bob Johnson,45,5500
+104,Alice White,29,7200
+
+Scrivere un programma python che :
+1) Legge il file e converte ogni linea in un dizionario con chiavi id, name, age, salary
+2) Colleziona i dizionari in una lista
+3) Filtra gli impiegati con salary >= 6000
+4) Scrive la lista filtrata in un file di output
+
+
+
+
+def read_input_file(file_path):
+    """Reads a text file and converts each line to a dictionary."""
+    data_list = []
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+        # Get header keys from the first line
+        keys = lines[0].strip().split(',')
+
+        # Process each remaining line into a dictionary
+        for line in lines[1:]:
+            values = line.strip().split(',')
+            entry = dict(zip(keys, values))
+            entry["age"] = int(entry["age"])
+            entry["salary"] = int(entry["salary"])
+            data_list.append(entry)
+    return data_list
+
+
+def filter_employees(data_list):
+    """Filter out employees with a salary less than 6000."""
+    return [entry for entry in data_list if entry["salary"] >= 6000]
+
+
+def write_output_file(file_path, data_list):
+    """Write the filtered data to an output file."""
+    if not data_list:
+        print("No data to write.")
+        return
+
+    # Write header row
+    keys = data_list[0].keys()
+    with open(file_path, 'w') as file:
+        file.write(','.join(keys) + '\n')
+        for entry in data_list:
+            values = [str(entry[key]) for key in keys]
+            file.write(','.join(values) + '\n')
+
+
+def main():
+    input_file = 'data.txt'
+    output_file = 'filtered_data.txt'
+
+    # Read input file
+    data_list = read_input_file(input_file)
+    print("Original Data:", data_list)
+
+    # Filter employees
+    filtered_data = filter_employees(data_list)
+    print("Filtered Data:", filtered_data)
+
+    # Write output file
+    write_output_file(output_file, filtered_data)
+    print(f"Filtered data written to '{output_file}'")
+
+if __name__ == "__main__":
+    main()
+	
+	
+	
+	
+================
+A Context Manager is a programming construct that manages resources such as files, database connections, or network sockets. 
+It ensures that resources are properly initialized and released.
+
+In Python, the most common way to use a context manager is with the with statement:
+
+with context_manager as variable:
+    # Perform operations
+	
+The context manager automatically handles the setup and cleanup, even if an error occurs inside the block.
+Here, open() returns a file object that acts as a context manager. The with block ensures:
+
+The file is automatically closed after reading, even if an exception occurs.
+
+
+Esercizio 2
+Proviamo adesso ad ordinare gli elementi della lista in base al salary in ordine decrescente
+
+
+
+def sort_employees_by_salary(data_list):
+    """Sort employees by salary in descending order."""
+    return sorted(data_list, key=lambda x: x["salary"], reverse=True)
+	
+	
+sorted(iterable, key, reverse)
+sorted() is a built-in Python function that returns a new sorted list from the given iterable.
+	
+In alternativa alla lambda possiamo usare:
+
+def get_salary(entry):
+    return entry["salary"]
+
+sorted_data = sorted(data_list, key=get_salary, reverse=True)
+
+
+
+def main():
+    input_file = 'data.txt'
+    output_file = 'sorted_data.txt'
+
+    # Read input file
+    data_list = read_input_file(input_file)
+    print("Original Data:", data_list)
+
+    # Sort employees by salary in descending order
+    sorted_data = sort_employees_by_salary(data_list)
+    print("Sorted Data by Salary:", sorted_data)
+
+    # Write output file
+    write_output_file(output_file, sorted_data)

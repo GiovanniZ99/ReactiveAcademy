@@ -30,7 +30,6 @@ public class GiocatoreController {
         this.giocatoreService = giocatoreService;
     }
 
-
     @ApiOperation(value = "Aumenta di 1 le ammonizioni", response = Giocatore.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Giocatore aggiornato con successo"),
@@ -38,6 +37,7 @@ public class GiocatoreController {
                     "- C6 in caso di errore di validazione",
                     response = ErrorResponse.class)
     })
+    
     @PutMapping("/updateAmmonizioni/{id}")
     public ResponseEntity<Giocatore> aumentaAmmonizioni(@Valid @PathVariable @ApiParam(value = "id giocatore", required = true)
                                                         @Min(value = 0, message = "L'ID deve essere positivo")

@@ -8,7 +8,6 @@ public class TorneoDTO {
     @Size(min = 3, message = "Il nome del torneo deve avere almeno 3 caratteri")
     private String nomeTorneo;
 
-
     public TorneoDTO() {
     }
 

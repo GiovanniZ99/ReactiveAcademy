@@ -37,7 +37,7 @@ public class SquadraController {
     @ApiOperation(value = "inserimento nuova squadra", response = Squadra.class)
     @ApiResponses({@ApiResponse(code = 200, message = "Squadra inserita!"), @ApiResponse(code = 550, message = "C1 in caso di squadra già censita \n" + "C6 in caso di errore di validazione ", response = ErrorResponse.class)})
     @PostMapping
-    public ResponseEntity<Squadra> salvaSquadra(@Valid @RequestBody SquadraDTO squadraDto) throws SQLException {
+    public ResponseEntity<Squadra> salvaSquadra(@Valid @RequestBody SquadraDTO squadraDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(squadraService.create(squadraDto));
     }
 

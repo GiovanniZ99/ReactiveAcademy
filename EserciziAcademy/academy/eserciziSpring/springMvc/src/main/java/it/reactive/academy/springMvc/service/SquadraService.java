@@ -82,11 +82,6 @@ public class SquadraService {
             giocatori = giocatoreDao.readAllByTeam(squadraDTOExtended);
             giocatori.forEach(elem-> elem.setTrasferimenti(trasferimentiService.trasferimenti(elem.getNomeCognome())));
             squadraDTOExtended.setGiocatori(giocatori);
-            if (giocatori == null) {
-                giocatori = new HashSet<>();
-                squadraDTOExtended.setGiocatori(giocatori);
-            }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
