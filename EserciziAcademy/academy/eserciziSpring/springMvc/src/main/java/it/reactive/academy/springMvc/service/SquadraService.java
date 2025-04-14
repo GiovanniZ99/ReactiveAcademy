@@ -172,7 +172,6 @@ public class SquadraService {
         }
     }
 
-    @Transactional
     public void delete(Integer id) {
         try {
             if(squadraDao.findSquadraById(id).getIdSquadra() == null){
